@@ -1,0 +1,259 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Google::Ads::Common::OAuth1_0aHandler</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::Common::OAuth1_0aHandler</span></strong></big>
+</td></tr>
+</table>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#attributes">ATTRIBUTES</a></li>
+	<ul>
+
+		<li><a href="#request_token_url">request_token_url</a></li>
+		<li><a href="#authorize_token_url">authorize_token_url</a></li>
+		<li><a href="#access_token_url">access_token_url</a></li>
+		<li><a href="#consumer_key">consumer_key</a></li>
+		<li><a href="#consumer_secret">consumer_secret</a></li>
+		<li><a href="#token">token</a></li>
+		<li><a href="#token_secret">token_secret</a></li>
+		<li><a href="#display_name">display_name</a></li>
+	</ul>
+
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#initialize">initialize</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+		</ul>
+
+		<li><a href="#is_auth_enabled">is_auth_enabled</a></li>
+		<li><a href="#prepare_request">prepare_request</a></li>
+		<li><a href="#get_authorization_url">get_authorization_url</a></li>
+		<li><a href="#issue_access_token">issue_access_token</a></li>
+		<li><a href="#_timestamp">_timestamp</a></li>
+		<li><a href="#_nonce">_nonce</a></li>
+		<li><a href="#_scope">_scope</a></li>
+	</ul>
+
+	<li><a href="#license_and_copyright">LICENSE AND COPYRIGHT</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#repository_information">REPOSITORY INFORMATION</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Google::Ads::Common::OAuth1_0aHandler</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>A partial implementation of <a href="../../../../../Google/Ads/Common/OAuth1_0aHandlerInterface.html">the Google::Ads::Common::OAuth1_0aHandlerInterface manpage</a>
+that defines most of the logic required to use OAuth against Google Ads
+endpoints.</p>
+<p>It is meant to be specialized and its <a href="#_scope">the _scope manpage</a> method be properly implemented.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="attributes">ATTRIBUTES</a></h1>
+<p>Each of these attributes can be set via
+Google::Ads::Common::OAuth1_0aHandler-&gt;<code>new()</code>.
+Alternatively, there is a get_ and set_ method associated with each attribute
+for retrieving or setting them dynamically.</p>
+<p>
+</p>
+<h2><a name="request_token_url">request_token_url</a></h2>
+<p>Request token URL used to retrieve a request token meant to be later authorized
+and upgraded to an access token. Defaults to
+<a href="../../../../../Google/Ads/Common/Constants/DEFAULT_OAUTH_REQUEST_TOKEN_URL.html">the Google::Ads::Common::Constants::DEFAULT_OAUTH_REQUEST_TOKEN_URL manpage</a>.</p>
+<p>
+</p>
+<h2><a name="authorize_token_url">authorize_token_url</a></h2>
+<p>Authorize token URL used to generate the location the user has to use to
+a valid request token. Defaults to
+<a href="../../../../../Google/Ads/Common/Constants/DEFAULT_OAUTH_AUTHORIZE_TOKEN_URL.html">the Google::Ads::Common::Constants::DEFAULT_OAUTH_AUTHORIZE_TOKEN_URL manpage</a>.</p>
+<p>
+</p>
+<h2><a name="access_token_url">access_token_url</a></h2>
+<p>Access token URL used to upgrade an authorized request token. Defaults to
+<a href="../../../../../Google/Ads/Common/Constants/DEFAULT_OAUTH_ACCESS_TOKEN_URL.html">the Google::Ads::Common::Constants::DEFAULT_OAUTH_ACCESS_TOKEN_URL manpage</a>.</p>
+<p>
+</p>
+<h2><a name="consumer_key">consumer_key</a></h2>
+<p>OAuth consumer key used include in requests, refer to
+<a href="http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html">http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html</a>
+for more information how to request this key. Defaults to
+<a href="../../../../../Google/Ads/Common/Constants/DEFAULT_OAUTH_CONSUMER_KEY.html">the Google::Ads::Common::Constants::DEFAULT_OAUTH_CONSUMER_KEY manpage</a> which is meant
+to be used only during tests.</p>
+<p>
+</p>
+<h2><a name="consumer_secret">consumer_secret</a></h2>
+<p>OAuth consumer secret used to sign requests, refer to
+<a href="http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html">http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html</a>
+for more information how to request this key. Defaults to
+<a href="../../../../../Google/Ads/Common/Constants/DEFAULT_OAUTH_CONSUMER_KEY.html">the Google::Ads::Common::Constants::DEFAULT_OAUTH_CONSUMER_KEY manpage</a> which is meant
+to be used only during tests.</p>
+<p>
+</p>
+<h2><a name="token">token</a></h2>
+<p>OAuth token included in every request, this attribute will hold either a request
+token while in the process of requesting permission to the user to access his
+account or an upgraded access token, that can then be kept as foverer unless
+the user revokes its access, and used to access restricted resources as for
+example Ads API endpoints. For more information about this process refer to
+<a href="http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html">http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html</a></p>
+<p>
+</p>
+<h2><a name="token_secret">token_secret</a></h2>
+<p>OAuth token secret used to sign every request, this attribute will hold either a
+request token secret while in the process of requesting permission to the user
+to access his account or an upgraded access token secret, that can then be kept
+foverer unless the user revokes its access, and used to access restricted
+resources as for example Ads API endpoints. For more information about this
+process refer to
+<a href="http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html">http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html</a></p>
+<p>
+</p>
+<h2><a name="display_name">display_name</a></h2>
+<p>OAuth display name include as part of a request token and displayed to the
+user when authorizing access to your application.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>
+</p>
+<h2><a name="initialize">initialize</a></h2>
+<p>Initializes the handler with properties such as the consumer_key and
+consumer_secret to use for generating authorization requests.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<ul>
+<li>
+<p>A required <em>api_client</em> with a reference to the API client object handling the
+requests against the API.</p>
+</li>
+<li>
+<p>A hash reference with the following keys:
+{
+  # A consumer key generated from the API console.
+  oAuthConsumerKey =&gt; &quot;consumer key&quot;,
+  # A consumer secret generated from the API console.
+  oAuthConsumerSecret =&gt; &quot;consumer secret&quot;,
+  # Display name shown to the user when requesting authorization.
+  oAuthDisplayName =&gt; &quot;name&quot;,
+  # Optionally an access token and secret can be manually set if authorization
+  # was previosly requested.
+  oAuthToken =&gt; &quot;token&quot;,
+  oAuthTokenSecret =&gt; &quot;secret&quot;,
+}</p>
+</li>
+</ul>
+<p>
+</p>
+<h2><a name="is_auth_enabled">is_auth_enabled</a></h2>
+<p>Refer to <a href="../../../../../Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a> documentation of this
+method.</p>
+<p>
+</p>
+<h2><a name="prepare_request">prepare_request</a></h2>
+<p>Refer to <a href="../../../../../Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a> documentation of this
+method.</p>
+<p>
+</p>
+<h2><a name="get_authorization_url">get_authorization_url</a></h2>
+<p>Refer to <a href="../../../../../Google/Ads/Common/OAuthHandlerInterface.html">the Google::Ads::Common::OAuthHandlerInterface manpage</a> documentation of this
+method.</p>
+<p>
+</p>
+<h2><a name="issue_access_token">issue_access_token</a></h2>
+<p>Refer to <a href="../../../../../Google/Ads/Common/OAuthHandlerInterface.html">the Google::Ads::Common::OAuthHandlerInterface manpage</a> documentation of this
+method.</p>
+<p>
+</p>
+<h2><a name="_timestamp">_timestamp</a></h2>
+<p>Returns a valid OAuth timestamp to be included in every request. The timestamp
+is expressed in the number of seconds since January 1, 1970 00:00:00 GMT.</p>
+<p>
+</p>
+<h2><a name="_nonce">_nonce</a></h2>
+<p>Returns a valid OAuth nonce to be included in every request. A nonce is a random
+string, uniquely generated for each request. Which is generated using
+the more secure Math::Random::MT subroutines with a fallback to the language
+subroutines if the module can't be loaded.</p>
+<p>
+</p>
+<h2><a name="_scope">_scope</a></h2>
+<p>Meant to be implemented by subclasses to define the valid XOAuth scope to be
+included in every request.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="license_and_copyright">LICENSE AND COPYRIGHT</a></h1>
+<p>Copyright 2012 Google Inc.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre>
+     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>David Torres &lt;david.t at google.com&gt;</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="repository_information">REPOSITORY INFORMATION</a></h1>
+<pre>
+ $Rev: $
+ $LastChangedBy: $
+ $Id: $</pre>
+<p><a href="#__index__"><small>Back to Top</small></a></p>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::Common::OAuth1_0aHandler</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>

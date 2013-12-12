@@ -1,0 +1,224 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Google::Ads::Common::XPathSAXParser</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::Common::XPathSAXParser</span></strong></big>
+</td></tr>
+</table>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#parse">parse</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+		</ul>
+
+		<li><a href="#__parse_node">__parse_node</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+		</ul>
+
+		<li><a href="#namespace">namespace</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#recognized_string">recognized_string</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#link_object_to_node">link_object_to_node</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+		</ul>
+
+		<li><a href="#get_node_from_object">get_node_from_object</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#get_object_from_node">get_object_from_node</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#license_and_copyright">LICENSE AND COPYRIGHT</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#repository_information">REPOSITORY INFORMATION</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Google::Ads::Common::XPathSAXParser</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Implements a SAX type of XML parser based on the <a href="../../../../../XML/XPath:XML/XPath.html">the XML::XPath:XML::XPath manpage</a>.
+And it is basically used during deserialization to tie XPath module nodes
+with SOAP objects so the XPath module search functionalities can be used
+to find SOAP objects.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>
+</p>
+<h2><a name="parse">parse</a></h2>
+<p>Main entry point to start the parsing of the XML and report to the registered
+handlers the parsed node in a depth-first traversal fashion as expected from
+a SAX parser.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The XML to parse.</p>
+<p>
+</p>
+<h2><a name="__parse_node">__parse_node</a></h2>
+<p>The parsing is done recursively through this method.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The node being parsed.</p>
+<p>
+</p>
+<h2><a name="namespace">namespace</a></h2>
+<p>Retrieves the expanded namespace name of the current parsed node or any
+given node.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>Optional an XPath node. If none given then the current parsed is used.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>The registered namespace.</p>
+<p>
+</p>
+<h2><a name="recognized_string">recognized_string</a></h2>
+<p>Retrieves a string representation of the current parsed node or any given
+node.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>Optional an XPath node. If none given then the current parsed is used.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>The string representation.</p>
+<p>
+</p>
+<h2><a name="link_object_to_node">link_object_to_node</a></h2>
+<p>Links a SOAP Object with its XPath node.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The SOAP object to associate.</p>
+<p>The XPath node.</p>
+<p>
+</p>
+<h2><a name="get_node_from_object">get_node_from_object</a></h2>
+<p>Retrieves an XPath node given its associated SOAP Object.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The SOAP object.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>The associated XPath node if found.</p>
+<p>
+</p>
+<h2><a name="get_object_from_node">get_object_from_node</a></h2>
+<p>Retrieves a SOAP Object given its associated XPath node..</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The XPath node.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>The associated SOAP Object.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="license_and_copyright">LICENSE AND COPYRIGHT</a></h1>
+<p>Copyright 2011 Google Inc.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre>
+     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>David Torres &lt;api.davidtorres at gmail.com&gt;</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="repository_information">REPOSITORY INFORMATION</a></h1>
+<pre>
+ $Rev: $
+ $LastChangedBy: $
+ $Id: $</pre>
+<p><a href="#__index__"><small>Back to Top</small></a></p>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::Common::XPathSAXParser</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>

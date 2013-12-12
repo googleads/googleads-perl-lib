@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Google::Ads::AdWords::Deserializer</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::AdWords::Deserializer</span></strong></big>
+</td></tr>
+</table>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#deserialize">deserialize</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+			<li><a href="#exceptions">Exceptions</a></li>
+		</ul>
+
+		<li><a href="#generate_fault">generate_fault</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#exceptions">Exceptions</a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#license_and_copyright">LICENSE AND COPYRIGHT</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#repository_information">REPOSITORY INFORMATION</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Google::Ads::AdWords::Deserializer</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Google::Ads::AdWords::Deserializer extends the
+<a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/Deserializer/XSD.html">SOAP::WSDL::Deserializer::XSD</a> module.
+The default deserializer used by &lt;SOAP::WSDL|SOAP::WSDL&gt;.
+Above the normal functionality of
+<a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/Deserializer/XSD.html">SOAP::WSDL::Deserializer::XSD</a>,
+this module implements hooks into
+<a href="../../../../../Google/Ads/AdWords/Logging.html">Google::Ads::AdWords::Logging</a> to simplify
+logging and keeping track of all the information in the AdWords API response
+headers.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>
+</p>
+<h2><a name="deserialize">deserialize</a></h2>
+<p>A method automatically invoked by SOAP::WSDL when an incoming SOAP XML response
+needs to be deserialized.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The SOAP XML response string.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>A <a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL.html">SOAP::WSDL</a> object representing the SOAP response. Most of the
+API calls return their result wrapped within an &lt;rval&gt; tag, that gets unwrapped
+and the inner object is returned instead in those cases.</p>
+<p>
+</p>
+<h3><a name="exceptions">Exceptions</a></h3>
+<p>If deserialization fails or the SOAP response contains a
+<a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> object and
+Google::Ads::AdWords::Client::get_die_on_faults() is set to true, then a die
+call is triggered.</p>
+<p>If <a href="../../../../../Google/Ads/AdWords/Client/get_die_on_faults().html">the Google::Ads::AdWords::Client::get_die_on_faults() manpage</a> is set to false then the
+deserialized message will be passed back, containing a
+<a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> object.</p>
+<p>
+</p>
+<h2><a name="generate_fault">generate_fault</a></h2>
+<p>A method automatically invoked on deserialization if an error occurred and
+<a href="../../../../../Google/Ads/AdWords/Client/get_die_on_faults().html">the Google::Ads::AdWords::Client::get_die_on_faults() manpage</a> is set to true.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>A <a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> object.</p>
+<p>
+</p>
+<h3><a name="exceptions">Exceptions</a></h3>
+<p>Always die()s with the value of the input parameter's message.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="license_and_copyright">LICENSE AND COPYRIGHT</a></h1>
+<p>Copyright 2011 Google Inc.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre>
+     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>David Torres &lt;api.davidtorres at gmail.com&gt;</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="repository_information">REPOSITORY INFORMATION</a></h1>
+<pre>
+ $Rev: $
+ $LastChangedBy: $
+ $Id: $</pre>
+<p><a href="#__index__"><small>Back to Top</small></a></p>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::AdWords::Deserializer</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>

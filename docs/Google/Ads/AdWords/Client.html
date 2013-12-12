@@ -1,0 +1,557 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Google::Ads::AdWords::Client</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::AdWords::Client</span></strong></big>
+</td></tr>
+</table>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#attributes">ATTRIBUTES</a></li>
+	<ul>
+
+		<li><a href="#email">email</a></li>
+		<li><a href="#password">password</a></li>
+		<li><a href="#client_id">client_id</a></li>
+		<li><a href="#user_agent">user_agent</a></li>
+		<li><a href="#developer_token">developer_token</a></li>
+		<li><a href="#version">version</a></li>
+		<li><a href="#alternate_url">alternate_url</a></li>
+		<li><a href="#validate_only">validate_only</a></li>
+		<li><a href="#partial_failure">partial_failure</a></li>
+		<li><a href="#auth_server">auth_server</a></li>
+		<li><a href="#auth_token">auth_token</a></li>
+		<li><a href="#use_auth_token_cache">use_auth_token_cache</a></li>
+		<li><a href="#die_on_faults">die_on_faults</a></li>
+		<li><a href="#requests_count">requests_count</a></li>
+		<li><a href="#failed_requests_count">failed_requests_count</a></li>
+		<li><a href="#operations_count">operations_count</a></li>
+		<li><a href="#requests_stats">requests_stats</a></li>
+		<li><a href="#last_request_stats">last_request_stats</a></li>
+		<li><a href="#last_soap_request">last_soap_request</a></li>
+		<li><a href="#last_soap_response">last_soap_response</a></li>
+	</ul>
+
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#new">new</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+			<li><a href="#exceptions">Exceptions</a></li>
+			<li><a href="#example">Example</a></li>
+		</ul>
+
+		<li><a href="#set_die_on_faults">set_die_on_faults</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+			<li><a href="#example">Example</a></li>
+		</ul>
+
+		<li><a href="#get_die_on_faults">get_die_on_faults</a></li>
+		<ul>
+
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#_servicename_">{ServiceName}</a></li>
+		<li><a href="#get_oauth_2_applications_handler">get_oauth_2_applications_handler</a></li>
+		<li><a href="#get_oauth_2_service_accounts_handler">get_oauth_2_service_accounts_handler</a></li>
+		<li><a href="#get_auth_token_handler">get_auth_token_handler</a></li>
+		<li><a href="#__setup_ssl__private_">__setup_SSL (Private)</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#__parse_properties_file__private_">__parse_properties_file (Private)</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+			<li><a href="#exceptions">Exceptions</a></li>
+		</ul>
+
+		<li><a href="#_get_header__protected_">_get_header (Protected)</a></li>
+		<ul>
+
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#_auth_handler__protected_">_auth_handler (Protected)</a></li>
+		<ul>
+
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#license_and_copyright">LICENSE AND COPYRIGHT</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#repository_information">REPOSITORY INFORMATION</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Google::Ads::AdWords::Client</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+  use Google::Ads::AdWords::Client;</pre>
+<pre>
+  my $client = Google::Ads::AdWords::Client-&gt;new();</pre>
+<pre>
+  my $adGroupId = &quot;12345678&quot;;</pre>
+<pre>
+  my $adgroupad_selector =
+      Google::Ads::AdWords::v201309::Types::AdGroupAdSelector-&gt;new({
+        adGroupIds =&gt; [$adGroupId]
+      });</pre>
+<pre>
+  my $page =
+      $client-&gt;AdGroupAdService()-&gt;get({selector =&gt; $adgroupad_selector});</pre>
+<pre>
+  if ($page-&gt;get_totalNumEntries() &gt; 0) {
+    foreach my $entry (@{$page-&gt;get_entries()}) {
+      #Do something with the results
+    }
+  } else {
+    print &quot;No AdGroupAds found.\n&quot;;
+  }</pre>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Google::Ads::AdWords::Client is the main interface to the AdWords API. It takes
+care of handling your API credentials, and exposes all of the underlying
+services that make up the AdWords API.</p>
+<p>Due to internal patching of the <code>SOAP::WSDL</code> module, the
+<code>Google::Ads::AdWords::Client</code> module should be loaded before other
+<code>Google::Ads::</code> modules. A warning will occur if modules are loaded in the
+wrong order.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="attributes">ATTRIBUTES</a></h1>
+<p>Each of these attributes can be set via Google::Ads::AdWords::Client-&gt;<code>new()</code>.
+Alternatively, there is a get_ and set_ method associated with each attribute
+for retrieving or setting them dynamically. For example, the <code>set_client_id()</code>
+allows you to change the value of the client_id attribute and <code>get_client_id()</code>
+returns the current value of the attribute.</p>
+<p>
+</p>
+<h2><a name="email">email</a></h2>
+<p>The email address of a Google Account. This account could correspond to either
+an AdWords MCC account or a normal AdWords account.</p>
+<p><strong>This property is demeed deprecated and should not be referenced</strong>. Instead use
+$client-&gt;get_auth_token_handler()-&gt;<code>get_email()</code>.</p>
+<p>
+</p>
+<h2><a name="password">password</a></h2>
+<p>The password associated with the Google Account given in <a href="#email">email</a>.</p>
+<p><strong>This property is demeed deprecated and should not be referenced</strong>. Instead use
+$client-&gt;get_auth_token_handler()-&gt;<code>get_password()</code>.</p>
+<p>
+</p>
+<h2><a name="client_id">client_id</a></h2>
+<p>If the Google Account given in <a href="#email">email</a> is an MCC account, you can specify the
+AdWords account underneath that MCC account to act upon using client_id. The
+value could be either a login email address or a 10 digit client id.</p>
+<p>
+</p>
+<h2><a name="user_agent">user_agent</a></h2>
+<p>A user-generated string used to identify your application. If nothing is
+specified, the name of your script (i.e. $0) will be used instead.</p>
+<p>
+</p>
+<h2><a name="developer_token">developer_token</a></h2>
+<p>A string used to tie usage of the AdWords API to a specific MCC account.</p>
+<p>The value should be a character string assigned to you by Google. This string
+will tie AdWords API usage to your MCC account for billing purposes. You can
+apply for a Developer Token at</p>
+<p><a href="https://adwords.google.com/select/ApiWelcome">https://adwords.google.com/select/ApiWelcome</a></p>
+<p>
+</p>
+<h2><a name="version">version</a></h2>
+<p>The version of the AdWords API to use. Currently <code>v201309</code> is the default and
+only supported version.</p>
+<p>
+</p>
+<h2><a name="alternate_url">alternate_url</a></h2>
+<p>The URL of an alternate AdWords API server to use.</p>
+<p>The default value is <code>https://adwords.google.com</code></p>
+<p>
+</p>
+<h2><a name="validate_only">validate_only</a></h2>
+<p>If is set to &quot;true&quot; calls to services will only perform validation, the results
+will be either empty response or a SOAP fault with the API error causing the
+fault.</p>
+<p>The default is &quot;false&quot;.</p>
+<p>
+</p>
+<h2><a name="partial_failure">partial_failure</a></h2>
+<p>If true, API will try to commit as many error free operations as possible and
+report the other operations' errors. This flag is currently only supported by
+the AdGroupCriterionService.</p>
+<p>The default is &quot;false&quot;.</p>
+<p>
+</p>
+<h2><a name="auth_server">auth_server</a></h2>
+<p>The server to use when making ClientLogin or OAuth requests. This normally
+doesn't need to be changed from the default value.</p>
+<p>The default is &quot;https://www.google.com&quot;.</p>
+<p>
+</p>
+<h2><a name="auth_token">auth_token</a></h2>
+<p>Use to manually set an existing AuthToken. If not set the client will use the
+auth_server to generate a token for you based on the email and password
+provided.</p>
+<p><strong>This property is demeed deprecated and should not be referenced</strong>. Instead use
+$client-&gt;get_auth_token_handler()-&gt;<code>get_auth_token()</code>.</p>
+<p>
+</p>
+<h2><a name="use_auth_token_cache">use_auth_token_cache</a></h2>
+<p>By default the client keeps generated auth tokens for 23 hours in a local cache,
+if this property is set to false then is your responsability to manually refresh
+tokens either setting the auth_token property or calling refresh_auth_token to
+auto generate a new one.</p>
+<p><strong>This property is demeed deprecated and should not be referenced</strong>. There is no
+replacement for this property since the auth token caching is now managed
+differently.</p>
+<p>
+</p>
+<h2><a name="die_on_faults">die_on_faults</a></h2>
+<p>By default the client returns a <a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> object
+if an error has ocurred at the server side, however if this flag is set to true,
+then the client will issue a die command on received SOAP faults.</p>
+<p>The default is &quot;false&quot;.</p>
+<p>
+</p>
+<h2><a name="requests_count">requests_count</a></h2>
+<p>Number of requests performed with this client so far.</p>
+<p>
+</p>
+<h2><a name="failed_requests_count">failed_requests_count</a></h2>
+<p>Number of failed requests performed with this client so far.</p>
+<p>
+</p>
+<h2><a name="operations_count">operations_count</a></h2>
+<p>Number of operations made with this client so far.</p>
+<p>
+</p>
+<h2><a name="requests_stats">requests_stats</a></h2>
+<p>An array of <a href="../../../../../Google/Ads/AdWords/RequestStats.html">the Google::Ads::AdWords::RequestStats manpage</a> containing the statistics of
+the last <a href="../../../../../Google/Ads/AdWords/Constants:MAX_NUM_OF_REQUEST_STATS.html">the Google::Ads::AdWords::Constants:MAX_NUM_OF_REQUEST_STATS manpage</a> requests.</p>
+<p>
+</p>
+<h2><a name="last_request_stats">last_request_stats</a></h2>
+<p>A <a href="../../../../../Google/Ads/AdWords/RequestStats.html">the Google::Ads::AdWords::RequestStats manpage</a> containing the statistics the last
+request performed by this client.</p>
+<p>
+</p>
+<h2><a name="last_soap_request">last_soap_request</a></h2>
+<p>A string containing the last SOAP request XML sent by this client.</p>
+<p>
+</p>
+<h2><a name="last_soap_response">last_soap_response</a></h2>
+<p>A string containing the last SOAP response XML sent by this client.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>
+</p>
+<h2><a name="new">new</a></h2>
+<p>Initializes a new Google::Ads::AdWords::Client object.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p><code>new()</code> takes parameters as a hash reference.
+The attributes of this object can be populated in a number of ways:</p>
+<ul>
+<li>
+<p>If the properties_file parameter is given, then properties are read from the
+file at that path and the corresponding attributes are populated.</p>
+</li>
+<li>
+<p>If no properties_file parameter is given, then the code checks to see if there
+is a file named &quot;adwords.properties&quot; in the home directory of the current user.
+If there is, then properties are read from there.</p>
+</li>
+<li>
+<p>Any of the <a href="#attributes">ATTRIBUTES</a> can be passed in as keys in the parameters hash
+reference. If any attribute is explicitly passed in then it will override any
+value for that attribute that might be in a properties file.</p>
+</li>
+</ul>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>A new Google::Ads::AdWords::Client object with the appropriate attributes set.</p>
+<p>
+</p>
+<h3><a name="exceptions">Exceptions</a></h3>
+<p>If a properties_file is passed in but the file cannot be read, the code will
+<code>die()</code> with an error message describing the failure.</p>
+<p>
+</p>
+<h3><a name="example">Example</a></h3>
+<pre>
+ # Basic use case. Attributes will be read from ~/adwords.properties file.
+ my $client = Google::Ads::AdWords::Client-&gt;new();</pre>
+<pre>
+ # Most attributes from a custom properties file, but override email.
+ eval {
+   my $client = Google::Ads::AdWords::Client-&gt;new({
+     properties_file =&gt; &quot;/path/to/adwords.properties&quot;,
+     email =&gt; &quot;user\@domain.com&quot;,
+   });
+ };
+ if ($@) {
+   # The properties file couldn't be read; handle error as appropriate.
+ }</pre>
+<pre>
+ # Specify all attributes explicitly. The properties file will not override.
+ my $client = Google::Ads::AdWords::Client-&gt;new({
+   email =&gt; &quot;user\@domain.com&quot;,
+   password =&gt; &quot;my_password&quot;,
+   client_id =&gt; &quot;client_1+user\@domain.com&quot;,
+   developer_token =&gt; &quot;user\@domain.com++USD&quot;,
+   user_agent =&gt; &quot;My Sample Program&quot;,
+ });</pre>
+<p>
+</p>
+<h2><a name="set_die_on_faults">set_die_on_faults</a></h2>
+<p>This module supports two approaches to handling SOAP faults (i.e. errors
+returned by the underlying SOAP service).</p>
+<p>One approach is to issue a <code>die()</code> with a description of the error when a SOAP
+fault occurs. This <code>die()</code> would ideally be contained within an eval { }; block,
+thereby emulating try { } / catch { } exception functionality in other
+languages.</p>
+<p>A different approach is to require developers to explicitly check for SOAP
+faults being returned after each AdWords API method. This approach requires a
+bit more work, but has the advantage of exposing the full details of the SOAP
+fault, like the fault code.</p>
+<p>Refer to the object <a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> for more detail on
+how faults get returned.</p>
+<p>The default value is false, i.e. you must explicitly check for faults.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>A true value will cause this module to <code>die()</code> when a SOAP fault occurs.</p>
+<p>A false value will supress this <code>die()</code>. This is the default behavior.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>The input parameter is returned.</p>
+<p>
+</p>
+<h3><a name="example">Example</a></h3>
+<pre>
+ # $client is a Google::Ads::AdWords::Client object.</pre>
+<pre>
+ # Enable die()ing on faults.
+ $client-&gt;set_die_on_faults(1);
+ eval {
+   my $response = $client-&gt;AdGroupAdService-&gt;mutate($mutate_params);
+ };
+ if ($@) {
+   # Do something with the error information in $@.
+ }</pre>
+<pre>
+ # Default behavior.
+ $client-&gt;set_die_on_faults(0);
+ my $response = $client-&gt;AdGroupAdService-&gt;mutate($mutate_params);
+ if ($response-&gt;isa(&quot;SOAP::WSDL::SOAP::Typelib::Fault11&quot;)) {
+   my $code = $response-&gt;get_faultcode() || '';
+   my $description = $response-&gt;get_faultstring() || '';
+   my $actor = $response-&gt;get_faultactor() || '';
+   my $detail = $response-&gt;get_faultdetail() || '';</pre>
+<pre>
+   # Do something with this error information.
+ }</pre>
+<p>
+</p>
+<h2><a name="get_die_on_faults">get_die_on_faults</a></h2>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>A true or false value indicating whether the Google::Ads::AdWords::Client
+instance is set to <code>die()</code> on SOAP faults.</p>
+<p>
+</p>
+<h2><a name="_servicename_">{ServiceName}</a></h2>
+<p>The client object contains a method for every service provided by the API.
+So for example it can invoked as $client-&gt;<code>AdGroupService()</code> and it will return
+an object of type
+<a href="../../../../../Google/Ads/AdWords/v201309/AdGroupService/AdGroupServiceInterfacePort.html">the Google::Ads::AdWords::v201309::AdGroupService::AdGroupServiceInterfacePort manpage</a>
+when using version v201309 of the API.
+For a list of all available services please refer to
+<a href="http://code.google.com/apis/adwords/docs/">http://code.google.com/apis/adwords/docs/</a> and for examples on
+how to invoke the services please refer to scripts in the examples folder.</p>
+<p>
+</p>
+<h2><a name="get_oauth_2_applications_handler">get_oauth_2_applications_handler</a></h2>
+<p>Returns the OAuth2 for Web/Installed applications authorization handler
+attached to the client, for programmatically setting/overriding its properties.</p>
+<p>$client-&gt;get_oauth_2_applications_handler()-&gt;set_client_id('client-id');
+$client-&gt;get_oauth_2_applications_handler()-&gt;set_client_secret('client-secret');
+$client-&gt;get_oauth_2_applications_handler()-&gt;set_access_token('access-token');
+$client-&gt;get_oauth_2_applications_handler()-&gt;set_refresh_token('refresh-token');
+$client-&gt;get_oauth_2_applications_handler()-&gt;set_access_type('access-type');
+$client-&gt;get_oauth_2_applications_handler()-&gt;set_approval_prompt('prompt');
+$client-&gt;get_oauth_2_applications_handler()-&gt;set_redirect_uri('redirect-url');</p>
+<p>Refer to <a href="../../../../../Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
+<p>
+</p>
+<h2><a name="get_oauth_2_service_accounts_handler">get_oauth_2_service_accounts_handler</a></h2>
+<p>Returns the OAuth2 authorization handler attached to the client, for
+programmatically setting/overriding its specific properties.</p>
+<p>$client-&gt;get_oauth_2_service_accounts_handler()-&gt;set_client_id('email');
+$client-&gt;get_oauth_2_service_accounts_handler()-&gt;set_email_address('email');
+$client-&gt;get_oauth_2_service_accounts_handler()-&gt;
+    set_delegated_email_address('delegated-email');
+$client-&gt;get_oauth_2_service_accounts_handler()-&gt;
+    set_pem_file('path-to-certificate');
+$client-&gt;get_oauth_2_service_accounts_handler()-&gt;set_display_name('email');</p>
+<p>Refer to <a href="../../../../../Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
+<p>
+</p>
+<h2><a name="get_auth_token_handler">get_auth_token_handler</a></h2>
+<p>Returns the ClientLogin authorization handler attached to the client, for
+manully setting its specific properties.</p>
+<p>$client-&gt;get_auth_token_handler()-&gt;set_email('email');
+$client-&gt;get_auth_token_handler()-&gt;set_password('email');</p>
+<p>Refer to <a href="../../../../../Google/Ads/AdWords/AuthTokenHandler.html">the Google::Ads::AdWords::AuthTokenHandler manpage</a> for more details.</p>
+<p>
+</p>
+<h2><a name="__setup_ssl__private_">__setup_SSL (Private)</a></h2>
+<p>Setups IO::Socket::SSL and Crypt::SSLeay enviroment variables to work with
+SSL certificate validation.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The path to the certificate authorites folder and the path to the certificate
+authorites file. Either can be null.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>Nothing.</p>
+<p>
+</p>
+<h2><a name="__parse_properties_file__private_">__parse_properties_file (Private)</a></h2>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<p>The path to a properties file on disk. The data in the file should be in the
+following format:</p>
+<pre>
+ key1=value1
+ key2=value2</pre>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>A hash corresponding to the keys and values in the properties file.</p>
+<p>
+</p>
+<h3><a name="exceptions">Exceptions</a></h3>
+<p>die()s with an error message if the properties file could not be read.</p>
+<p>
+</p>
+<h2><a name="_get_header__protected_">_get_header (Protected)</a></h2>
+<p>Used by the <a href="../../../../../Google/Ads/AdWords/Serializer.html">the Google::Ads::AdWords::Serializer manpage</a> class to get a valid request
+header corresponding to the current credentials in this
+Google::Ads::AdWords::Client instance.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>A hash reference with credentials corresponding to the values needed to be
+included in the request header.</p>
+<p>
+</p>
+<h2><a name="_auth_handler__protected_">_auth_handler (Protected)</a></h2>
+<p>Retrieves the active AuthHandler. All handlers are checked in the order
+OAuth2 Applications -&gt; OAuth2 Service Accounts -&gt; AuthToken, given preference of
+OAuth2 over AuthToken.</p>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>An implementation of <a href="../../../../../Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a>.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="license_and_copyright">LICENSE AND COPYRIGHT</a></h1>
+<p>Copyright 2011 Google Inc.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre>
+     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Jeffrey Posnick &lt;api.jeffy at gmail.com&gt;</p>
+<p>David Torres &lt;david.t at google.com&gt;</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="repository_information">REPOSITORY INFORMATION</a></h1>
+<pre>
+ $Rev: $
+ $LastChangedBy: $
+ $Id: $</pre>
+<p><a href="#__index__"><small>Back to Top</small></a></p>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::AdWords::Client</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>

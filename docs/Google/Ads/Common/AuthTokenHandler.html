@@ -1,0 +1,221 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Google::Ads::Common::AuthTokenHandler</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::Common::AuthTokenHandler</span></strong></big>
+</td></tr>
+</table>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<p><a name="__index__"></a></p>
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#attributes">ATTRIBUTES</a></li>
+	<ul>
+
+		<li><a href="#email">email</a></li>
+		<li><a href="#password">password</a></li>
+		<li><a href="#auth_server">auth_server</a></li>
+		<li><a href="#auth_token">auth_token</a></li>
+		<li><a href="#issued_in">issued_in</a></li>
+	</ul>
+
+	<li><a href="#methods">METHODS</a></li>
+	<ul>
+
+		<li><a href="#initialize">initialize</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+		</ul>
+
+		<li><a href="#is_auth_enabled">is_auth_enabled</a></li>
+		<ul>
+
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+		<li><a href="#refresh_auth_token">refresh_auth_token</a></li>
+		<li><a href="#issue_new_token">issue_new_token</a></li>
+		<ul>
+
+			<li><a href="#parameters">Parameters</a></li>
+			<li><a href="#returns">Returns</a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#license_and_copyright">LICENSE AND COPYRIGHT</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#repository_information">REPOSITORY INFORMATION</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Google::Ads::Common::AuthTokenHandler</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>Google::Ads::Common::AuthTokenHandler implements most of the methods required
+to request AuthTokens using the ClientLogin protocol, see
+<a href="https://developers.google.com/accounts/docs/AuthForInstalledApps">https://developers.google.com/accounts/docs/AuthForInstalledApps</a> for more
+information about the protocol.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="attributes">ATTRIBUTES</a></h1>
+<p>Each of these attributes can be set via the constructor as a hash.
+Alternatively, there is a get_ and set_ method associated with each attribute
+for retrieving or setting them dynamically.</p>
+<p>
+</p>
+<h2><a name="email">email</a></h2>
+<p>The email of the account to authorization against.</p>
+<p>
+</p>
+<h2><a name="password">password</a></h2>
+<p>The password to use for authorization.</p>
+<p>
+</p>
+<h2><a name="auth_server">auth_server</a></h2>
+<p>Endpoint of the authorization server.</p>
+<p>
+</p>
+<h2><a name="auth_token">auth_token</a></h2>
+<p>Auth token either manually set or generated.</p>
+<p>
+</p>
+<h2><a name="issued_in">issued_in</a></h2>
+<p><a href="../../../../../local/share/perl/5.14.2/SOAP/WSDL/XSD/Typelib/Builtin/time.html">the time manpage</a> in which the token was issued if it was requested by this class.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="methods">METHODS</a></h1>
+<p>
+</p>
+<h2><a name="initialize">initialize</a></h2>
+<p>Initializes the handler with properties such as the email and password to use
+for generating AuthTokens.</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<ul>
+<li>
+<p>A required <em>api_client</em> with a reference to the API client object handling the
+requests against the API.</p>
+</li>
+<li>
+<p>A hash reference with the following keys:
+{
+  # The service name to access.
+  service =&gt; &quot;adwords&quot;,
+  # The email address of a Google Account.
+  email =&gt; <a href="mailto:"user@domain.com",">"user@domain.com",</a>
+  # The password for the Google Account.
+  password =&gt; &quot;password&quot;,
+}</p>
+</li>
+</ul>
+<p>
+</p>
+<h2><a name="is_auth_enabled">is_auth_enabled</a></h2>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>True, if a valid AuthToken is available or can be generated to use within API
+requests.</p>
+<p>
+</p>
+<h2><a name="refresh_auth_token">refresh_auth_token</a></h2>
+<p>Forces refreshing the auth token using the credentials set in the handler.</p>
+<p>
+</p>
+<h2><a name="issue_new_token">issue_new_token</a></h2>
+<p>Calls the authorization server to generate a new AuthToken. Sets the generated
+AuthToken in the <a href="#auth_token">the auth_token manpage</a> property as well as the <a href="#issued_in">the issued_in manpage</a> property.
+A captcha token and code can be passed to this method to handle captcha challenges</p>
+<p>
+</p>
+<h3><a name="parameters">Parameters</a></h3>
+<ul>
+<li>
+<p>An optional captcha token, obtained from a captcha challenge error. See
+<a href="../../../../../Google/Ads/Common/CaptchaRequiredError.html">the Google::Ads::Common::CaptchaRequiredError manpage</a>.</p>
+</li>
+<li>
+<p>An optional captcha code, obtained from the user by looking at the captcha
+image.</p>
+</li>
+</ul>
+<p>
+</p>
+<h3><a name="returns">Returns</a></h3>
+<p>Returns an error of type <a href="../../../../../Google/Ads/Common/CaptchaRequiredError.html">the Google::Ads::Common::CaptchaRequiredError manpage</a> or
+<a href="../../../../../Google/Ads/Common/AuthError.html">the Google::Ads::Common::AuthError manpage</a> if an error occurred while generating the
+token.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="license_and_copyright">LICENSE AND COPYRIGHT</a></h1>
+<p>Copyright 2012 Google Inc.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<pre>
+     <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></pre>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>David Torres &lt;david.t at google.com&gt;</p>
+<p>
+<a href="#__index__"><small>Back to Top</small></a>
+</p>
+<hr />
+<h1><a name="repository_information">REPOSITORY INFORMATION</a></h1>
+<pre>
+ $Rev: $
+ $LastChangedBy: $
+ $Id: $</pre>
+<p><a href="#__index__"><small>Back to Top</small></a></p>
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="block" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="block">&nbsp;Google::Ads::Common::AuthTokenHandler</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
