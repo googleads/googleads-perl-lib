@@ -96,7 +96,7 @@ download a pre-stored definition, otherwise the versioned download url endpoint
 (based on the version of the given <code>Client</code> object) will be used.</p>
 </li>
 <li>
-<p>The client parameter is an instance of a valid <a href="../../../../../Google/AdWords/Client.html">the Google::AdWords::Client manpage</a>.</p>
+<p>The client parameter is an instance of a valid <a href="../../../Google/AdWords/Client.html">the Google::AdWords::Client manpage</a>.</p>
 </li>
 <li>
 <p>The file_path is an optional parameter that if given the subroutine will write
@@ -114,7 +114,7 @@ the output of money kind of fields in the report.</p>
 <p>The timeout is an optional parameter that can be set to alter the default
 time that the http client waits to get a response from the server. If not set,
 the default timeout used is
-<a href="../../../../../Google/Ads/Common/ReportUtils/LWP_DEFAULT_TIMEOUT.html">the Google::Ads::Common::ReportUtils::LWP_DEFAULT_TIMEOUT manpage</a>.</p>
+<a href="../../../Google/Ads/Common/ReportUtils/LWP_DEFAULT_TIMEOUT.html">the Google::Ads::Common::ReportUtils::LWP_DEFAULT_TIMEOUT manpage</a>.</p>
 </li>
 </ul>
 <p>
@@ -125,7 +125,7 @@ returned, if not the report data itself is returned.</p>
 <p>
 </p>
 <h3><a name="exceptions">Exceptions</a></h3>
-<p>Starting with v201209 of the API a <a href="../../../../../Google/Ads/Common/ReportDownloadError.html">the Google::Ads::Common::ReportDownloadError manpage</a>
+<p>Starting with v201209 of the API a <a href="../../../site/lib/Google/Ads/Common/ReportDownloadError.html">the Google::Ads::Common::ReportDownloadError manpage</a>
 object will be returned in case of a download error. If not passing a
 <code>file_path</code> to dump the report then you must check if the return
 isa(&quot;Google::Ads::Common::ReportDownloadError&quot;).</p>
