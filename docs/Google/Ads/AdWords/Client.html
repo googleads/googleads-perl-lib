@@ -256,7 +256,7 @@ differently.</p>
 <p>
 </p>
 <h2><a name="die_on_faults">die_on_faults</a></h2>
-<p>By default the client returns a <a href="../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> object
+<p>By default the client returns a <a href="../../../SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> object
 if an error has ocurred at the server side, however if this flag is set to true,
 then the client will issue a die command on received SOAP faults.</p>
 <p>The default is &quot;false&quot;.</p>
@@ -275,12 +275,12 @@ then the client will issue a die command on received SOAP faults.</p>
 <p>
 </p>
 <h2><a name="requests_stats">requests_stats</a></h2>
-<p>An array of <a href="../../..//usr/local/google/jradcliff/client-libs-build/awapi-perl-lib-release-v2_14_0/blib/lib/Google/Ads/AdWords/RequestStats.html">the Google::Ads::AdWords::RequestStats manpage</a> containing the statistics of
+<p>An array of <a href="../../../Google/Ads/AdWords/RequestStats.html">the Google::Ads::AdWords::RequestStats manpage</a> containing the statistics of
 the last <a href="../../../Google/Ads/AdWords/Constants:MAX_NUM_OF_REQUEST_STATS.html">the Google::Ads::AdWords::Constants:MAX_NUM_OF_REQUEST_STATS manpage</a> requests.</p>
 <p>
 </p>
 <h2><a name="last_request_stats">last_request_stats</a></h2>
-<p>A <a href="../../..//usr/local/google/jradcliff/client-libs-build/awapi-perl-lib-release-v2_14_0/blib/lib/Google/Ads/AdWords/RequestStats.html">the Google::Ads::AdWords::RequestStats manpage</a> containing the statistics the last
+<p>A <a href="../../../Google/Ads/AdWords/RequestStats.html">the Google::Ads::AdWords::RequestStats manpage</a> containing the statistics the last
 request performed by this client.</p>
 <p>
 </p>
@@ -368,7 +368,7 @@ languages.</p>
 faults being returned after each AdWords API method. This approach requires a
 bit more work, but has the advantage of exposing the full details of the SOAP
 fault, like the fault code.</p>
-<p>Refer to the object <a href="../../../local/share/perl/5.14.2/SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> for more detail on
+<p>Refer to the object <a href="../../../SOAP/WSDL/SOAP/Typelib/Fault11.html">the SOAP::WSDL::SOAP::Typelib::Fault11 manpage</a> for more detail on
 how faults get returned.</p>
 <p>The default value is false, i.e. you must explicitly check for faults.</p>
 <p>
@@ -437,7 +437,7 @@ $client-&gt;get_oauth_2_applications_handler()-&gt;set_refresh_token('refresh-to
 $client-&gt;get_oauth_2_applications_handler()-&gt;set_access_type('access-type');
 $client-&gt;get_oauth_2_applications_handler()-&gt;set_approval_prompt('prompt');
 $client-&gt;get_oauth_2_applications_handler()-&gt;set_redirect_uri('redirect-url');</p>
-<p>Refer to <a href="../../..//usr/local/google/jradcliff/client-libs-build/awapi-perl-lib-release-v2_14_0/blib/lib/Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
+<p>Refer to <a href="../../../Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
 <p>
 </p>
 <h2><a name="get_oauth_2_service_accounts_handler">get_oauth_2_service_accounts_handler</a></h2>
@@ -450,7 +450,7 @@ $client-&gt;get_oauth_2_service_accounts_handler()-&gt;
 $client-&gt;get_oauth_2_service_accounts_handler()-&gt;
     set_pem_file('path-to-certificate');
 $client-&gt;get_oauth_2_service_accounts_handler()-&gt;set_display_name('email');</p>
-<p>Refer to <a href="../../..//usr/local/google/jradcliff/client-libs-build/awapi-perl-lib-release-v2_14_0/blib/lib/Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
+<p>Refer to <a href="../../../Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
 <p>
 </p>
 <h2><a name="get_auth_token_handler">get_auth_token_handler</a></h2>
@@ -458,7 +458,7 @@ $client-&gt;get_oauth_2_service_accounts_handler()-&gt;set_display_name('email')
 manully setting its specific properties.</p>
 <p>$client-&gt;get_auth_token_handler()-&gt;set_email('email');
 $client-&gt;get_auth_token_handler()-&gt;set_password('email');</p>
-<p>Refer to <a href="../../..//usr/local/google/jradcliff/client-libs-build/awapi-perl-lib-release-v2_14_0/blib/lib/Google/Ads/AdWords/AuthTokenHandler.html">the Google::Ads::AdWords::AuthTokenHandler manpage</a> for more details.</p>
+<p>Refer to <a href="../../../Google/Ads/AdWords/AuthTokenHandler.html">the Google::Ads::AdWords::AuthTokenHandler manpage</a> for more details.</p>
 <p>
 </p>
 <h2><a name="__setup_ssl__private_">__setup_SSL (Private)</a></h2>
@@ -495,7 +495,7 @@ following format:</p>
 <p>
 </p>
 <h2><a name="_get_header__protected_">_get_header (Protected)</a></h2>
-<p>Used by the <a href="../../..//usr/local/google/jradcliff/client-libs-build/awapi-perl-lib-release-v2_14_0/blib/lib/Google/Ads/AdWords/Serializer.html">the Google::Ads::AdWords::Serializer manpage</a> class to get a valid request
+<p>Used by the <a href="../../../Google/Ads/AdWords/Serializer.html">the Google::Ads::AdWords::Serializer manpage</a> class to get a valid request
 header corresponding to the current credentials in this
 Google::Ads::AdWords::Client instance.</p>
 <p>
@@ -512,7 +512,7 @@ OAuth2 over AuthToken.</p>
 <p>
 </p>
 <h3><a name="returns">Returns</a></h3>
-<p>An implementation of <a href="../../../site/lib/Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a>.</p>
+<p>An implementation of <a href="../../../Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a>.</p>
 <p>
 <a href="#__index__"><small>Back to Top</small></a>
 </p>

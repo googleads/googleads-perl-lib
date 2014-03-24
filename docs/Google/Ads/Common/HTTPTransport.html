@@ -56,13 +56,13 @@
 <hr />
 <h1><a name="name">NAME</a></h1>
 <p>Google::Ads::Common::HTTPTransport - Specialization of
-<a href="../../../local/share/perl/5.14.2/SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a> transport class with added logic to handle OAuth.</p>
+<a href="../../../SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a> transport class with added logic to handle OAuth.</p>
 <p>
 <a href="#__index__"><small>Back to Top</small></a>
 </p>
 <hr />
 <h1><a name="description">DESCRIPTION</a></h1>
-<p>Provides a thin transport class on top of <a href="../../../local/share/perl/5.14.2/SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a>  to add
+<p>Provides a thin transport class on top of <a href="../../../SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a>  to add
 support to pluggable authorization methods.</p>
 <p>
 <a href="#__index__"><small>Back to Top</small></a>
@@ -73,7 +73,7 @@ support to pluggable authorization methods.</p>
 </p>
 <h2><a name="client">client</a></h2>
 <p>Holds an instance of the API client, which will use to retrieve the current
-<a href="../../../site/lib/Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a>.</p>
+<a href="../../../Google/Ads/Common/AuthHandlerInterface.html">the Google::Ads::Common::AuthHandlerInterface manpage</a>.</p>
 <p>
 <a href="#__index__"><small>Back to Top</small></a>
 </p>
@@ -82,13 +82,13 @@ support to pluggable authorization methods.</p>
 <p>
 </p>
 <h2><a name="send_receive">send_receive</a></h2>
-<p>Overrides <a href="../../../local/share/perl/5.14.2/SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a> send_receive method to change the
-endpoint in case OAuth is enabled, uses the <a href="../../../site/lib/Google/Ads/AdWords/Client.html">the Google::Ads::AdWords::Client manpage</a>
+<p>Overrides <a href="../../../SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a> send_receive method to change the
+endpoint in case OAuth is enabled, uses the <a href="../../../Google/Ads/AdWords/Client.html">the Google::Ads::AdWords::Client manpage</a>
 configured OAuth handler to leverage all the OAuth signing logic.</p>
 <p>
 </p>
 <h3><a name="parameters">Parameters</a></h3>
-<p>The same as the <a href="../../../local/share/perl/5.14.2/SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a> send_receive method.</p>
+<p>The same as the <a href="../../../SOAP/WSDL/Transport/HTTP.html">the SOAP::WSDL::Transport::HTTP manpage</a> send_receive method.</p>
 <p>
 <a href="#__index__"><small>Back to Top</small></a>
 </p>
