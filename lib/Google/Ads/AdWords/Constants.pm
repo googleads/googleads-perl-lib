@@ -23,7 +23,7 @@ use File::HomeDir;
 use File::Spec::Functions;
 
 # Main version number that the rest of the modules pick up off of.
-our $VERSION = qv("2.14.0");
+our $VERSION = qv("2.15.0");
 
 use constant DEFAULT_PROPERTIES_FILE => catfile(File::HomeDir->my_home,
     "adwords.properties");

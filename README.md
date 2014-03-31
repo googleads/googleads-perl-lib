@@ -12,7 +12,6 @@ programmatically access [AdWords](https://adwords.google.com/select/Login) accou
 ## Features
  - Fully featured object oriented client library (all classes come generated from
  - the WSDLs)
- - v201109+ support
  - Perl 5.8.0+ and based on SOAP::WSDL module
  - Outgoing and incoming SOAP message are monitored and logged on demand
  - Support for API calls to production system or sandbox
