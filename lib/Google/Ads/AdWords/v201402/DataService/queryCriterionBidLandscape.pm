@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201402::DataService::queryCriterionBidLandscape
 Perl data type class for the XML Schema defined element
 queryCriterionBidLandscape from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Returns a list of bid landscapes for the criteria that match the query. @param query The SQL-like AWQL query string. @return A list of bid landscapes. @throws ApiException if problems occur while parsing the query or fetching bid landscapes. 
+Returns a list of {@link CriterionBidLandscape}s for the criteria that match the query. In the result, the returned {@link LandscapePoint}s are grouped into {@link CriterionBidLandscape}s by their criteria, and numberResults of paging limits the total number of {@link LandscapePoint}s instead of number of {@link CriterionBidLandscape}s. @param query The SQL-like AWQL query string. @return A list of bid landscapes. @throws ApiException if problems occur while parsing the query or fetching bid landscapes. 
 
 
 

@@ -49,6 +49,7 @@ my %EntityCountLimitExceededReason_of :ATTR(:get<EntityCountLimitExceededReason>
 my %EntityNotFoundReason_of :ATTR(:get<EntityNotFoundReason>);
 my %FeedItemErrorReason_of :ATTR(:get<FeedItemErrorReason>);
 my %ForwardCompatibilityErrorReason_of :ATTR(:get<ForwardCompatibilityErrorReason>);
+my %FunctionParsingErrorReason_of :ATTR(:get<FunctionParsingErrorReason>);
 my %IdErrorReason_of :ATTR(:get<IdErrorReason>);
 my %ImageErrorReason_of :ATTR(:get<ImageErrorReason>);
 my %InternalApiErrorReason_of :ATTR(:get<InternalApiErrorReason>);
@@ -108,6 +109,7 @@ __PACKAGE__->_factory(
         EntityNotFoundReason
         FeedItemErrorReason
         ForwardCompatibilityErrorReason
+        FunctionParsingErrorReason
         IdErrorReason
         ImageErrorReason
         InternalApiErrorReason
@@ -168,6 +170,7 @@ __PACKAGE__->_factory(
         'EntityNotFoundReason' => \%EntityNotFoundReason_of,
         'FeedItemErrorReason' => \%FeedItemErrorReason_of,
         'ForwardCompatibilityErrorReason' => \%ForwardCompatibilityErrorReason_of,
+        'FunctionParsingErrorReason' => \%FunctionParsingErrorReason_of,
         'IdErrorReason' => \%IdErrorReason_of,
         'ImageErrorReason' => \%ImageErrorReason_of,
         'InternalApiErrorReason' => \%InternalApiErrorReason_of,
@@ -227,6 +230,7 @@ __PACKAGE__->_factory(
         'EntityNotFoundReason' => 'Google::Ads::AdWords::v201309::EntityNotFound::Reason',
         'FeedItemErrorReason' => 'Google::Ads::AdWords::v201309::FeedItemError::Reason',
         'ForwardCompatibilityErrorReason' => 'Google::Ads::AdWords::v201309::ForwardCompatibilityError::Reason',
+        'FunctionParsingErrorReason' => 'Google::Ads::AdWords::v201309::FunctionParsingError::Reason',
         'IdErrorReason' => 'Google::Ads::AdWords::v201309::IdError::Reason',
         'ImageErrorReason' => 'Google::Ads::AdWords::v201309::ImageError::Reason',
         'InternalApiErrorReason' => 'Google::Ads::AdWords::v201309::InternalApiError::Reason',
@@ -287,6 +291,7 @@ __PACKAGE__->_factory(
         'EntityNotFoundReason' => 'EntityNotFoundReason',
         'FeedItemErrorReason' => 'FeedItemErrorReason',
         'ForwardCompatibilityErrorReason' => 'ForwardCompatibilityErrorReason',
+        'FunctionParsingErrorReason' => 'FunctionParsingErrorReason',
         'IdErrorReason' => 'IdErrorReason',
         'ImageErrorReason' => 'ImageErrorReason',
         'InternalApiErrorReason' => 'InternalApiErrorReason',
@@ -435,6 +440,9 @@ methods:
 
 
 =item * ForwardCompatibilityErrorReason
+
+
+=item * FunctionParsingErrorReason
 
 
 =item * IdErrorReason

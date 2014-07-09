@@ -44,7 +44,7 @@ use Cwd qw(abs_path);
 my $ad_group_id = "INSERT_AD_GROUP_ID_HERE";
 
 # Example main subroutine.
-sub add_product_partition_tree_example {
+sub add_product_partition_tree {
   my ($client, $ad_group_id) = @_;
 
   my $operations = [];
@@ -287,4 +287,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201402"});
 $client->set_die_on_faults(1);
 
 # Call the example
-add_product_partition_tree_example($client, $ad_group_id);
+add_product_partition_tree($client, $ad_group_id);

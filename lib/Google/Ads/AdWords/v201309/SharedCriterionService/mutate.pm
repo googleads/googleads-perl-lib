@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201309::SharedCriterionService::mutate
 Perl data type class for the XML Schema defined element
 mutate from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Adds, removes criteria in a shared set. @param operations @return @throws ApiException 
+Adds, removes criteria in a shared set. @param operations A list of unique operations @return The list of updated SharedCriterion, returned in the same order as the {@code operations} array. @throws ApiException 
 
 
 

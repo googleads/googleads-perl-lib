@@ -71,7 +71,7 @@ Google::Ads::AdWords::v201309::OAuthInfo
 Perl data type class for the XML Schema defined complexType
 OAuthInfo from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-
+Data used for authorization using OAuth. For more information about OAuth, see: {@link "https://developers.google.com/accounts/docs/OAuth2"} 
 
 
 

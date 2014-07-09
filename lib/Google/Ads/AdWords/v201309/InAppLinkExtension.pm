@@ -89,7 +89,7 @@ Google::Ads::AdWords::v201309::InAppLinkExtension
 Perl data type class for the XML Schema defined complexType
 InAppLinkExtension from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-<p>This extension is useful for advertisers who wish to provide users with a link that points to the advertiser's mobile application in addition to their website. <p>It is also known as Mobile App Extension. <p>The API allows one InAppLinkExtension per {@code AppStore} per campaign. Only the extension for a given {@code AppStore} will render on the device relevant to that {@code AppStore} (e.g. iPhones for {@code AppStore.ITUNES} and Android phones for {@code AppStore.GOOGLE_PLAY}). <span class="constraint Beta">This is a beta feature.</span> 
+<p>This extension is useful for advertisers who wish to provide users with a link that points to the advertiser's mobile application in addition to their website. <p>It is also known as Mobile App Extension. <p>The API allows one InAppLinkExtension per {@code AppStore} per campaign. Only the extension for a given {@code AppStore} will render on the device relevant to that {@code AppStore} (e.g. iPhones for {@code AppStore.ITUNES} and Android phones for {@code AppStore.GOOGLE_PLAY}). 
 
 
 

@@ -134,8 +134,13 @@ sub delete_campaign {
 
   my $campaign = get_api_package($client, "Campaign", 1)->new({
     id => $campaign_id,
-    status => "DELETED"
   });
+
+  if ($client->get_version() ge "v201406") {
+    $campaign->set_status("REMOVED");
+  } else {
+    $campaign->set_status("DELETED");
+  }
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({
     operand => $campaign,
@@ -203,8 +208,13 @@ sub delete_ad_group {
 
   my $adgroup = get_api_package($client, "AdGroup", 1)->new({
     id => $adgroup_id,
-    status => "DELETED"
   });
+
+  if ($client->get_version() ge "v201406") {
+    $adgroup->set_status("REMOVED");
+  } else {
+    $adgroup->set_status("DELETED");
+  }
 
   my $operation = get_api_package($client, "AdGroupOperation", 1)->new({
     operand => $adgroup,
@@ -327,9 +337,13 @@ sub create_campaign_location_extension {
       });
   my $extension = get_api_package($client, "CampaignAdExtension", 1)->new({
     campaignId => $campaign_id,
-    status => "ACTIVE",
     adExtension => $location_extension
   });
+  if ($client->get_version() ge "v201406") {
+    $extension->set_status("ENABLED");
+  } else {
+    $extension->set_status("ACTIVE");
+  }
   my $result = $client->CampaignAdExtensionService()->mutate({
     operations => [get_api_package($client, "CampaignAdExtensionOperation",
                                    1)->new({

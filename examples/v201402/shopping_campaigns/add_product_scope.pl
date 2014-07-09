@@ -43,7 +43,7 @@ use Cwd qw(abs_path);
 my $campaign_id = "INSERT_CAMPAIGN_ID_HERE";
 
 # Example main subroutine.
-sub add_product_scope_example {
+sub add_product_scope {
   my $client = shift;
 
   my $product_scope = Google::Ads::AdWords::v201402::ProductScope->new({
@@ -125,4 +125,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201402"});
 $client->set_die_on_faults(1);
 
 # Call the example
-add_product_scope_example($client, $campaign_id);
+add_product_scope($client, $campaign_id);

@@ -41,7 +41,7 @@ my $client = get_test_client_no_auth();
 my $current_version = $client->get_version();
 
 # Test defaults.
-is($handler->_scope(), "https://adwords.google.com/api/adwords/");
+is($handler->_scope(), "https://www.googleapis.com/auth/adwords");
 
 $handler->initialize($client, {
   oAuth2ClientId => "client-id",
@@ -60,8 +60,8 @@ is($handler->get_delegated_email_address(), "delegated-email");
 my $exp = (time + 1000);
 $user_agent_mock->mock(request => sub {
   my $response = HTTP::Response->new(200, "");
-  $response->content("{\n\"scope\":\"https://adwords.google.com/api/" .
-                     "adwords/\"\n\"expires_in\":" . $exp . "\n}");
+  $response->content("{\n\"scope\":\"https://www.googleapis.com/auth/adwords" .
+                     "\"\n\"expires_in\":" . $exp . "\n}");
   return $response;
 });
 

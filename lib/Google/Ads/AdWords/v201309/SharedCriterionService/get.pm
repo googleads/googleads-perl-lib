@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201309::SharedCriterionService::get
 Perl data type class for the XML Schema defined element
 get from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-@param selector filters the criteria returned @return @throws ApiException 
+Returns a list of SharedCriterion that meets the selector criteria. @param selector filters the criteria returned @return The list of SharedCriterion @throws ApiException 
 
 
 

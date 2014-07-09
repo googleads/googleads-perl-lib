@@ -129,7 +129,7 @@ Google::Ads::AdWords::v201309::ExternalRemarketingUserList
 Perl data type class for the XML Schema defined complexType
 ExternalRemarketingUserList from the namespace https://adwords.google.com/api/adwords/rm/v201309.
 
-User lists created in the DoubleClick platform that are mapped from DoubleClick to AdWords. 
+User lists created in the DoubleClick platform that are mapped from DoubleClick to AdWords. These lists are readonly. 
 
 
 

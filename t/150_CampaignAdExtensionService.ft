@@ -64,7 +64,7 @@ my $campaign_ad_extension =
     get_api_package($client, "CampaignAdExtension")->new({
       campaignId => $campaign->get_id(),
       adExtension => $location_extension,
-      status => "ACTIVE"
+      status => "ENABLED"
     });
 my $result = $client->CampaignAdExtensionService()->mutate({
   operations => [get_api_package($client, "CampaignAdExtensionOperation")->new({
@@ -131,8 +131,8 @@ isa_ok($result, get_api_package($client, "CampaignAdExtensionReturnValue"));
 is(scalar(@{$result->get_value()}), 1, "Result value length is correct");
 isa_ok($result->get_value()->[0],
        get_api_package($client, "CampaignAdExtension"));
-is($result->get_value()->[0]->get_status(), "DELETED",
-   "Campaign ad extension status is deleted");
+is($result->get_value()->[0]->get_status(), "REMOVED",
+   "Campaign ad extension status is removed");
 is($result->get_value()->[0]->get_campaignId(), $campaign->get_id(),
    "Campaign id of ad extension is correct");
 ok($result->get_value()->[0]->get_adExtension(), "Ad extension is set");

@@ -84,7 +84,7 @@ Google::Ads::AdWords::v201402::PlacesLocationFeedData
 Perl data type class for the XML Schema defined complexType
 PlacesLocationFeedData from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Data used to configure a location feed populated from Google Places. 
+Data used to configure a location feed populated from Google My Business Locations. 
 
 
 

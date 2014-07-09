@@ -172,6 +172,8 @@ sub create_campaign_with_bidding_strategy {
           optIn => 0
         })
     ],
+    # Set advertising channel type (required).
+    advertisingChannelType => 'SEARCH',
     # Network targeting (recommended).
     networkSetting => Google::Ads::AdWords::v201402::NetworkSetting->new({
       targetGoogleSearch => 1,

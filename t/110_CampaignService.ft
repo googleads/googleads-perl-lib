@@ -176,14 +176,14 @@ is($result->get_value()->[0]->get_id(), $campaign1_id,
 is($result->get_value()->[0]->get_name, $new_name,
    "Updated campaign name is correct");
 
-# Test delete campaign
+# Test remove campaign
 my $campaign_to_delete1 = get_api_package($client, "Campaign")->new({
   id => $campaign1_id,
-  status => "DELETED"
+  status => "REMOVED"
 });
 my $campaign_to_delete2 = get_api_package($client, "Campaign")->new({
   id => $campaign2_id,
-  status => "DELETED"
+  status => "REMOVED"
 });
 
 $result = $client->CampaignService()->mutate({
@@ -197,6 +197,6 @@ $result = $client->CampaignService()->mutate({
 });
 
 isa_ok($result, get_api_package($client, "CampaignReturnValue"));
-is(scalar(@{$result->get_value()}), 2, "Deleted campaign list size is correct");
-is(scalar(grep($_->get_status() eq "DELETED", @{$result->get_value()})), 2,
-   "Deleted Campaigns status is correct");
+is(scalar(@{$result->get_value()}), 2, "Removed campaign list size is correct");
+is(scalar(grep($_->get_status() eq "REMOVED", @{$result->get_value()})), 2,
+   "Removed Campaigns status is correct");

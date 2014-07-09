@@ -51,6 +51,7 @@ my %ExperimentErrorReason_of :ATTR(:get<ExperimentErrorReason>);
 my %FeedItemErrorReason_of :ATTR(:get<FeedItemErrorReason>);
 my %ForwardCompatibilityErrorReason_of :ATTR(:get<ForwardCompatibilityErrorReason>);
 my %FunctionErrorReason_of :ATTR(:get<FunctionErrorReason>);
+my %FunctionParsingErrorReason_of :ATTR(:get<FunctionParsingErrorReason>);
 my %IdErrorReason_of :ATTR(:get<IdErrorReason>);
 my %ImageErrorReason_of :ATTR(:get<ImageErrorReason>);
 my %InternalApiErrorReason_of :ATTR(:get<InternalApiErrorReason>);
@@ -111,6 +112,7 @@ __PACKAGE__->_factory(
         FeedItemErrorReason
         ForwardCompatibilityErrorReason
         FunctionErrorReason
+        FunctionParsingErrorReason
         IdErrorReason
         ImageErrorReason
         InternalApiErrorReason
@@ -172,6 +174,7 @@ __PACKAGE__->_factory(
         'FeedItemErrorReason' => \%FeedItemErrorReason_of,
         'ForwardCompatibilityErrorReason' => \%ForwardCompatibilityErrorReason_of,
         'FunctionErrorReason' => \%FunctionErrorReason_of,
+        'FunctionParsingErrorReason' => \%FunctionParsingErrorReason_of,
         'IdErrorReason' => \%IdErrorReason_of,
         'ImageErrorReason' => \%ImageErrorReason_of,
         'InternalApiErrorReason' => \%InternalApiErrorReason_of,
@@ -232,6 +235,7 @@ __PACKAGE__->_factory(
         'FeedItemErrorReason' => 'Google::Ads::AdWords::v201402::FeedItemError::Reason',
         'ForwardCompatibilityErrorReason' => 'Google::Ads::AdWords::v201402::ForwardCompatibilityError::Reason',
         'FunctionErrorReason' => 'Google::Ads::AdWords::v201402::FunctionError::Reason',
+        'FunctionParsingErrorReason' => 'Google::Ads::AdWords::v201402::FunctionParsingError::Reason',
         'IdErrorReason' => 'Google::Ads::AdWords::v201402::IdError::Reason',
         'ImageErrorReason' => 'Google::Ads::AdWords::v201402::ImageError::Reason',
         'InternalApiErrorReason' => 'Google::Ads::AdWords::v201402::InternalApiError::Reason',
@@ -293,6 +297,7 @@ __PACKAGE__->_factory(
         'FeedItemErrorReason' => 'FeedItemErrorReason',
         'ForwardCompatibilityErrorReason' => 'ForwardCompatibilityErrorReason',
         'FunctionErrorReason' => 'FunctionErrorReason',
+        'FunctionParsingErrorReason' => 'FunctionParsingErrorReason',
         'IdErrorReason' => 'IdErrorReason',
         'ImageErrorReason' => 'ImageErrorReason',
         'InternalApiErrorReason' => 'InternalApiErrorReason',
@@ -446,6 +451,9 @@ methods:
 
 
 =item * FunctionErrorReason
+
+
+=item * FunctionParsingErrorReason
 
 
 =item * IdErrorReason

@@ -84,7 +84,7 @@ Google::Ads::AdWords::v201309::MobileAppCategory
 Perl data type class for the XML Schema defined complexType
 MobileAppCategory from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Represents the mobile app category to be targeted. <a href="/adwords/api/docs/appendix/mobileappcategories">View the complete list of available mobile app categories</a>. <span class="constraint AdxEnabled">This is enabled for AdX.</span> <span class="constraint Beta">This is a beta feature.</span> 
+Represents the mobile app category to be targeted. <a href="/adwords/api/docs/appendix/mobileappcategories">View the complete list of available mobile app categories</a>. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
 
 
 

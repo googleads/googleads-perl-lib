@@ -84,7 +84,7 @@ Google::Ads::AdWords::v201309::CriterionUserInterest
 Perl data type class for the XML Schema defined complexType
 CriterionUserInterest from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-User Interest - represents a particular interest based vertical to be targeted. Targeting UserInterest is currently in a limited beta. If you'd like access please speak with your account representative. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
+User Interest represents a particular interest-based vertical to be targeted. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
 
 
 

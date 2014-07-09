@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201402::DataService::queryAdGroupBidLandscape
 Perl data type class for the XML Schema defined element
 queryAdGroupBidLandscape from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Returns a list of bid landscapes for the ad groups that match the query. @param query The SQL-like AWQL query string. @return A list of bid landscapes. @throws ApiException if problems occur while parsing the query or fetching bid landscapes. 
+Returns a list of {@link AdGroupBidLandscape}s for the ad groups that match the query. In the result, the returned {@link LandscapePoint}s are grouped into {@link AdGroupBidLandscape}s by their ad groups, and numberResults of paging limits the total number of {@link LandscapePoint}s instead of number of {@link AdGroupBidLandscape}s. @param query The SQL-like AWQL query string. @return A list of bid landscapes. @throws ApiException if problems occur while parsing the query or fetching bid landscapes. 
 
 
 

@@ -69,7 +69,7 @@ Google::Ads::AdWords::v201402::ProductCanonicalCondition
 Perl data type class for the XML Schema defined complexType
 ProductCanonicalCondition from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-A canonical condition. 
+A canonical condition. Only supported by campaigns of {@link AdvertisingChannelType#SHOPPING}. 
 
 
 

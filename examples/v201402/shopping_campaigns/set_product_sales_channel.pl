@@ -41,7 +41,7 @@ use constant LOCAL => 201;
 my $campaign_id = "INSERT_CAMPAIGN_ID_HERE";
 
 # Example main subroutine.
-sub set_product_sales_channel_example {
+sub set_product_sales_channel {
   my $client = shift;
 
   my $product_sales_channel =
@@ -91,4 +91,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201402"});
 $client->set_die_on_faults(1);
 
 # Call the example
-set_product_sales_channel_example($client, $campaign_id);
+set_product_sales_channel($client, $campaign_id);

@@ -69,7 +69,7 @@ Google::Ads::AdWords::v201402::ProductTypeFull
 Perl data type class for the XML Schema defined complexType
 ProductTypeFull from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-A full product type string. Category of the product according to the merchant's own classification. Example: <pre>{@code "Home & Garden > Kitchen & Dining > Kitchen Appliances > Refrigerators"}</pre> This ProductDimension is only permitted for ProductScopes in Product Listing Ad campaigns. 
+A full product type string. Category of the product according to the merchant's own classification. Example: <pre>{@code "Home & Garden > Kitchen & Dining > Kitchen Appliances > Refrigerators"}</pre> <p>Not supported by campaigns of {@link AdvertisingChannelType#SHOPPING}. 
 
 
 

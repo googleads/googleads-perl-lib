@@ -79,7 +79,7 @@ Google::Ads::AdWords::v201309::DomainInfoExtension
 Perl data type class for the XML Schema defined complexType
 DomainInfoExtension from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Domain extension, which adds domain info to ads. <span class="constraint Beta">This is a beta feature.</span> 
+Domain extension, which adds domain info to ads. 
 
 
 

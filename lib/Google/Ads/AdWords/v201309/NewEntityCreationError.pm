@@ -84,7 +84,7 @@ Google::Ads::AdWords::v201309::NewEntityCreationError
 Perl data type class for the XML Schema defined complexType
 NewEntityCreationError from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Error associated with creation of new entities using {@link com.google.ads.api.services.common.id.TempId}s. 
+Error associated with creation of new entities. 
 
 
 

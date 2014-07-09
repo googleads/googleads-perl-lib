@@ -79,7 +79,7 @@ Google::Ads::AdWords::v201402::ProductScope
 Perl data type class for the XML Schema defined complexType
 ProductScope from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Scope of products in a shopping campaign. Contains a set of product dimensions, all of which a product has to match to be included in the campaign. A campaign can contain multiple ProductScope criterion and that products are included as long as they match at least one ProductScope. Non-existence of ProductScope means all products are included in the campaign. <span class="constraint AdxEnabled">This is disabled for AdX when it is contained within Operators: ADD, SET.</span> 
+Scope of products. Contains a set of product dimensions, all of which a product has to match to be included in the campaign. These product dimensions must have a value; the "everything else" case without a value is not allowed. <p>If there is no {@code ProductScope}, all products are included in the campaign. If a campaign has more than one {@code ProductScope}, products are included as long as they match any. Campaigns of {@link AdvertisingChannelType#SHOPPING} can have at most one {@code ProductScope}. <span class="constraint AdxEnabled">This is disabled for AdX when it is contained within Operators: ADD, SET.</span> 
 
 
 

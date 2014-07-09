@@ -25,7 +25,7 @@ __END__
 Perl data type class for the XML Schema defined simpleType
 AccessReason from the namespace https://adwords.google.com/api/adwords/rm/v201309.
 
-AccessReason in the AccountUserListStatus table. This indicates the way the userlist is related to a user. 
+This indicates the way the entity such as UserList is related to a user. 
 
 
 

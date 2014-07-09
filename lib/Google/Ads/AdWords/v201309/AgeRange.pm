@@ -79,7 +79,7 @@ Google::Ads::AdWords::v201309::AgeRange
 Perl data type class for the XML Schema defined complexType
 AgeRange from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Represents an Age Range criterion. <p>A criterion of this type can only be created using an ID. A criterion of this type is only excludable. <span class="constraint AdxEnabled">This is disabled for AdX when it is contained within Operators: ADD, SET.</span> 
+Represents an Age Range criterion. <p>A criterion of this type can only be created using an ID. <span class="constraint AdxEnabled">This is disabled for AdX when it is contained within Operators: ADD, SET.</span> 
 
 
 

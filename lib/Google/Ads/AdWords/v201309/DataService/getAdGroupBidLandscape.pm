@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201309::DataService::getAdGroupBidLandscape
 Perl data type class for the XML Schema defined element
 getAdGroupBidLandscape from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Returns a list of bid landscapes for the ad groups specified in the selector. @param serviceSelector Selects the entities to return bid landscapes for. @return A list of bid landscapes. @throws ApiException when there is at least one error with the request. 
+Returns a list of {@link AdGroupBidLandscape}s for the ad groups specified in the selector. In the result, the returned {@link LandscapePoint}s are grouped into {@link AdGroupBidLandscape}s by their ad groups, and numberResults of paging limits the total number of {@link LandscapePoint}s instead of number of {@link AdGroupBidLandscape}s. @param serviceSelector Selects the entities to return bid landscapes for. @return A list of bid landscapes. @throws ApiException when there is at least one error with the request. 
 
 
 

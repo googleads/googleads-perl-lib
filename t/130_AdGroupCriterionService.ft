@@ -155,7 +155,7 @@ is($result->get_value()->[1]->get_criterion()->get_url(),
 $keyword2 = $result->get_value()->[0]->get_criterion();
 $placement2 = $result->get_value()->[1]->get_criterion();
 
-# Test get a page of biddable and active criteria.
+# Test get a page of biddable and enabled criteria.
 $result = $client->AdGroupCriterionService()->get({
   serviceSelector => get_api_package($client, "Selector")->new({
     fields => ["Id", "Status"],
@@ -163,7 +163,7 @@ $result = $client->AdGroupCriterionService()->get({
       get_api_package($client, "Predicate")->new({
         field => "Status",
         operator => "IN",
-        values => ["ACTIVE"]
+        values => ["ENABLED"]
       }),
       get_api_package($client, "Predicate")->new({
         field => "CriterionUse",
@@ -177,11 +177,12 @@ $result = $client->AdGroupCriterionService()->get({
     })
   })
 });
-ok($result, "Result from getting all active criteria is valid");
+ok($result, "Result from getting all enabled criteria is valid");
 isa_ok($result, get_api_package($client, "AdGroupCriterionPage"));
 ok($result->get_entries(), "Entries from result is valid");
-is(scalar(grep($_->get_userStatus() eq "ACTIVE", @{$result->get_entries()})),
-   scalar(@{$result->get_entries()}), "Retrived criteria statuses are correct");
+is(scalar(grep($_->get_userStatus() eq "ENABLED", @{$result->get_entries()})),
+   scalar(@{$result->get_entries()}),
+   "Retrieved criteria statuses are correct");
 
 # Test get criteria by Campaign.
 $result = $client->AdGroupCriterionService()->get({
@@ -204,7 +205,7 @@ my %ad_group_ids = ($ad_group_keyword->get_id() => 1,
                     $ad_group_placement->get_id() => 1);
 is(scalar(grep(exists $ad_group_ids{$_->get_adGroupId()},
                @{$result->get_entries()})),
-   scalar(@{$result->get_entries()}), "Retrived criteria belong to campaign");
+   scalar(@{$result->get_entries()}), "Retrieved criteria belong to campaign");
 
 # Test get criteria by id.
 $result = $client->AdGroupCriterionService()->get({
@@ -253,7 +254,7 @@ ok($result->get_value()->[0], "First result is correct");
 is($result->get_value()->[0]->get_userStatus(), "PAUSED",
    "Status in update criterion is correct");
 
-# Test delete criterion.
+# Test remove criterion.
 my @operations = ();
 foreach my $criterion ($keyword1, $keyword2, $placement1, $placement2) {
   my $ad_group_id = $criterion->isa(get_api_package($client, "Keyword"))?
@@ -271,11 +272,11 @@ foreach my $criterion ($keyword1, $keyword2, $placement1, $placement2) {
 $result = $client->AdGroupCriterionService()->mutate({
   operations => \@operations
 });
-ok($result, "Results from deleting Ads is correct");
+ok($result, "Results from removing criteria is correct");
 ok($result->get_value(), "Value array within result is correct");
 isa_ok($result, get_api_package($client, "AdGroupCriterionReturnValue"));
 is(scalar(@{$result->get_value()}), scalar(@operations),
-   "Deleted criteria returned array size is correct");
+   "Removed criteria returned array size is correct");
 
 # Cleaning up test dependencies.
 delete_ad_group($client, $ad_group_keyword->get_id());

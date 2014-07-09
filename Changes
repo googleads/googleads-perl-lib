@@ -1,3 +1,13 @@
+2.16.0
+- Added examples and support for v201406.
+- Updated OAuth scope. See
+  https://developers.google.com/adwords/api/docs/guides/authentication#scope for
+  details.
+- Fix github issue #4:
+  https://github.com/googleads/googleads-perl-lib/issues/4
+  Incorrect attribute references and printf statements in
+  upload_offline_conversions.pl.
+
 2.15.0
 - Removed support for v201306.
 

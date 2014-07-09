@@ -69,7 +69,7 @@ Google::Ads::AdWords::v201402::ProductAdwordsGrouping
 Perl data type class for the XML Schema defined complexType
 ProductAdwordsGrouping from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-An adwords grouping string. This ProductDimension is only permitted for ProductScopes in Product Listing Ad campaigns. 
+An {@code adwords grouping} string. Not supported by campaigns of {@link AdvertisingChannelType#SHOPPING}. 
 
 
 

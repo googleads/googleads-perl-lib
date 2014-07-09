@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201402::DataService::getCriterionBidLandscape
 Perl data type class for the XML Schema defined element
 getCriterionBidLandscape from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Returns a list of bid landscapes for the criteria specified in the selector. @param serviceSelector Selects the entities to return bid landscapes for. @return A list of bid landscapes. @throws ApiException when there is at least one error with the request. 
+Returns a list of {@link CriterionBidLandscape}s for the criteria specified in the selector. In the result, the returned {@link LandscapePoint}s are grouped into {@link CriterionBidLandscape}s by their criteria, and numberResults of paging limits the total number of {@link LandscapePoint}s instead of number of {@link CriterionBidLandscape}s. @param serviceSelector Selects the entities to return bid landscapes for. @return A list of bid landscapes. @throws ApiException when there is at least one error with the request. 
 
 
 

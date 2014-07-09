@@ -84,7 +84,7 @@ Google::Ads::AdWords::v201309::MobileApplication
 Perl data type class for the XML Schema defined complexType
 MobileApplication from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Represents the mobile application to be targeted. <span class="constraint AdxEnabled">This is enabled for AdX.</span> <span class="constraint Beta">This is a beta feature.</span> 
+Represents the mobile application to be targeted. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
 
 
 

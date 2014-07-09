@@ -69,7 +69,7 @@ Google::Ads::AdWords::v201309::TrackingSetting
 Perl data type class for the XML Schema defined complexType
 TrackingSetting from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Campaign level settings for tracking information. <span class="constraint Beta">This is a beta feature.</span> 
+Campaign level settings for tracking information. 
 
 
 

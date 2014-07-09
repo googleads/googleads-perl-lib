@@ -23,7 +23,7 @@
 # Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
-use lib "../../../lib";
+use lib "../../lib";
 
 use Google::Ads::AdWords::Client;
 

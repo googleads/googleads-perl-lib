@@ -44,7 +44,7 @@ ok(!$handler->is_auth_enabled());
 is($handler->get_access_type(), "offline");
 is($handler->get_approval_prompt(), "auto");
 is($handler->get_redirect_uri(), "urn:ietf:wg:oauth:2.0:oob");
-is($handler->_scope(), "https://adwords.google.com/api/adwords/");
+is($handler->_scope(), "https://www.googleapis.com/auth/adwords");
 
 $handler->initialize($client, {
   oAuth2ClientId => "client-id",
@@ -58,8 +58,8 @@ $handler->initialize($client, {
 
 $user_agent_mock->mock(request => sub {
   my $response = HTTP::Response->new(200, "");
-  $response->content("{\n\"scope\":\"https://adwords.google.com/api/" .
-                     "adwords/\"\n\"expires_in\":" . (time + 1000) . "\n}");
+  $response->content("{\n\"scope\":\"https://www.googleapis.com/auth/adwords" .
+                     "\"\n\"expires_in\":" . (time + 1000) . "\n}");
 
   return $response;
 });
@@ -78,8 +78,8 @@ ok($handler->get_access_token_expires());
 # Test OAuth2 Flow methods
 is($handler->get_authorization_url("state"),
    "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" .
-   "client-id&redirect_uri=uri&scope=https%3A%2F%2Fadwords.google.com%2Fapi" .
-   "%2Fadwords%2F&access_type=access-type&approval_prompt=approval-prompt&" .
+   "client-id&redirect_uri=uri&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth" .
+   "%2Fadwords&access_type=access-type&approval_prompt=approval-prompt&" .
    "state=state");
 
 $user_agent_mock->mock(request => sub {

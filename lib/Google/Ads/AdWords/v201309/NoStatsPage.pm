@@ -69,7 +69,7 @@ Google::Ads::AdWords::v201309::NoStatsPage
 Perl data type class for the XML Schema defined complexType
 NoStatsPage from the namespace https://adwords.google.com/api/adwords/mcm/v201309.
 
-Base class for Get results for a page of entities that do not use statistics. 
+
 
 
 

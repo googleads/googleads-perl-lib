@@ -45,7 +45,7 @@ my $budget_id = "INSERT_BUDGET_ID_HERE";
 my $merchant_id = "INSERT_MERCHANT_CENTER_ID_HERE";
 
 # Example main subroutine.
-sub add_shopping_campaign_example {
+sub add_shopping_campaign {
   my $client = shift;
 
   my $campaign = Google::Ads::AdWords::v201402::Campaign->new({
@@ -158,4 +158,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201402"});
 $client->set_die_on_faults(1);
 
 # Call the example
-add_shopping_campaign_example($client, $budget_id, $merchant_id);
+add_shopping_campaign($client, $budget_id, $merchant_id);

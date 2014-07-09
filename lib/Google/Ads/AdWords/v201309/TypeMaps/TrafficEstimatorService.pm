@@ -49,6 +49,7 @@ our $typemap_1 = {
                'get/selector/campaignEstimateRequests/criteria[Location]/parentLocations' => 'Google::Ads::AdWords::v201309::Location',
                'get/selector/campaignEstimateRequests/criteria[Location]/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/locationName' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
                'get/selector/campaignEstimateRequests/criteria[Location]/Criterion.Type' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
+               'Fault/detail/ApiExceptionFault/errors[CollectionSizeError]/reason' => 'Google::Ads::AdWords::v201309::CollectionSizeError::Reason',
                'get/selector/campaignEstimateRequests' => 'Google::Ads::AdWords::v201309::CampaignEstimateRequest',
                'get/selector/campaignEstimateRequests/criteria[Location]/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/parentLocations/id' => 'SOAP::WSDL::XSD::Typelib::Builtin::long',
                'Fault/detail/ApiExceptionFault/errors[NotWhitelistedError]/ApiError.Type' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',

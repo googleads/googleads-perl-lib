@@ -24,13 +24,9 @@ use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Cons
 
 use Class::Std::Fast;
 
-my %server_of : ATTR(:name<server> :default<"https://adwords.google.com">);
-
-# Retrieves the XOAuth scope required for AdWords API.
+# Retrieves the OAuth scope required for AdWords API.
 sub _scope {
-  my $self = shift;
-
-  return $self->get_server() . "/api/adwords/";
+  return Google::Ads::AdWords::Constants::DEFAULT_OAUTH_SCOPE;
 }
 
 1;
@@ -59,12 +55,6 @@ for a complete documentation of all the methods supported by this handler class.
 Each of these attributes can be set via the constructor as a hash.
 Alternatively, there is a get_ and set_ method associated with each attribute
 for retrieving or setting them dynamically.
-
-=head2 server
-
-The API server path to use to construct the scope, defaults to
-I<https://adwords.google.com> and be changed to
-I<https://adwords-sandbox.google.com> for use with the Sanbox environment.
 
 =head1 METHODS
 

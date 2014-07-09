@@ -77,7 +77,7 @@ sub upload_offline_conversions {
   if ($tracker_result->get_value()) {
     foreach my $conversion_tracker (@{$tracker_result->get_value()}) {
       printf "New upload conversion type with name \"%s\" and ID \"%d\" " .
-             "\"%s\" was created.\n",
+             "was created.\n",
              $conversion_tracker->get_name(),
              $conversion_tracker->get_id();
     }
@@ -112,9 +112,9 @@ sub upload_offline_conversions {
   if ($feed_result->get_value()) {
     foreach my $oc_feed (@{$feed_result->get_value()}) {
       printf "Uploaded offline conversion value of \"%s\" for Google Click " .
-             "ID \"%d\" was created.\n",
-             $oc_feed->get_name(),
-             $oc_feed->get_id();
+             "ID \"%s\" was created.\n",
+             $oc_feed->get_conversionName(),
+             $oc_feed->get_googleClickId();
     }
   } else {
     print "No offline conversion were added.\n";

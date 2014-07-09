@@ -74,7 +74,7 @@ Google::Ads::AdWords::v201309::ConversionOptimizerBiddingScheme
 Perl data type class for the XML Schema defined complexType
 ConversionOptimizerBiddingScheme from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Conversion optimizer bidding strategy helps you maximize your return on investment (ROI) by automatically getting you the most possible conversions for your budget. <p class="warning">{@code pricingMode} currently defaults to {@code CLICKS} and cannot be changed.</p> <p>Note that campaigns must meet <a href="//support.google.com/adwords/bin/answer.py?answer=2471188">specific eligibility requirements</a> before they can use the <code>ConversionOptimizer</code> bidding strategy. For more information on conversion optimizer, visit the <a href="http://www.google.com/adwords/conversionoptimizer/index.html" >Conversion Optimizer site</a>. <span class="constraint AdxEnabled">This is disabled for AdX.</span> 
+Conversion optimizer bidding strategy helps you maximize your return on investment (ROI) by automatically getting you the most possible conversions for your budget. <p class="warning">{@code pricingMode} currently defaults to {@code CLICKS} and cannot be changed.</p> <p>Note that campaigns must meet <a href="https://support.google.com/adwords/answer/2471188#CORequirements"> specific eligibility requirements</a> before they can use the <code>ConversionOptimizer</code> bidding strategy.</p> <p>For more information on conversion optimizer, visit the <a href="https://support.google.com/adwords/answer/2471188" >Conversion Optimizer help center</a>.</p> <span class="constraint AdxEnabled">This is disabled for AdX.</span> 
 
 
 

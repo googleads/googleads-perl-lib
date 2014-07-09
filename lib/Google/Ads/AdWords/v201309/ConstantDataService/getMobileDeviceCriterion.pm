@@ -70,7 +70,7 @@ Google::Ads::AdWords::v201309::ConstantDataService::getMobileDeviceCriterion
 Perl data type class for the XML Schema defined element
 getMobileDeviceCriterion from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Returns a list of all mobile devices. @return A list of mobile devices. @throws ApiException when there is at least one error with the request. <span class="constraint Beta">This is a beta feature.</span> 
+Returns a list of all mobile devices. @return A list of mobile devices. @throws ApiException when there is at least one error with the request. 
 
 
 

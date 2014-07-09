@@ -61,7 +61,7 @@ Google::Ads::AdWords::v201309::LogicalUserListOperand
 Perl data type class for the XML Schema defined complexType
 LogicalUserListOperand from the namespace https://adwords.google.com/api/adwords/rm/v201309.
 
-An interface for a logical user list operand. A logical user list is a combination of logical rules. Each rule is defined as a logical operator and a list of operands. Those operands can be of type UserList or UserInterest. 
+An interface for a logical user list operand. A logical user list is a combination of logical rules. Each rule is defined as a logical operator and a list of operands. Those operands can be of type UserList. 
 
 
 

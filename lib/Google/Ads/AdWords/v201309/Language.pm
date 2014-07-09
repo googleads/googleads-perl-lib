@@ -84,7 +84,7 @@ Google::Ads::AdWords::v201309::Language
 Perl data type class for the XML Schema defined complexType
 Language from the namespace https://adwords.google.com/api/adwords/cm/v201309.
 
-Represents a Language criterion. <p>A criterion of this type can only be created using an ID. A criterion of this type is only targetable. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
+Represents a Language criterion. <p>A criterion of this type can only be created using an ID. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
 
 
 

@@ -28,12 +28,14 @@ my %fieldPath_of :ATTR(:get<fieldPath>);
 my %trigger_of :ATTR(:get<trigger>);
 my %errorString_of :ATTR(:get<errorString>);
 my %ApiError__Type_of :ATTR(:get<ApiError__Type>);
+my %reason_of :ATTR(:get<reason>);
 
 __PACKAGE__->_factory(
     [ qw(        fieldPath
         trigger
         errorString
         ApiError__Type
+        reason
 
     ) ],
     {
@@ -41,12 +43,14 @@ __PACKAGE__->_factory(
         'trigger' => \%trigger_of,
         'errorString' => \%errorString_of,
         'ApiError__Type' => \%ApiError__Type_of,
+        'reason' => \%reason_of,
     },
     {
         'fieldPath' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
         'trigger' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
         'errorString' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
         'ApiError__Type' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
+        'reason' => 'Google::Ads::AdWords::v201402::CollectionSizeError::Reason',
     },
     {
 
@@ -54,6 +58,7 @@ __PACKAGE__->_factory(
         'trigger' => 'trigger',
         'errorString' => 'errorString',
         'ApiError__Type' => 'ApiError.Type',
+        'reason' => 'reason',
     }
 );
 
@@ -90,6 +95,9 @@ The following properties may be accessed using get_PROPERTY / set_PROPERTY
 methods:
 
 =over
+
+=item * reason
+
 
 
 

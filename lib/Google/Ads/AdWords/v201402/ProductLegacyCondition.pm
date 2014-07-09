@@ -69,7 +69,7 @@ Google::Ads::AdWords::v201402::ProductLegacyCondition
 Perl data type class for the XML Schema defined complexType
 ProductLegacyCondition from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-A plain condition string. This ProductDimension is only permitted for ProductScopes in Product Listing Ad campaigns. 
+A plain condition string. Not supported by campaigns of {@link AdvertisingChannelType#SHOPPING}. 
 
 
 

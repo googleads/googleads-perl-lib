@@ -30,7 +30,7 @@ use Google::Ads::AdWords::v201402::Predicate;
 use Cwd qw(abs_path);
 
 # Example main subroutine.
-sub get_product_category_taxonomy_example {
+sub get_product_category_taxonomy {
   my $client = shift;
 
   # Create selector.
@@ -124,4 +124,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201402"});
 $client->set_die_on_faults(1);
 
 # Call the example
-get_product_category_taxonomy_example($client);
+get_product_category_taxonomy($client);

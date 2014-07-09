@@ -112,19 +112,19 @@ is(scalar(@{$result->get_value()}), 1,
 is($result->get_value()->[0]->get_name(), $new_adgroup_name,
    "Updated campaign name is correctly set");
 
-# Test delete AdGroups.
+# Test remove AdGroups.
 $operations = [
   get_api_package($client, "AdGroupOperation")->new({
     operand => get_api_package($client, "AdGroup")->new({
       id => $manual_cpc_ad_group->get_id(),
-      status => "DELETED"
+      status => "REMOVED"
     }),
     operator => "SET"
   }),
   get_api_package($client, "AdGroupOperation")->new({
     operand => get_api_package($client, "AdGroup")->new({
       id => $manual_cpm_ad_group->get_id(),
-      status => "DELETED"
+      status => "REMOVED"
     }),
     operator => "SET"
   })
@@ -135,9 +135,9 @@ $result = $client->AdGroupService()->mutate({
 });
 isa_ok($result, get_api_package($client, "AdGroupReturnValue"));
 is(scalar(@{$result->get_value()}), 2,
-    "Deleted AdGroups returned array size is correct");
-is(scalar(grep($_->get_status() eq "DELETED", @{$result->get_value()})), 2,
-   "Deleted AdGroups status is correct");
+    "Removed AdGroups returned array size is correct");
+is(scalar(grep($_->get_status() eq "REMOVED", @{$result->get_value()})), 2,
+   "Removed AdGroups status is correct");
 
 # Cleaning up test dependencies.
 delete_campaign($client, $campaign_cpc->get_id());

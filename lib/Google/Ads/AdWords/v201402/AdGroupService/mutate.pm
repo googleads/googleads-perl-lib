@@ -75,7 +75,7 @@ Google::Ads::AdWords::v201402::AdGroupService::mutate
 Perl data type class for the XML Schema defined element
 mutate from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Adds, updates, or deletes ad groups. <p class="note"><b>Note:</b> {@link AdGroupOperation} does not support the {@code REMOVE} operator. To delete an ad group, set its {@link AdGroup#status status} to {@code DELETED}.</p> @param operations List of unique operations. The same ad group cannot be specified in more than one operation. @return The updated adgroups. 
+Adds, updates, or removes ad groups. <p class="note"><b>Note:</b> {@link AdGroupOperation} does not support the {@code REMOVE} operator. To remove an ad group, set its {@link AdGroup#status status} to {@code REMOVED}.</p> @param operations List of unique operations. The same ad group cannot be specified in more than one operation. @return The updated adgroups. 
 
 
 

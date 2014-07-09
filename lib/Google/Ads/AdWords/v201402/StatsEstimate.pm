@@ -23,43 +23,43 @@ Class::Std::initialize();
 
 my %averageCpc_of :ATTR(:get<averageCpc>);
 my %averagePosition_of :ATTR(:get<averagePosition>);
+my %clickThroughRate_of :ATTR(:get<clickThroughRate>);
 my %clicksPerDay_of :ATTR(:get<clicksPerDay>);
 my %impressionsPerDay_of :ATTR(:get<impressionsPerDay>);
-my %clickThroughRate_of :ATTR(:get<clickThroughRate>);
 my %totalCost_of :ATTR(:get<totalCost>);
 
 __PACKAGE__->_factory(
     [ qw(        averageCpc
         averagePosition
+        clickThroughRate
         clicksPerDay
         impressionsPerDay
-        clickThroughRate
         totalCost
 
     ) ],
     {
         'averageCpc' => \%averageCpc_of,
         'averagePosition' => \%averagePosition_of,
+        'clickThroughRate' => \%clickThroughRate_of,
         'clicksPerDay' => \%clicksPerDay_of,
         'impressionsPerDay' => \%impressionsPerDay_of,
-        'clickThroughRate' => \%clickThroughRate_of,
         'totalCost' => \%totalCost_of,
     },
     {
         'averageCpc' => 'Google::Ads::AdWords::v201402::Money',
         'averagePosition' => 'SOAP::WSDL::XSD::Typelib::Builtin::double',
+        'clickThroughRate' => 'SOAP::WSDL::XSD::Typelib::Builtin::double',
         'clicksPerDay' => 'SOAP::WSDL::XSD::Typelib::Builtin::float',
         'impressionsPerDay' => 'SOAP::WSDL::XSD::Typelib::Builtin::float',
-        'clickThroughRate' => 'SOAP::WSDL::XSD::Typelib::Builtin::double',
         'totalCost' => 'Google::Ads::AdWords::v201402::Money',
     },
     {
 
         'averageCpc' => 'averageCpc',
         'averagePosition' => 'averagePosition',
+        'clickThroughRate' => 'clickThroughRate',
         'clicksPerDay' => 'clicksPerDay',
         'impressionsPerDay' => 'impressionsPerDay',
-        'clickThroughRate' => 'clickThroughRate',
         'totalCost' => 'totalCost',
     }
 );
@@ -86,7 +86,7 @@ Google::Ads::AdWords::v201402::StatsEstimate
 Perl data type class for the XML Schema defined complexType
 StatsEstimate from the namespace https://adwords.google.com/api/adwords/o/v201402.
 
-Represents a set of stats for a traffic estimate. 
+Represents a set of stats for a daily traffic estimate. As of v201406 {@code averageCpc}, {@code averagePosition} and {@code clickThroughRate} will be {@code null} when not defined (respectively, if {@code clicksPerDay} or {@code impressionsPerDay} are 0). 
 
 
 
@@ -104,13 +104,13 @@ methods:
 =item * averagePosition
 
 
+=item * clickThroughRate
+
+
 =item * clicksPerDay
 
 
 =item * impressionsPerDay
-
-
-=item * clickThroughRate
 
 
 =item * totalCost

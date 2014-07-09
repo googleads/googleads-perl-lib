@@ -637,6 +637,7 @@ our $typemap_1 = {
                'mutateResponse/rval/value[LogicalUserList]/rules/ruleOperands/UserList/sizeRangeForSearch' => 'Google::Ads::AdWords::v201402::SizeRange',
                'getResponse/rval/entries[LogicalUserList]/rules/ruleOperands/UserList[SimilarUserList]/accessReason' => 'Google::Ads::AdWords::v201402::AccessReason',
                'mutate/operations/operand[LogicalUserList]/rules/ruleOperands' => 'Google::Ads::AdWords::v201402::LogicalUserListOperand',
+               'Fault/detail/ApiExceptionFault/errors[NotWhitelistedError]/reason' => 'Google::Ads::AdWords::v201402::NotWhitelistedError::Reason',
                'getResponse/rval/entries[LogicalUserList]/rules/ruleOperands/UserList/status' => 'Google::Ads::AdWords::v201402::UserListMembershipStatus',
                'mutateResponse/rval/value[LogicalUserList]/rules/ruleOperands/UserList[LogicalUserList]/description' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
                'mutateResponse/rval/value[LogicalUserList]/integrationCode' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
