@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# This example renames and removes a campaign by setting the status to
-# 'REMOVED'. To get campaigns, run basic_operations/get_campaigns.pl.
+# This example removes a campaign by setting the status to 'REMOVED'.
+# To get campaigns, run basic_operations/get_campaigns.pl.
 #
 # Tags: CampaignService.mutate
 # Author: David Torres <api.davidtorres@gmail.com>
@@ -42,9 +42,6 @@ sub remove_campaign {
   # Create campaign with REMOVED status.
   my $campaign = Google::Ads::AdWords::v201406::Campaign->new({
     id => $campaign_id,
-    # When deleting a campaign, it is a good practice to also rename it to
-    # avoid name collisions when creating new campaigns.
-    name => "Removed Campaign - " . uniqid(),
     status => "REMOVED"
   });
 

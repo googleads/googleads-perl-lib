@@ -1,3 +1,9 @@
+2.17.0
+- Removed support for v201309.
+- Added validation to ensure that returnMoneyInMicros is not set on
+  reporting requests for versions higher than v201402. See
+  https://developers.google.com/adwords/api/docs/guides/reporting-concepts#money.
+
 2.16.0
 - Added examples and support for v201406.
 - Updated OAuth scope. See

@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# This example renames and deletes an ad group by setting the status to
-# 'DELETED'. To get ad groups, run basic_operations/get_ad_groups.pl.
+# This example deletes an ad group by setting the status to 'DELETED'.
+# To get ad groups, run basic_operations/get_ad_groups.pl.
 #
 # Tags: AdGroupService.mutate
 # Author: David Torres <api.davidtorres@gmail.com>
@@ -42,9 +42,6 @@ sub delete_ad_group {
   # Create ad group with DELETED status.
   my $ad_group = Google::Ads::AdWords::v201402::AdGroup->new({
     id => $ad_group_id,
-    # When deleting an ad group, it is a good practice to also rename it to
-    # avoid name collisions when creating new ad groups.
-    name => "Deleted Ad Group - " . uniqid(),
     status => "DELETED"
   });
 

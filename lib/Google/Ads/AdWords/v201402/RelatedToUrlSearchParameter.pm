@@ -74,7 +74,7 @@ Google::Ads::AdWords::v201402::RelatedToUrlSearchParameter
 Perl data type class for the XML Schema defined complexType
 RelatedToUrlSearchParameter from the namespace https://adwords.google.com/api/adwords/o/v201402.
 
-A {@link SearchParameter} for {@code KEYWORD} and {@code PLACEMENT} {@link IdeaType}s that specifies a set of URLs that results should in some way be related too. For example, keyword results would be similar to content keywords found on the related URLs. <p>This search parameter can be used in bulk keyword requests through the {@link com.google.ads.api.services.targetingideas.TargetingIdeaService#getBulkKeywordIdeas(TargetingIdeaSelector)} method. It must be single-valued when used in a call to that method. <p>This element is supported by following {@link IdeaType}s: KEYWORD, PLACEMENT. <p>This element is supported by following {@link RequestType}s: IDEAS, STATS. 
+A {@link SearchParameter} that specifies a set of URLs that results should in some way be related too. For example, keyword results would be similar to content keywords found on the related URLs. <p>This search parameter can be used in bulk keyword requests through the {@link com.google.ads.api.services.targetingideas.TargetingIdeaService#getBulkKeywordIdeas(TargetingIdeaSelector)} method. It must be single-valued when used in a call to that method. <p>This element is supported by following {@link IdeaType}s: KEYWORD, PLACEMENT. <p>This element is supported by following {@link RequestType}s: IDEAS, STATS. 
 
 
 

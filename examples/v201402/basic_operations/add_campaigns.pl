@@ -107,7 +107,7 @@ sub add_campaigns {
             positiveGeoTargetType => "DONT_CARE",
             negativeGeoTargetType => "DONT_CARE"
           }),
-          # Keyword match setting (non-required).
+          # Keyword match setting (required).
           Google::Ads::AdWords::v201402::KeywordMatchSetting->new({
             optIn => 0
           })

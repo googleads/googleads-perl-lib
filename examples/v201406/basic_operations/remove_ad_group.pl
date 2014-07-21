@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# This example renames and removes an ad group by setting the status to
-# 'REMOVED'. To get ad groups, run basic_operations/get_ad_groups.pl.
+# This example removes an ad group by setting the status to 'REMOVED'.
+# To get ad groups, run basic_operations/get_ad_groups.pl.
 #
 # Tags: AdGroupService.mutate
 # Author: David Torres <api.davidtorres@gmail.com>
@@ -42,9 +42,6 @@ sub remove_ad_group {
   # Create ad group with REMOVED status.
   my $ad_group = Google::Ads::AdWords::v201406::AdGroup->new({
     id => $ad_group_id,
-    # When removing an ad group, it is a good practice to also rename it to
-    # avoid name collisions when creating new ad groups.
-    name => "Removed Ad Group - " . uniqid(),
     status => "REMOVED"
   });
 

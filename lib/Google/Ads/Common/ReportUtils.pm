@@ -37,6 +37,7 @@ use constant REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload?__rd=%s";
 use constant ADHOC_REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload/%s";
 use constant CLIENT_EMAIL_MAX_VERSION => "201101";
 use constant XML_ERRORS_MIN_VERSION => "201209";
+use constant MONEY_IN_MICROS_MAX_VERSION => "201402";
 use constant LWP_DEFAULT_TIMEOUT => 300; # 5 minutes.
 
 sub download_report {
@@ -106,6 +107,15 @@ sub download_report {
 
   # Set other headers.
   if (defined $return_money_in_micros) {
+    if ($current_version > MONEY_IN_MICROS_MAX_VERSION) {
+        if ($client->get_die_on_faults()) {
+          die("Version " . $client->get_version() .
+              " does not support returnMoneyInMicros.");
+        } else {
+          warn("Version " . $client->get_version() .
+               " does not support returnMoneyInMicros.");
+        }
+    }
     push @headers, "returnMoneyInMicros" => $return_money_in_micros ?
          "true" : "false";
   }
@@ -263,7 +273,8 @@ the report will be requested.
 =item *
 
 The return_money_in_micros is an optional parameter that can be set to alter
-the output of money kind of fields in the report.
+the output of money kind of fields in the report. This parameter is not
+supported after v201402.
 
 =item *
 
