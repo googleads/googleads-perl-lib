@@ -31,12 +31,13 @@ use Google::Ads::AdWords::Reports::Selector;
 use Google::Ads::Common::ReportUtils;
 
 use Cwd qw(abs_path);
-use File::Basename;
+use File::HomeDir;
+use File::Spec;
 
 # Example main subroutine.
 sub download_criteria_report {
   my $client = shift;
-  my $path = shift;
+  my $output_file = shift;
 
   # Create criteria status predicate.
   my $predicate = Google::Ads::AdWords::Reports::Predicate->new({
@@ -67,13 +68,13 @@ sub download_criteria_report {
 
   # Download report.
   my $error = Google::Ads::Common::ReportUtils::download_report(
-      $report_definition, $client, $path);
+      $report_definition, $client, $output_file);
 
   if (ref $error eq "Google::Ads::Common::ReportDownloadError") {
     printf("An error has occurred of type '%s', triggered by '%s'.\n",
            $error->get_type(), $error->get_trigger());
   } else {
-    printf("Report was downloaded to \"%s\".\n", $path);
+    printf("Report was downloaded to \"%s\".\n", $output_file);
   }
 
   return 1;
@@ -93,5 +94,8 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201406"});
 # By default examples are set to die on any server returned fault.
 $client->set_die_on_faults(1);
 
+my $output_file =
+    File::Spec->catfile(File::HomeDir->my_home, "criteria_report.csv");
+
 # Call the example
-download_criteria_report($client, dirname($0) . "/criteria_report.csv");
+download_criteria_report($client, $output_file);

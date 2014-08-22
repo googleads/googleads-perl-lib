@@ -28,8 +28,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %operations_of :ATTR(:get<operations>);
@@ -75,7 +73,7 @@ Google::Ads::AdWords::v201406::ExperimentService::mutate
 Perl data type class for the XML Schema defined element
 mutate from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Mutates (add, update or remove) experiments. <b>Note:</b> To REMOVE use SET and mark status to DELETED. @param operations A list of unique operations. The same experiment cannot be specified in more than one operation. @return The updated experiments. The list of experiments is returned in the same order in which it came in as input. @throws ApiException if problems occurred while updating experiment information. 
+Mutates (add, update or remove) experiments. <b>Note:</b> To REMOVE use SET and mark status to REMOVED. @param operations A list of unique operations. The same experiment cannot be specified in more than one operation. @return The updated experiments. The list of experiments is returned in the same order in which it came in as input. @throws ApiException if problems occurred while updating experiment information. 
 
 
 

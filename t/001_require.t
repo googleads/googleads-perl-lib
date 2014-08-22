@@ -37,7 +37,9 @@ sub test_require {
   return if $File::Find::name =~ m{Google/Ads/AdWords/Client\.pm$};
 
   if ($file_name =~ /\.pm$/) {
-    delete $INC{$_} for keys %INC;
+    local $SIG{__WARN__} = sub {
+      warn @_ unless $_[0] =~ /redefine/
+    };
     require_ok($file_name);
   }
 }

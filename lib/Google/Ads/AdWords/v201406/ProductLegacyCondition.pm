@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201406::ProductDimension);
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %ProductDimension__Type_of :ATTR(:get<ProductDimension__Type>);

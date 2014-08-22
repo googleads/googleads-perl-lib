@@ -41,7 +41,7 @@ $build_sc->new(module_name => "Google::Ads::AdWords::Client",
                create_makefile_pl => "traditional",
                dist_abstract      => "AdWords API Perl Client Library",
                dist_name          => "GOOGLE-ADWORDS-PERL-CLIENT",
-               dist_version       => "2.17.0",
+               dist_version       => "3.0.0",
                requires => {
                  "Class::Std::Fast" => 0,
                  "Crypt::OpenSSL::RSA" => 0,
@@ -77,8 +77,7 @@ $build_sc->new(module_name => "Google::Ads::AdWords::Client",
                  "Test::More" => 0
                },
                test_types => {
-                 small => ["010_AuthTokenHandler.t",
-                           "011_Client.t",
+                 small => ["011_Client.t",
                            "012_Serialiazer.t",
                            "013_Deserializer.t",
                            "014_XPathSAXParser.t",

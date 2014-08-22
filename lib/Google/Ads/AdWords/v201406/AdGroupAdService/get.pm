@@ -28,8 +28,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %serviceSelector_of :ATTR(:get<serviceSelector>);
@@ -75,7 +73,7 @@ Google::Ads::AdWords::v201406::AdGroupAdService::get
 Perl data type class for the XML Schema defined element
 get from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Returns a list of AdGroupAds. Deleted AdGroupAds are not returned by default. @param serviceSelector The selector specifying the {@link AdGroupAd}s to return. @return The page containing the AdGroupAds that meet the criteria specified by the selector. @throws ApiException when there is at least one error with the request. 
+Returns a list of AdGroupAds. AdGroupAds that had been removed are not returned by default. @param serviceSelector The selector specifying the {@link AdGroupAd}s to return. @return The page containing the AdGroupAds that meet the criteria specified by the selector. @throws ApiException when there is at least one error with the request. 
 
 
 

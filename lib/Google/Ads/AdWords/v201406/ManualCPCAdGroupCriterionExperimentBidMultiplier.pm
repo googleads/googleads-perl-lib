@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201406::AdGroupCriterionExperimentBidMultipli
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %AdGroupCriterionExperimentBidMultiplier__Type_of :ATTR(:get<AdGroupCriterionExperimentBidMultiplier__Type>);

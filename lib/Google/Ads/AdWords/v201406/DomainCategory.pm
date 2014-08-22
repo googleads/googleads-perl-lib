@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201406::DimensionProperties);
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %DataEntry__Type_of :ATTR(:get<DataEntry__Type>);
@@ -89,7 +87,7 @@ Google::Ads::AdWords::v201406::DomainCategory
 Perl data type class for the XML Schema defined complexType
 DomainCategory from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Represents domain category information. 
+Represents categories that AdWords finds automatically for your website. <p> No categories available means that AdWords couldn't automatically find categories for your website. To control how categories are assigned, manually add breadcrumbs to your webpages. <p> Categories can be filtered by domain name or by a set of campaign IDs. 
 
 
 

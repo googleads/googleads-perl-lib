@@ -70,8 +70,7 @@ to a given request.
 
 =head2 authentication
 
-Type of authentication used in the request, if client login then the login used
-in the call will be attached if available.
+Type of authentication used in the request.
 
 =head2 client_id
 

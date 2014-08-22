@@ -77,9 +77,12 @@ sub download_report {
     push @headers, "Authorization" => "Bearer " .
         $auth_handler->get_access_token();
   } else {
-    # In this case we use the client login header.
-    push @headers, "Authorization" => "GoogleLogin auth=" .
-        $auth_handler->__get_auth_token();
+    my $handler_warning = "The authorization handler is not supported.";
+    if ($client->get_die_on_faults()) {
+      die($handler_warning);
+    } else {
+      warn($handler_warning);
+    }
   }
 
   my $current_version = $client->get_version();

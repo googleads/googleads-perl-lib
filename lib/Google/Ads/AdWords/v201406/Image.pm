@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201406::Media);
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %mediaId_of :ATTR(:get<mediaId>);

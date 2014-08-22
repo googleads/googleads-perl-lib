@@ -27,12 +27,13 @@ use Google::Ads::AdWords::Logging;
 use Google::Ads::Common::ReportUtils;
 
 use Cwd qw(abs_path);
-use File::Basename;
+use File::HomeDir;
+use File::Spec;
 
 # Example main subroutine.
 sub download_criteria_report_with_awql {
   my $client = shift;
-  my $path = shift;
+  my $output_file = shift;
 
   # Create report query.
   my (undef, undef, undef, $mday, $mon, $year) = localtime(time - 60 * 60 * 24);
@@ -51,13 +52,13 @@ sub download_criteria_report_with_awql {
   my $error = Google::Ads::Common::ReportUtils::download_report({
     query => $report_query,
     format => "CSV"
-  }, $client, $path);
+  }, $client, $output_file);
 
   if (ref $error eq "Google::Ads::Common::ReportDownloadError") {
     printf("An error has occurred of type '%s', triggered by '%s'.\n",
            $error->get_type(), $error->get_trigger());
   } else {
-    printf("Report was downloaded to \"%s\".\n", $path);
+    printf("Report was downloaded to \"%s\".\n", $output_file);
   }
 
   return 1;
@@ -77,6 +78,8 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201402"});
 # By default examples are set to die on any server returned fault.
 $client->set_die_on_faults(1);
 
+my $output_file =
+    File::Spec->catfile(File::HomeDir->my_home, "criteria_report.csv");
+
 # Call the example
-download_criteria_report_with_awql($client, dirname($0) .
-                                   "/criteria_report.csv");
+download_criteria_report_with_awql($client, $output_file);

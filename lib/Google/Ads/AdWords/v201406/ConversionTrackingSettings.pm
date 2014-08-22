@@ -17,8 +17,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %conversionOptimizerMode_of :ATTR(:get<conversionOptimizerMode>);
@@ -61,7 +59,7 @@ Google::Ads::AdWords::v201406::ConversionTrackingSettings
 Perl data type class for the XML Schema defined complexType
 ConversionTrackingSettings from the namespace https://adwords.google.com/api/adwords/mcm/v201406.
 
-A collection of customer-wide settings related to AdWords Conversion Tracking. Settings that apply a conversion type level can be accessed and modified though {@code ConversionTrackerService} 
+A collection of customer-wide settings related to AdWords Conversion Tracking. Settings that apply at the conversion type level can be accessed and modified though {@code ConversionTrackerService}. 
 
 
 

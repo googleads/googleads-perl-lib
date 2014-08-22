@@ -25,7 +25,7 @@ __END__
 Perl data type class for the XML Schema defined simpleType
 BiddingTransitionError.Reason from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Reason for bidding transition error. It is used by capability service as denial reasons, for bidding transition capability. 
+Reason for bidding transition error. Used by the bidding transition capability service as the denial reason. 
 
 
 

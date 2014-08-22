@@ -28,8 +28,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %customer_of :ATTR(:get<customer>);
@@ -75,7 +73,7 @@ Google::Ads::AdWords::v201406::CustomerService::mutate
 Perl data type class for the XML Schema defined element
 mutate from the namespace https://adwords.google.com/api/adwords/mcm/v201406.
 
-Update an authorized customer. The only update currently provided is to enable or disable <a href="https://support.google.com/analytics/answer/1033981?hl=en"> auto-tagging </a>; see that link for special cases affecting the use of auto-tagging. @param customer the requested updated value for the customer. @throws ApiException 
+Update the authorized customer. <p>While there are a limited set of properties available to update, please read this <a href="https://support.google.com/analytics/answer/1033981">help center article on auto-tagging</a> before updating {@code customer.autoTaggingEnabled}. @param customer the requested updated value for the customer. @throws ApiException 
 
 
 

@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201402::SearchParameter);
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %SearchParameter__Type_of :ATTR(:get<SearchParameter__Type>);

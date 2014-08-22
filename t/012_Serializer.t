@@ -24,7 +24,7 @@ use lib qw(t/util);
 use File::Basename;
 use File::Spec;
 use Test::MockObject;
-use Test::More (tests => 8);
+use Test::More (tests => 7);
 use TestClientUtils qw(get_test_client_no_auth);
 use TestUtils qw(read_test_properties read_client_properties
                  replace_properties);
@@ -33,12 +33,11 @@ use_ok("Google::Ads::AdWords::Client");
 use_ok("Google::Ads::AdWords::Serializer");
 
 my $client = get_test_client_no_auth();
-$client->set_auth_token("test-auth-token");
+$client->get_oauth_2_handler()->set_access_token("test-auth-token");
 
 my $current_version = $client->get_version();
 my $client_properties = read_client_properties()->{properties};
 $client_properties->{version} = $current_version;
-$client_properties->{authToken} = "test-auth-token";
 $client_properties->{libVersion} = ${Google::Ads::AdWords::Client::VERSION};
 
 use_ok("Google::Ads::AdWords::${current_version}::Selector");
@@ -63,7 +62,7 @@ my $body = "Google::Ads::AdWords::${current_version}::CampaignService::get"
 my $logger = Test::MockObject->new();
 my $logged_message;
 $client->set_always("_get_auth_handler",
-    Google::Ads::Common::AuthTokenHandler->new());
+    Google::Ads::Common::OAuth2ApplicationsHandler->new());
 $logger->set_always('info', 1);
 $logger->mock('warn', sub {
   $logged_message = $_[1];
@@ -94,8 +93,6 @@ $client_properties->{userAgent} = $user_agent;
 $expected_output = replace_properties($expected_output, $client_properties);
 
 is($envelope, $expected_output, "check serializer output");
-is($logged_message,
-    Google::Ads::Common::Constants::CLIENT_LOGIN_DEPRECATION_MESSAGE);
 
 # Test error propagation when invalid nested structure is given.
 # Issue #58, http://goo.gl/mZkw6z

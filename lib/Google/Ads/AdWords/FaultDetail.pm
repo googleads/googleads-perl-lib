@@ -55,8 +55,6 @@ sub AUTOMETHOD {
   }
 }
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
   my %ApiExceptionFault_of :ATTR(:get<ApiExceptionFault>);

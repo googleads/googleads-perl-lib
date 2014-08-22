@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 # This example gets all alerts for all clients of an MCC account. The effective
-# user (clientCustomerId, or authToken) must be an MCC user to
+# user (clientCustomerId, or accessToken) must be an MCC user to
 # get results.
 #
 # Note: This example won't work if your token is not approved and you are only

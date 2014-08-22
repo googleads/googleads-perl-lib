@@ -28,8 +28,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %operations_of :ATTR(:get<operations>);
@@ -75,7 +73,7 @@ Google::Ads::AdWords::v201406::CampaignService::mutate
 Perl data type class for the XML Schema defined element
 mutate from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Adds, updates, or deletes campaigns. <p class="note"><b>Note:</b> {@link CampaignOperation} does not support the <code>REMOVE</code> operator. To delete a campaign, set its {@link Campaign#status status} to <code>DELETED</code>.</p> @param operations A list of unique operations. The same campaign cannot be specified in more than one operation. @return The list of updated campaigns, returned in the same order as the <code>operations</code> array. @throws ApiException if problems occurred while updating campaign information. 
+Adds, updates, or removes campaigns. <p class="note"><b>Note:</b> {@link CampaignOperation} does not support the <code>REMOVE</code> operator. To remove a campaign, set its {@link Campaign#status status} to {@code REMOVED}.</p> @param operations A list of unique operations. The same campaign cannot be specified in more than one operation. @return The list of updated campaigns, returned in the same order as the <code>operations</code> array. @throws ApiException if problems occurred while updating campaign information. 
 
 
 

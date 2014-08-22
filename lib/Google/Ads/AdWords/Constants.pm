@@ -23,7 +23,7 @@ use File::HomeDir;
 use File::Spec::Functions;
 
 # Main version number that the rest of the modules pick up off of.
-our $VERSION = qv("2.17.0");
+our $VERSION = qv("3.0.0");
 
 use constant DEFAULT_PROPERTIES_FILE => catfile(File::HomeDir->my_home,
     "adwords.properties");
@@ -96,8 +96,5 @@ our %SERVICE_TO_GROUP = (
 
 # Useful constant to translate micros to dollars and viceversa.
 use constant MICROS_PER_DOLLAR => 1000000;
-
-# Last version of the API to support the ClientLogin auth method.
-use constant LAST_SUPPORTED_CLIENT_LOGIN_VERSION => "v201309";
 
 return 1;

@@ -17,8 +17,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %startIndex_of :ATTR(:get<startIndex>);
@@ -66,7 +64,7 @@ Google::Ads::AdWords::Reports::Paging
 Perl data type class for the XML Schema defined complexType
 Paging from the namespace https://adwords.google.com/api/adwords/cm/.
 
-Specifies the page of results to return in the response. A page is specified by the result position to start at and the maximum number of results to return. 
+Specifies the page of results to return in the response. A page is specified by the result position to start at and the maximum number of results to return.
 
 
 

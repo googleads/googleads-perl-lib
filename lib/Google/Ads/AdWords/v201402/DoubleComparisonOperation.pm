@@ -17,7 +17,7 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
+#Class::Std::initialize();
 
 { # BLOCK to scope variables
 
@@ -66,7 +66,7 @@ Google::Ads::AdWords::v201402::DoubleComparisonOperation
 Perl data type class for the XML Schema defined complexType
 DoubleComparisonOperation from the namespace https://adwords.google.com/api/adwords/o/v201402.
 
-Object representing double comparison operations. This is usually used within a particular {@link com.google.ads.api.services.targetingideas.search.SearchParameter} to specify the valid values requested for the specific {@link com.google.ads.api.services.common.optimization.attributes.Attribute}. 
+Object representing double comparison operations. This is usually used within a particular {@link com.google.ads.api.services.targetingideas.search.SearchParameter} to specify the valid values requested for the specific {@link com.google.ads.api.services.common.optimization.attributes.Attribute}.
 
 
 

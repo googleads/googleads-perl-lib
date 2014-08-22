@@ -1,3 +1,13 @@
+3.0.0
+- Removed support for ClientLogin.
+- Added add_ad_customizers.pl example. See
+  https://developers.google.com/adwords/api/docs/guides/ad-customizers for
+  details.
+- Modified download_criteria_report.pl and download_criteria_report_with_awql.pl
+  examples to write output files to the user's home directory.
+- Removed unnecessary calls to Class::Std::initialize() that originally caused
+  issue #61 (https://code.google.com/p/google-api-adwords-perl/issues/detail?id=61&can=1).
+
 2.17.0
 - Removed support for v201309.
 - Added validation to ensure that returnMoneyInMicros is not set on

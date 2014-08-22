@@ -17,8 +17,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %field_of :ATTR(:get<field>);
@@ -71,7 +69,7 @@ Google::Ads::AdWords::Reports::Predicate
 Perl data type class for the XML Schema defined complexType
 Predicate from the namespace https://adwords.google.com/api/adwords/cm/.
 
-Specifies how an entity (eg. adgroup, campaign, criterion, ad) should be filtered. 
+Specifies how an entity (eg. adgroup, campaign, criterion, ad) should be filtered.
 
 
 

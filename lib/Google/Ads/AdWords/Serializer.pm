@@ -31,7 +31,7 @@ use SOAP::WSDL::Factory::Serializer;
 
 # A list of headers that need to be scrubbed before logging due to sensitive
 # content.
-use constant SCRUBBED_HEADERS => qw(authToken password developerToken);
+use constant SCRUBBED_HEADERS => qw(developerToken);
 
 # Class attributes used to hook this class with the AdWords client.
 my %client_of :ATTR(:name<client> :default<>);
@@ -46,11 +46,6 @@ sub serialize {
   my $sanitized_request = __scrub_request($request);
 
   my $auth_handler = $client->_get_auth_handler();
-  if ($auth_handler && $client->_get_auth_handler()->isa(
-      "Google::Ads::Common::AuthTokenHandler")) {
-    Google::Ads::AdWords::Logging::get_soap_logger->warn(
-        Google::Ads::Common::Constants::CLIENT_LOGIN_DEPRECATION_MESSAGE);
-  }
 
   Google::Ads::AdWords::Logging::get_soap_logger->info("Outgoing Request:\n" .
       $sanitized_request);
@@ -67,20 +62,6 @@ sub serialize_header {
   my $client_header = $client->_get_header();
   my $adwords_header = $_[1];
 
-  # Set request header parameters based on configured header parameters
-  # through the client class.
-  if ($adwords_header->can("set_clientEmail")) {
-    $adwords_header->set_clientEmail($client_header->{clientEmail});
-  } elsif ($client_header->{clientEmail} &&
-           $client_header->{clientEmail} ne "") {
-    if ($client->get_die_on_faults()) {
-      die("Version " . $client->get_version() .
-          " has no support for identifying clients by email.");
-    } else {
-      warn("Version " . $client->get_version() .
-           " has no support for identifying clients by email.");
-    }
-  }
   $adwords_header->set_clientCustomerId($client_header->{clientCustomerId});
   $adwords_header->set_developerToken($client_header->{developerToken});
   $adwords_header->set_userAgent($client_header->{userAgent});
@@ -95,8 +76,6 @@ sub serialize_header {
   # Hack the header inner elements to correctly include the namespaces.
   my $xmlns = "https://adwords.google.com/api/adwords/cm/" .
       $client->get_version;
-  $header =~ s/<authToken>/<authToken xmlns="$xmlns">/;
-  $header =~ s/<clientEmail>/<clientEmail xmlns="$xmlns">/;
   $header =~ s/<developerToken>/<developerToken xmlns="$xmlns">/;
   $header =~ s/<userAgent>/<userAgent xmlns="$xmlns">/;
   $header =~ s/<validateOnly>/<validateOnly xmlns="$xmlns">/;
@@ -168,8 +147,7 @@ The SOAP XML string representing the request.
 
 =head2 __scrub_request (Private)
 
-Scrubs sensitive password and auth token information from the request before
-it's logged.
+Scrubs sensitive information from the request before it's logged.
 
 =head3 Parameters
 

@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201402::Operation);
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %operator_of :ATTR(:get<operator>);
@@ -74,7 +72,7 @@ Google::Ads::AdWords::v201402::CampaignOperation
 Perl data type class for the XML Schema defined complexType
 CampaignOperation from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-An operation on an AdWords campaign. <p class="note"><b>Note:</b> The <code>REMOVE</code> operator is not supported. To remove a campaign, set its {@link Campaign#status status} to <code>DELETED</code>.</p> 
+An operation on an AdWords campaign. <p class="note"><b>Note:</b> The <code>REMOVE</code> operator is not supported. To remove a campaign, set its {@link Campaign#status status} to {@code REMOVED}.</p> 
 
 
 

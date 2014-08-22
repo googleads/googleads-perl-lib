@@ -17,8 +17,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %min_of :ATTR(:get<min>);
@@ -66,7 +64,7 @@ Google::Ads::AdWords::Reports::DateRange
 Perl data type class for the XML Schema defined complexType
 DateRange from the namespace https://adwords.google.com/api/adwords/cm/.
 
-Represents a range of dates that has either an upper or a lower bound. The format for the date is YYYYMMDD. 
+Represents a range of dates that has either an upper or a lower bound. The format for the date is YYYYMMDD.
 
 
 

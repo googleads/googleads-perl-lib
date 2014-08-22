@@ -137,7 +137,7 @@ authorization protocols:
 
     This protocol provides a way to access an AdWords account without needing to
     retain the user credentials such as email and password, and it is the
-    preferred way for you to authorize your API requests. An access token is
+    only way for you to authorize your API requests. An access token is
     required by the library to be able to send authorized requests against
     the API. This access token can be generated with the library via two
     different OAuth 2 handlers.
@@ -188,33 +188,6 @@ authorization protocols:
     'notasecret'). In Linux/Unix environments with openssl installed this
     transformation can be easily done as follows:
     > openssl pkcs12 -in yourfile.p12 -out yourfile.pem -nodes
-
-
-  - ClientLogin:
-
-    ** This authorization protocol is consider deprecated given the support of
-       OAuth2 and should not be used for future development while strongly
-       consider migrating old code to OAuth2 **
-
-    - Email and Password: When the first request is sent an AuthToken is
-      generated using the ClientLogin API and using the credentials (login and
-      password) set in the authentication handler.
-
-      The email and password can be stored in the adwords.properties file,
-      passed into the Client object constructor, or set using the set_email()
-      and set_password() methods of the authorization handler.
-
-      AuthTokens are cached and automatically refresh by the library but
-      you can force its refresh using the refresh_auth_token() method of the
-      authorization handler.
-
-      To obtain the client login authorization handler out of your Client object
-      you just need to call the get_auth_token_handler() method.
-
-    - AuthToken: It is recommended to reuse AuthTokens since too many requests
-      to the ClientLogin API can lead to captcha challenge errors. You can pass
-      the authToken in the constructor of the Client or set it using the
-      set_token() method of the authorization handler.
 
 
 How do I enable logging?

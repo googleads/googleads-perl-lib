@@ -24,7 +24,7 @@ use strict;
 
 use File::Basename;
 use File::Spec;
-use Test::More (tests => 23);
+use Test::More (tests => 12);
 
 # Set up @INC at runtime with an absolute path.
 my $lib_path = File::Spec->catdir(dirname($0), "..", "lib");
@@ -37,21 +37,19 @@ use_ok("Google::Ads::AdWords::Client")
 # Test client initialization, including reading from properties files.
 my $properties_file =
     File::Spec->catdir(dirname($0), qw(testdata client.test.input));
-my $password = "password_overide";
+my $client_id = "client_id_override";
 my $client = Google::Ads::AdWords::Client->new({
-  password => $password,
+  client_id => $client_id,
   properties_file => $properties_file,
 });
-is($client->get_email(), "user\@domain.com", "Basic properties file reading");
-is($client->get_password(), $password, "Local param overrides properties file");
-is($client->get_client_id(), "client_1+user\@domain.com", "Read of client id");
+is($client->get_client_id(), $client_id);
 is($client->get_user_agent(), "perl-unit-tests");
 is($client->get_developer_token(), "dev-token",
-   "Read of developer token");
-is($client->get_auth_token(), "auth-token",
-   "Read of auth token");
+    "Read of developer token");
+is($client->get_oauth_2_handler()->get_refresh_token(), "refresh-token",
+    "Read of refresh token");
 is($client->get_alternate_url(), "https://adwords.google.com",
-   "Read of alternate url");
+    "Read of alternate url");
 
 # Test basic get/set methods.
 $client->set_die_on_faults(1);
@@ -101,36 +99,15 @@ can_ok($client, @services);
 ok(Google::Ads::AdWords::Client->new && Google::Ads::AdWords::Client->new,
    "Can construct more than one client object.");
 
-# Make sure auth initialization through Client constructor gets propagated to
-# the appropiate auth handlers.
-my $test_email = "my_email\@test.com";
-my $test_password = "my_password";
-my $test_auth_token = "my_auth_token";
-my $test_auth_server = "my_auth_server";
-$client = Google::Ads::AdWords::Client->new({
-  email => $test_email,
-  password => $test_password,
-  auth_token => $test_auth_token,
-  auth_server => $test_auth_server
-});
-is($client->get_auth_token_handler()->get_email(), $test_email);
-is($client->get_auth_token_handler()->get_password(), $test_password);
-is($client->get_auth_token_handler()->get_auth_token(), $test_auth_token);
-is($client->get_auth_token_handler()->get_auth_server(), $test_auth_server);
-
 # Test set auth properties.
-$client->set_email("john-doe\@google.com");
-is($client->get_email(), "john-doe\@google.com");
-is($client->get_auth_token_handler()->get_email(), "john-doe\@google.com");
+my $test_oauth2_refresh_token = "my_oauth2_refresh_token";
+$client->get_oauth_2_handler()->set_refresh_token($test_oauth2_refresh_token);
+is($client->get_oauth_2_handler()->get_refresh_token(), $test_oauth2_refresh_token);
 
-$client->set_password("password");
-is($client->get_password(), "password");
-is($client->get_auth_token_handler()->get_password(), "password");
+my $test_oauth2_client_secret = "my_client_secret";
+$client->get_oauth_2_handler()->set_client_secret($test_oauth2_client_secret);
+is($client->get_oauth_2_handler()->get_client_secret(), $test_oauth2_client_secret);
 
-$client->set_auth_server("auth-server");
-is($client->get_auth_server(), "auth-server");
-is($client->get_auth_token_handler()->get_auth_server(), "auth-server");
-
-$client->set_auth_token("token");
-is($client->get_auth_token(), "token");
-is($client->get_auth_token_handler()->get_auth_token(), "token");
+my $test_oauth2_client_id = "my_oauth2_client_id";
+$client->get_oauth_2_handler()->set_client_id($test_oauth2_client_id);
+is($client->get_oauth_2_handler()->get_client_id(), $test_oauth2_client_id);

@@ -20,8 +20,6 @@ use base qw(Google::Ads::AdWords::v201402::Operation);
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %operator_of :ATTR(:get<operator>);
@@ -74,7 +72,7 @@ Google::Ads::AdWords::v201402::ExperimentOperation
 Perl data type class for the XML Schema defined complexType
 ExperimentOperation from the namespace https://adwords.google.com/api/adwords/cm/v201402.
 
-Operation for adding, updating or removing operations. For removing, use SET and mark status as DELETED. 
+Operation for adding, updating or removing operations. For removing, use SET and mark status as REMOVED. 
 
 
 

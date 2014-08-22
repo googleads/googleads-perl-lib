@@ -16,9 +16,8 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("2.17.0");
+our $VERSION = qv("3.0.0");
 
-use Google::Ads::AdWords::AuthTokenHandler;
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
 use Google::Ads::AdWords::OAuth2ApplicationsHandler;
@@ -32,10 +31,8 @@ use SOAP::WSDL qv("2.00.10");
 use constant OAUTH_2_APPLICATIONS_HANDLER => "OAUTH_2_APPLICATIONS_HANDLER";
 use constant OAUTH_2_SERVICE_ACCOUNTS_HANDLER =>
   "OAUTH_2_SERVICE_ACCOUNTS_HANDLER";
-use constant AUTH_TOKEN_HANDLER  => "AUTH_TOKEN_HANDLER";
 use constant AUTH_HANDLERS_ORDER => (
-  OAUTH_2_APPLICATIONS_HANDLER, OAUTH_2_SERVICE_ACCOUNTS_HANDLER,
-  AUTH_TOKEN_HANDLER
+  OAUTH_2_APPLICATIONS_HANDLER, OAUTH_2_SERVICE_ACCOUNTS_HANDLER
 );
 
 # Class::Std-style attributes. Most values read from adwords.properties file.
@@ -54,15 +51,6 @@ my %services_of : ATTR(:name<services> :default<{}>);
 my %transport_of : ATTR(:name<transport> :default<>);
 my %auth_handlers_of : ATTR(:name<auth_handlers> :default<>);
 my %__enabled_auth_handler_of : ATTR(:name<__enabled_auth_handler> :default<>);
-
-# All these auth related properties are now considered deprecated, to be
-# removed in a later release.
-my %email_of : ATTR(:init_arg<email> :get<email> :default<>);
-my %password_of : ATTR(:init_arg<password> :get<password> :default<>);
-my %auth_server_of : ATTR(:init_arg<auth_server> :get<auth_server> :default<0>);
-my %auth_token_of : ATTR(:init_arg<auth_token> :get<auth_token> :default<>);
-my %use_auth_token_cache_of :
-  ATTR(:init_arg<use_auth_token_cache> :get<use_auth_token_cache> :default<>);
 
 # Runtime statistics.
 my %requests_count_of : ATTR(:name<requests_count> :default<0>);
@@ -99,13 +87,6 @@ sub START {
     $validate_only_of{$ident}   ||= $properties{validateOnly};
     $partial_failure_of{$ident} ||= $properties{partialFailure};
 
-    # Deprecated: To be removed in a later release.
-    $email_of{$ident}                ||= $properties{email};
-    $password_of{$ident}             ||= $properties{password};
-    $auth_server_of{$ident}          ||= $properties{authServer};
-    $auth_token_of{$ident}           ||= $properties{authToken};
-    $use_auth_token_cache_of{$ident} ||= $properties{useAuthTokenCache};
-
     # SSL Peer validation setup.
     $self->__setup_SSL( $properties{CAPath}, $properties{CAFile} );
   }
@@ -129,18 +110,6 @@ sub START {
   $auth_handler = Google::Ads::AdWords::OAuth2ServiceAccountsHandler->new();
   $auth_handler->initialize( $self, \%properties );
   $auth_handlers{OAUTH_2_SERVICE_ACCOUNTS_HANDLER} = $auth_handler;
-
-  $auth_handler = Google::Ads::AdWords::AuthTokenHandler->new();
-  $auth_handler->initialize(
-    $self,
-    {
-      email      => $email_of{$ident},
-      password   => $password_of{$ident},
-      authServer => $auth_server_of{$ident},
-      authToken  => $auth_token_of{$ident},
-    }
-  );
-  $auth_handlers{AUTH_TOKEN_HANDLER} = $auth_handler;
 
   $auth_handlers_of{$ident} = \%auth_handlers;
 
@@ -334,23 +303,10 @@ sub _get_header {
   # $clientId may not be set, in which case we're operating on the account
   # specified in the email header.
   if ($clientId) {
-
-    # Not the most sophisticated check, but it should do the trick.
-    if ( $clientId =~ /@/ ) {
-      $headers->{clientEmail} = $clientId;
-    }
-    else {
-      $headers->{clientCustomerId} = $clientId;
-    }
+    $headers->{clientCustomerId} = $clientId;
   }
 
   return $headers;
-}
-
-sub get_auth_token_handler {
-  my ($self) = @_;
-
-  return $self->get_auth_handlers()->{AUTH_TOKEN_HANDLER};
 }
 
 sub get_oauth_2_handler {
@@ -384,54 +340,6 @@ sub _push_new_request_stats {
     $self->set_failed_requests_count( $self->get_failed_requests_count() + 1 );
   $self->set_operations_count(
     $self->get_operations_count() + $request_stats->get_operations() );
-}
-
-# Deprecated methods. These can be removed in a later release.
-
-## Forces a refresh of the auth token even if it's cached already or if it was
-## manually set via the auth_token property.
-## This method is deprecated, consider using
-## $client->get_auth_token_handler()->refresh_auth_token() instead.
-sub refresh_auth_token {
-  my ($self) = @_;
-
-  my $auth_token_handler = $self->get_auth_token_handler();
-  my $error              = $auth_token_handler->refresh_auth_token();
-  if ($error) {
-    $self->get_die_on_faults() ? die($error) : warn($error);
-  }
-
-  return $auth_token_handler->get_auth_token();
-}
-
-# Overriding default setter to also set underlying auth handlers.
-
-sub set_email {
-  my ( $self, $email ) = @_;
-
-  $email_of{ ident $self} = $email;
-  $self->get_auth_token_handler()->set_email($email);
-}
-
-sub set_password {
-  my ( $self, $password ) = @_;
-
-  $password_of{ ident $self} = $password;
-  $self->get_auth_token_handler()->set_password($password);
-}
-
-sub set_auth_server {
-  my ( $self, $auth_server ) = @_;
-
-  $auth_server_of{ ident $self} = $auth_server;
-  $self->get_auth_token_handler()->set_auth_server($auth_server);
-}
-
-sub set_auth_token {
-  my ( $self, $auth_token ) = @_;
-
-  $auth_token_of{ ident $self} = $auth_token;
-  $self->get_auth_token_handler()->set_auth_token($auth_token);
 }
 
 1;
@@ -485,26 +393,10 @@ for retrieving or setting them dynamically. For example, the set_client_id()
 allows you to change the value of the client_id attribute and get_client_id()
 returns the current value of the attribute.
 
-=head2 email
-
-The email address of a Google Account. This account could correspond to either
-an AdWords MCC account or a normal AdWords account.
-
-B<This property is demeed deprecated and should not be referenced>. Instead use
-$client->get_auth_token_handler()->get_email().
-
-=head2 password
-
-The password associated with the Google Account given in L</email>.
-
-B<This property is demeed deprecated and should not be referenced>. Instead use
-$client->get_auth_token_handler()->get_password().
-
 =head2 client_id
 
-If the Google Account given in L</email> is an MCC account, you can specify the
-AdWords account underneath that MCC account to act upon using client_id. The
-value could be either a login email address or a 10 digit client id.
+An optional 10 digit client id (with or without dashes) to specify the AdWords
+account to act upon.
 
 =head2 user_agent
 
@@ -515,11 +407,10 @@ specified, the name of your script (i.e. $0) will be used instead.
 
 A string used to tie usage of the AdWords API to a specific MCC account.
 
-The value should be a character string assigned to you by Google. This string
-will tie AdWords API usage to your MCC account for billing purposes. You can
-apply for a Developer Token at
+The value should be a character string assigned to you by Google. You can
+apply for a Developer Token by following the instructions at
 
-https://adwords.google.com/select/ApiWelcome
+https://developers.google.com/adwords/api/docs/signingup
 
 =head2 version
 
@@ -547,33 +438,6 @@ report the other operations' errors. This flag is currently only supported by
 the AdGroupCriterionService.
 
 The default is "false".
-
-=head2 auth_server
-
-The server to use when making ClientLogin or OAuth requests. This normally
-doesn't need to be changed from the default value.
-
-The default is "https://www.google.com".
-
-=head2 auth_token
-
-Use to manually set an existing AuthToken. If not set the client will use the
-auth_server to generate a token for you based on the email and password
-provided.
-
-B<This property is demeed deprecated and should not be referenced>. Instead use
-$client->get_auth_token_handler()->get_auth_token().
-
-=head2 use_auth_token_cache
-
-By default the client keeps generated auth tokens for 23 hours in a local cache,
-if this property is set to false then is your responsability to manually refresh
-tokens either setting the auth_token property or calling refresh_auth_token to
-auto generate a new one.
-
-B<This property is demeed deprecated and should not be referenced>. There is no
-replacement for this property since the auth token caching is now managed
-differently.
 
 =head2 die_on_faults
 
@@ -659,11 +523,11 @@ die() with an error message describing the failure.
  # Basic use case. Attributes will be read from ~/adwords.properties file.
  my $client = Google::Ads::AdWords::Client->new();
 
- # Most attributes from a custom properties file, but override email.
+ # Most attributes from a custom properties file, but override client_id.
  eval {
    my $client = Google::Ads::AdWords::Client->new({
      properties_file => "/path/to/adwords.properties",
-     email => "user\@domain.com",
+     client_id => "123-456-7890",
    });
  };
  if ($@) {
@@ -672,12 +536,11 @@ die() with an error message describing the failure.
 
  # Specify all attributes explicitly. The properties file will not override.
  my $client = Google::Ads::AdWords::Client->new({
-   email => "user\@domain.com",
-   password => "my_password",
-   client_id => "client_1+user\@domain.com",
-   developer_token => "user\@domain.com++USD",
+   client_id => "123-456-7890",
+   developer_token => "123xyzabc...",
    user_agent => "My Sample Program",
  });
+ $client->get_oauth_2_applications_handler()->set_refresh_token('1/Abc...');
 
 =head2 set_die_on_faults
 
@@ -782,19 +645,9 @@ $client->get_oauth_2_service_accounts_handler()->set_display_name('email');
 
 Refer to L<Google::Ads::AdWords::OAuth2ApplicationsHandler> for more details.
 
-=head2 get_auth_token_handler
-
-Returns the ClientLogin authorization handler attached to the client, for
-manully setting its specific properties.
-
-$client->get_auth_token_handler()->set_email('email');
-$client->get_auth_token_handler()->set_password('email');
-
-Refer to L<Google::Ads::AdWords::AuthTokenHandler> for more details.
-
 =head2 __setup_SSL (Private)
 
-Setups IO::Socket::SSL and Crypt::SSLeay enviroment variables to work with
+Setups IO::Socket::SSL and Crypt::SSLeay environment variables to work with
 SSL certificate validation.
 
 =head3 Parameters
@@ -838,8 +691,7 @@ included in the request header.
 =head2 _auth_handler (Protected)
 
 Retrieves the active AuthHandler. All handlers are checked in the order
-OAuth2 Applications -> OAuth2 Service Accounts -> AuthToken, given preference of
-OAuth2 over AuthToken.
+OAuth2 Applications -> OAuth2 Service Accounts.
 
 =head3 Returns
 

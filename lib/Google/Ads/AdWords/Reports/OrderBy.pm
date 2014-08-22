@@ -17,8 +17,6 @@ sub __get_attr_class {
 use Class::Std::Fast::Storable constructor => 'none';
 use base qw(Google::Ads::SOAP::Typelib::ComplexType);
 
-Class::Std::initialize();
-
 { # BLOCK to scope variables
 
 my %field_of :ATTR(:get<field>);
@@ -66,7 +64,7 @@ Google::Ads::AdWords::Reports::OrderBy
 Perl data type class for the XML Schema defined complexType
 OrderBy from the namespace https://adwords.google.com/api/adwords/cm/.
 
-Specifies how the resulting information should be sorted. 
+Specifies how the resulting information should be sorted.
 
 
 

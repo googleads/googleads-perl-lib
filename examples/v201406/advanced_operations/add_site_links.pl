@@ -16,7 +16,7 @@
 #
 # This example adds a sitelinks feed and associates it with a campaign.
 #
-# Tags: Tags: CampaignFeedService.mutate, FeedItemService.mutate, FeedMappingService.mutate
+# Tags: CampaignFeedService.mutate, FeedItemService.mutate, FeedMappingService.mutate
 # Tags: FeedService.mutate
 # Author: Josh Radcliff <api.jradcliff@gmail.com>
 
