@@ -28,8 +28,6 @@
 	<li><a href="#attributes">ATTRIBUTES</a></li>
 	<ul>
 
-		<li><a href="#email">email</a></li>
-		<li><a href="#password">password</a></li>
 		<li><a href="#client_id">client_id</a></li>
 		<li><a href="#user_agent">user_agent</a></li>
 		<li><a href="#developer_token">developer_token</a></li>
@@ -37,9 +35,6 @@
 		<li><a href="#alternate_url">alternate_url</a></li>
 		<li><a href="#validate_only">validate_only</a></li>
 		<li><a href="#partial_failure">partial_failure</a></li>
-		<li><a href="#auth_server">auth_server</a></li>
-		<li><a href="#auth_token">auth_token</a></li>
-		<li><a href="#use_auth_token_cache">use_auth_token_cache</a></li>
 		<li><a href="#die_on_faults">die_on_faults</a></li>
 		<li><a href="#requests_count">requests_count</a></li>
 		<li><a href="#failed_requests_count">failed_requests_count</a></li>
@@ -79,7 +74,6 @@
 		<li><a href="#_servicename_">{ServiceName}</a></li>
 		<li><a href="#get_oauth_2_applications_handler">get_oauth_2_applications_handler</a></li>
 		<li><a href="#get_oauth_2_service_accounts_handler">get_oauth_2_service_accounts_handler</a></li>
-		<li><a href="#get_auth_token_handler">get_auth_token_handler</a></li>
 		<li><a href="#__setup_ssl__private_">__setup_SSL (Private)</a></li>
 		<ul>
 
@@ -175,23 +169,9 @@ allows you to change the value of the client_id attribute and <code>get_client_i
 returns the current value of the attribute.</p>
 <p>
 </p>
-<h2><a name="email">email</a></h2>
-<p>The email address of a Google Account. This account could correspond to either
-an AdWords MCC account or a normal AdWords account.</p>
-<p><strong>This property is demeed deprecated and should not be referenced</strong>. Instead use
-$client-&gt;get_auth_token_handler()-&gt;<code>get_email()</code>.</p>
-<p>
-</p>
-<h2><a name="password">password</a></h2>
-<p>The password associated with the Google Account given in <a href="#email">email</a>.</p>
-<p><strong>This property is demeed deprecated and should not be referenced</strong>. Instead use
-$client-&gt;get_auth_token_handler()-&gt;<code>get_password()</code>.</p>
-<p>
-</p>
 <h2><a name="client_id">client_id</a></h2>
-<p>If the Google Account given in <a href="#email">email</a> is an MCC account, you can specify the
-AdWords account underneath that MCC account to act upon using client_id. The
-value could be either a login email address or a 10 digit client id.</p>
+<p>An optional 10 digit client id (with or without dashes) to specify the AdWords
+account to act upon.</p>
 <p>
 </p>
 <h2><a name="user_agent">user_agent</a></h2>
@@ -201,10 +181,9 @@ specified, the name of your script (i.e. $0) will be used instead.</p>
 </p>
 <h2><a name="developer_token">developer_token</a></h2>
 <p>A string used to tie usage of the AdWords API to a specific MCC account.</p>
-<p>The value should be a character string assigned to you by Google. This string
-will tie AdWords API usage to your MCC account for billing purposes. You can
-apply for a Developer Token at</p>
-<p><a href="https://adwords.google.com/select/ApiWelcome">https://adwords.google.com/select/ApiWelcome</a></p>
+<p>The value should be a character string assigned to you by Google. You can
+apply for a Developer Token by following the instructions at</p>
+<p><a href="https://developers.google.com/adwords/api/docs/signingup">https://developers.google.com/adwords/api/docs/signingup</a></p>
 <p>
 </p>
 <h2><a name="version">version</a></h2>
@@ -229,30 +208,6 @@ fault.</p>
 report the other operations' errors. This flag is currently only supported by
 the AdGroupCriterionService.</p>
 <p>The default is &quot;false&quot;.</p>
-<p>
-</p>
-<h2><a name="auth_server">auth_server</a></h2>
-<p>The server to use when making ClientLogin or OAuth requests. This normally
-doesn't need to be changed from the default value.</p>
-<p>The default is &quot;https://www.google.com&quot;.</p>
-<p>
-</p>
-<h2><a name="auth_token">auth_token</a></h2>
-<p>Use to manually set an existing AuthToken. If not set the client will use the
-auth_server to generate a token for you based on the email and password
-provided.</p>
-<p><strong>This property is demeed deprecated and should not be referenced</strong>. Instead use
-$client-&gt;get_auth_token_handler()-&gt;<code>get_auth_token()</code>.</p>
-<p>
-</p>
-<h2><a name="use_auth_token_cache">use_auth_token_cache</a></h2>
-<p>By default the client keeps generated auth tokens for 23 hours in a local cache,
-if this property is set to false then is your responsability to manually refresh
-tokens either setting the auth_token property or calling refresh_auth_token to
-auto generate a new one.</p>
-<p><strong>This property is demeed deprecated and should not be referenced</strong>. There is no
-replacement for this property since the auth token caching is now managed
-differently.</p>
 <p>
 </p>
 <h2><a name="die_on_faults">die_on_faults</a></h2>
@@ -336,11 +291,11 @@ value for that attribute that might be in a properties file.</p>
  # Basic use case. Attributes will be read from ~/adwords.properties file.
  my $client = Google::Ads::AdWords::Client-&gt;new();</pre>
 <pre>
- # Most attributes from a custom properties file, but override email.
+ # Most attributes from a custom properties file, but override client_id.
  eval {
    my $client = Google::Ads::AdWords::Client-&gt;new({
      properties_file =&gt; &quot;/path/to/adwords.properties&quot;,
-     email =&gt; &quot;user\@domain.com&quot;,
+     client_id =&gt; &quot;123-456-7890&quot;,
    });
  };
  if ($@) {
@@ -349,12 +304,11 @@ value for that attribute that might be in a properties file.</p>
 <pre>
  # Specify all attributes explicitly. The properties file will not override.
  my $client = Google::Ads::AdWords::Client-&gt;new({
-   email =&gt; &quot;user\@domain.com&quot;,
-   password =&gt; &quot;my_password&quot;,
-   client_id =&gt; &quot;client_1+user\@domain.com&quot;,
-   developer_token =&gt; &quot;user\@domain.com++USD&quot;,
+   client_id =&gt; &quot;123-456-7890&quot;,
+   developer_token =&gt; &quot;123xyzabc...&quot;,
    user_agent =&gt; &quot;My Sample Program&quot;,
- });</pre>
+ });
+ $client-&gt;get_oauth_2_applications_handler()-&gt;set_refresh_token('1/Abc...');</pre>
 <p>
 </p>
 <h2><a name="set_die_on_faults">set_die_on_faults</a></h2>
@@ -453,16 +407,8 @@ $client-&gt;get_oauth_2_service_accounts_handler()-&gt;set_display_name('email')
 <p>Refer to <a href="../../../Google/Ads/AdWords/OAuth2ApplicationsHandler.html">the Google::Ads::AdWords::OAuth2ApplicationsHandler manpage</a> for more details.</p>
 <p>
 </p>
-<h2><a name="get_auth_token_handler">get_auth_token_handler</a></h2>
-<p>Returns the ClientLogin authorization handler attached to the client, for
-manully setting its specific properties.</p>
-<p>$client-&gt;get_auth_token_handler()-&gt;set_email('email');
-$client-&gt;get_auth_token_handler()-&gt;set_password('email');</p>
-<p>Refer to <a href="../../../Google/Ads/AdWords/AuthTokenHandler.html">the Google::Ads::AdWords::AuthTokenHandler manpage</a> for more details.</p>
-<p>
-</p>
 <h2><a name="__setup_ssl__private_">__setup_SSL (Private)</a></h2>
-<p>Setups IO::Socket::SSL and Crypt::SSLeay enviroment variables to work with
+<p>Setups IO::Socket::SSL and Crypt::SSLeay environment variables to work with
 SSL certificate validation.</p>
 <p>
 </p>
@@ -507,8 +453,7 @@ included in the request header.</p>
 </p>
 <h2><a name="_auth_handler__protected_">_auth_handler (Protected)</a></h2>
 <p>Retrieves the active AuthHandler. All handlers are checked in the order
-OAuth2 Applications -&gt; OAuth2 Service Accounts -&gt; AuthToken, given preference of
-OAuth2 over AuthToken.</p>
+OAuth2 Applications -&gt; OAuth2 Service Accounts.</p>
 <p>
 </p>
 <h3><a name="returns">Returns</a></h3>
