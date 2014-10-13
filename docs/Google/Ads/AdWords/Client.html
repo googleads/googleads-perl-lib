@@ -35,6 +35,7 @@
 		<li><a href="#alternate_url">alternate_url</a></li>
 		<li><a href="#validate_only">validate_only</a></li>
 		<li><a href="#partial_failure">partial_failure</a></li>
+		<li><a href="#reporting_config">reporting_config</a></li>
 		<li><a href="#die_on_faults">die_on_faults</a></li>
 		<li><a href="#requests_count">requests_count</a></li>
 		<li><a href="#failed_requests_count">failed_requests_count</a></li>
@@ -131,7 +132,7 @@
   my $adGroupId = &quot;12345678&quot;;</pre>
 <pre>
   my $adgroupad_selector =
-      Google::Ads::AdWords::v201406::Types::AdGroupAdSelector-&gt;new({
+      Google::Ads::AdWords::v201409::Types::AdGroupAdSelector-&gt;new({
         adGroupIds =&gt; [$adGroupId]
       });</pre>
 <pre>
@@ -187,7 +188,7 @@ apply for a Developer Token by following the instructions at</p>
 <p>
 </p>
 <h2><a name="version">version</a></h2>
-<p>The version of the AdWords API to use. Currently <code>v201406</code> is the default
+<p>The version of the AdWords API to use. Currently <code>v201409</code> is the default
 version.</p>
 <p>
 </p>
@@ -208,6 +209,12 @@ fault.</p>
 report the other operations' errors. This flag is currently only supported by
 the AdGroupCriterionService.</p>
 <p>The default is &quot;false&quot;.</p>
+<p>
+</p>
+<h2><a name="reporting_config">reporting_config</a></h2>
+<p>The reporting configuration that controls additional options such as excluding
+the report header or summary row. Only supported starting with
+<a href="../../../Google/Ads/AdWords/Reports/ReportingConfiguration:MIN_REPORT_CONFIGURATION_VERSION.html">the Google::Ads::AdWords::Reports::ReportingConfiguration:MIN_REPORT_CONFIGURATION_VERSION manpage</a>.</p>
 <p>
 </p>
 <h2><a name="die_on_faults">die_on_faults</a></h2>
@@ -374,8 +381,8 @@ instance is set to <code>die()</code> on SOAP faults.</p>
 <p>The client object contains a method for every service provided by the API.
 So for example it can invoked as $client-&gt;<code>AdGroupService()</code> and it will return
 an object of type
-<a href="../../../Google/Ads/AdWords/v201406/AdGroupService/AdGroupServiceInterfacePort.html">the Google::Ads::AdWords::v201406::AdGroupService::AdGroupServiceInterfacePort manpage</a>
-when using version v201406 of the API.
+<a href="../../../Google/Ads/AdWords/v201409/AdGroupService/AdGroupServiceInterfacePort.html">the Google::Ads::AdWords::v201409::AdGroupService::AdGroupServiceInterfacePort manpage</a>
+when using version v201409 of the API.
 For a list of all available services please refer to
 <a href="http://developers.google.com/adwords/api/docs">http://developers.google.com/adwords/api/docs</a> and for examples on
 how to invoke the services please refer to scripts in the examples folder.</p>
