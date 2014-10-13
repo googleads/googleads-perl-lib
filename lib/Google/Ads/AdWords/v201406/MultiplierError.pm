@@ -82,7 +82,7 @@ Google::Ads::AdWords::v201406::MultiplierError
 Perl data type class for the XML Schema defined complexType
 MultiplierError from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Represents errors in bid multipliers TODO(pbaheti): Calling this BidMultiplierError results in grubby proto conflicts. There may be a better way to do this. 
+Represents errors in bid multipliers. 
 
 
 

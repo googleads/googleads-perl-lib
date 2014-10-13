@@ -52,59 +52,37 @@ sub create_campaign {
   my $client = shift;
   my $bidding_strategy = shift;
   if (!$bidding_strategy) {
-    if ($client->get_version() ge "v201302") {
-      $bidding_strategy =
-          get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
-            biddingStrategyType => "MANUAL_CPC",
-            biddingScheme =>
-                get_api_package($client, "ManualCpcBiddingScheme", 1)->new({
-                  enhancedCpcEnabled => 0
-                })
-          });
-    } else {
-      $bidding_strategy = get_api_package($client, "ManualCPC", 1);
-    }
-  }
-  my $budget;
-  my $campaign;
-
-
-  if ($client->get_version() ge "v201209") {
-    $budget = get_api_package($client, "Budget", 1)->new({
-      name => "Test " . uniqid(),
-      period => "DAILY",
-      amount => { microAmount => 50000000 },
-      deliveryMethod => "STANDARD"
-    });
-    my $budget_operation = get_api_package($client, "BudgetOperation", 1)->new({
-      operand => $budget,
-      operator => "ADD"
-    });
-    $budget = $client->BudgetService()->mutate({
-      operations => ($budget_operation)
-    })->get_value();
-  } else {
-    $budget = get_api_package($client, "Budget", 1)->new({
-      period => "DAILY",
-      amount => { microAmount => 50000000 },
-      deliveryMethod => "STANDARD"
-    });
-  }
-  if ($client->get_version() ge "v201302") {
-    $campaign = get_api_package($client, "Campaign", 1)->new({
-      name => "Campaign #" . uniqid(),
-      biddingStrategyConfiguration => $bidding_strategy,
-      budget => $budget,
-    });
-  } else {
-    $campaign = get_api_package($client, "Campaign", 1)->new({
-      name => "Campaign #" . uniqid(),
-      biddingStrategy => $bidding_strategy->new(),
-      budget => $budget
-    });
+    $bidding_strategy =
+        get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
+          biddingStrategyType => "MANUAL_CPC",
+          biddingScheme =>
+              get_api_package($client, "ManualCpcBiddingScheme", 1)->new({
+                enhancedCpcEnabled => 0
+              })
+        });
   }
 
-  if ($client->get_version() ge "v201209") {
+  my $budget = get_api_package($client, "Budget", 1)->new({
+    name => "Test " . uniqid(),
+    period => "DAILY",
+    amount => { microAmount => 50000000 },
+    deliveryMethod => "STANDARD"
+  });
+  my $budget_operation = get_api_package($client, "BudgetOperation", 1)->new({
+    operand => $budget,
+    operator => "ADD"
+  });
+  $budget = $client->BudgetService()->mutate({
+    operations => ($budget_operation)
+  })->get_value();
+
+  my $campaign = get_api_package($client, "Campaign", 1)->new({
+    name => "Campaign #" . uniqid(),
+    biddingStrategyConfiguration => $bidding_strategy,
+    budget => $budget,
+  });
+
+  if ($client->get_version() le "v201406") {
     $campaign->set_settings([
       get_api_package($client, "KeywordMatchSetting", 1)->new({
         optIn => 1
@@ -112,9 +90,7 @@ sub create_campaign {
     ]);
   }
 
-  if ($client->get_version() ge "v201402") {
-    $campaign->set_advertisingChannelType("SEARCH");
-  }
+  $campaign->set_advertisingChannelType("SEARCH");
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({
     operand => $campaign,

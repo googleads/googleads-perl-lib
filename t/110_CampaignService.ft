@@ -21,7 +21,7 @@
 use strict;
 use lib qw(t/util);
 
-use Test::More (tests => 26);
+use Test::More (tests => 25);
 use TestClientUtils qw(get_test_client);
 use TestAPIUtils qw(get_api_package);
 use Data::Uniqid qw(uniqid);
@@ -43,7 +43,6 @@ use_ok(get_api_package($client, "CampaignReturnValue"));
 use_ok(get_api_package($client, "Predicate"));
 use_ok(get_api_package($client, "Selector"));
 use_ok(get_api_package($client, "Money"));
-use_ok(get_api_package($client, "KeywordMatchSetting"));
 
 # Create a budget, which can be shared by multiple campaigns.
 my $ budget = get_api_package($client, "Budget")->new({
@@ -77,10 +76,6 @@ my $campaign1 = get_api_package($client, "Campaign")->new({
   budget => get_api_package($client, "Budget")->new({
     budgetId => $budgetId
   }),
-  settings => [
-    get_api_package($client, "KeywordMatchSetting")->new({
-      optIn => 0
-    })],
   advertisingChannelType => "SEARCH"
 });
 
@@ -94,10 +89,6 @@ my $campaign2 = get_api_package($client, "Campaign")->new({
   budget => get_api_package($client, "Budget")->new({
     budgetId => $budgetId
   }),
-  settings => [
-    get_api_package($client, "KeywordMatchSetting")->new({
-      optIn => 0
-    })],
   advertisingChannelType => "SEARCH"
 });
 

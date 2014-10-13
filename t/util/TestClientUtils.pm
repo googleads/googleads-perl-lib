@@ -25,9 +25,10 @@ use Exporter;
 use File::Basename;
 use File::Spec;
 use Test::MockObject::Extends;
+use TestUtils qw(read_client_properties);
 
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(get_test_client get_test_client_no_auth);
+@EXPORT_OK = qw(get_test_client get_test_mcc_client get_test_client_no_auth);
 
 sub get_test_client {
   my $api_version = shift;
@@ -45,6 +46,22 @@ sub get_test_client {
   }
 
   return $client;
+}
+
+sub get_test_mcc_client {
+  my $api_version = shift;
+
+  my $client = get_test_client($api_version);
+
+  my $client_properties = read_client_properties();
+
+  my $mcc_client_id = $client_properties->getProperty('mccClientId');
+
+  if ($api_version ge "v201409") {
+    die "No MCC client ID found" unless $mcc_client_id;
+  }
+
+  $client->set_client_id($mcc_client_id);
 }
 
 sub get_test_client_no_auth {

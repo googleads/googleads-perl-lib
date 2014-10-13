@@ -1,3 +1,6 @@
+3.1.0
+- Added examples and support for v201409.
+
 3.0.0
 - Removed support for ClientLogin.
 - Added add_ad_customizers.pl example. See

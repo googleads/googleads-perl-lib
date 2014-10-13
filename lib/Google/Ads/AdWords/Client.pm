@@ -16,12 +16,13 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("3.0.0");
+our $VERSION = qv("3.1.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
 use Google::Ads::AdWords::OAuth2ApplicationsHandler;
 use Google::Ads::AdWords::OAuth2ServiceAccountsHandler;
+use Google::Ads::AdWords::Reports::ReportingConfiguration;
 use Google::Ads::AdWords::Serializer;
 use Google::Ads::Common::HTTPTransport;
 
@@ -45,6 +46,7 @@ my %alternate_url_of : ATTR(:name<alternate_url> :default<>);
 my %die_on_faults_of : ATTR(:name<die_on_faults> :default<0>);
 my %validate_only_of : ATTR(:name<validate_only> :default<0>);
 my %partial_failure_of : ATTR(:name<partial_failure> :default<0>);
+my %reporting_config_of : ATTR(:name<reporting_config> :default<>);
 
 my %properties_file_of : ATTR(:init_arg<properties_file> :default<>);
 my %services_of : ATTR(:name<services> :default<{}>);
@@ -86,6 +88,13 @@ sub START {
     $alternate_url_of{$ident}   ||= $properties{alternateUrl};
     $validate_only_of{$ident}   ||= $properties{validateOnly};
     $partial_failure_of{$ident} ||= $properties{partialFailure};
+
+    # Construct the ReportingConfiguration.
+    $reporting_config_of{$ident} ||=
+        Google::Ads::AdWords::Reports::ReportingConfiguration->new({
+            skip_header => $properties{"reporting.skipHeader"},
+            skip_summary => $properties{"reporting.skipSummary"}
+        });
 
     # SSL Peer validation setup.
     $self->__setup_SSL( $properties{CAPath}, $properties{CAFile} );
@@ -359,7 +368,7 @@ Google::Ads::AdWords::Client
   my $adGroupId = "12345678";
 
   my $adgroupad_selector =
-      Google::Ads::AdWords::v201406::Types::AdGroupAdSelector->new({
+      Google::Ads::AdWords::v201409::Types::AdGroupAdSelector->new({
         adGroupIds => [$adGroupId]
       });
 
@@ -414,7 +423,7 @@ https://developers.google.com/adwords/api/docs/signingup
 
 =head2 version
 
-The version of the AdWords API to use. Currently C<v201406> is the default
+The version of the AdWords API to use. Currently C<v201409> is the default
 version.
 
 =head2 alternate_url
@@ -438,6 +447,12 @@ report the other operations' errors. This flag is currently only supported by
 the AdGroupCriterionService.
 
 The default is "false".
+
+=head2 reporting_config
+
+The reporting configuration that controls additional options such as excluding
+the report header or summary row. Only supported starting with
+L<Google::Ads::AdWords::Reports::ReportingConfiguration:MIN_REPORT_CONFIGURATION_VERSION>.
 
 =head2 die_on_faults
 
@@ -609,8 +624,8 @@ instance is set to die() on SOAP faults.
 The client object contains a method for every service provided by the API.
 So for example it can invoked as $client->AdGroupService() and it will return
 an object of type
-L<Google::Ads::AdWords::v201406::AdGroupService::AdGroupServiceInterfacePort>
-when using version v201406 of the API.
+L<Google::Ads::AdWords::v201409::AdGroupService::AdGroupServiceInterfacePort>
+when using version v201409 of the API.
 For a list of all available services please refer to
 http://developers.google.com/adwords/api/docs and for examples on
 how to invoke the services please refer to scripts in the examples folder.

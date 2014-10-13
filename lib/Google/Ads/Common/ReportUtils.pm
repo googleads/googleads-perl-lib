@@ -18,6 +18,8 @@ use strict;
 use utf8;
 use version;
 
+use Google::Ads::AdWords::Reports::ReportingConfiguration;
+
 # The following needs to be on one line because CPAN uses a particularly hacky
 # eval() to determine module versions.
 use Google::Ads::Common::Constants; our $VERSION = ${Google::Ads::Common::Constants::VERSION};
@@ -121,6 +123,32 @@ sub download_report {
     }
     push @headers, "returnMoneyInMicros" => $return_money_in_micros ?
          "true" : "false";
+  }
+
+  # Set reporting configuration headers.
+  my $reporting_config = $client->get_reporting_config();
+  if (defined $reporting_config->get_skip_header() or
+        defined $reporting_config->get_skip_summary()) {
+    if ($current_version <
+        Google::Ads::AdWords::Reports::ReportingConfiguration::MIN_SUPPORTED_API_VERSION) {
+        if ($client->get_die_on_faults()) {
+          die("Version " . $client->get_version() .
+              " does not support skipReportHeader or skipReportSummary.");
+        } else {
+          warn("Version " . $client->get_version() .
+               " does not support skipReportHeader or skipReportSummary.");
+        }
+    }
+    if (defined $reporting_config->get_skip_header()) {
+        push @headers, "skipReportHeader" =>
+            $reporting_config->get_skip_header() ?
+                "true" : "false";
+    }
+    if (defined $reporting_config->get_skip_summary()) {
+        push @headers, "skipReportSummary" =>
+            $reporting_config->get_skip_summary() ?
+                "true" : "false";
+    }
   }
   push @headers, "developerToken" => $client->get_developer_token();
 

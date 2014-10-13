@@ -78,7 +78,7 @@ sub get_account_hierarchy {
       }
     }
     # Display customers tree.
-    print "Login, CustomerId (Status, Description)\n";
+    print "CustomerId, Login - Name\n";
     display_customers_tree($root_account, undef, $customers, $child_links, 0);
   } else {
     print "No serviced accounts were found.\n";
