@@ -22,8 +22,9 @@
 use strict;
 use lib qw(lib t t/util);
 
-use Test::More (tests => 9);
-use TestClientUtils qw(get_test_client_no_auth);
+use Test::MockObject::Extends;
+use Test::More (tests => 13);
+use TestClientUtils qw(get_test_client_no_auth get_test_client);
 
 use_ok("Google::Ads::AdWords::Reports::ReportingConfiguration");
 
@@ -60,3 +61,38 @@ is($client->get_reporting_config()->get_skip_summary(), 1,
 
 ok($client->get_reporting_config()->as_string(),
     "as_string");
+
+# Clear the reporting config and confirm that ReportUtils
+# does not fail. Added to test the fix for issue #7:
+# https://github.com/googleads/googleads-perl-lib/issues/7
+$client = get_test_client();
+$client->set_reporting_config(undef);
+
+# Mock the auth handler
+my $auth_handler = Google::Ads::Common::OAuth2ApplicationsHandler->new();
+$auth_handler = Test::MockObject::Extends->new($auth_handler);
+$auth_handler->mock("get_access_token", sub { return "ACCESS_TOKEN"; });
+
+$client = Test::MockObject::Extends->new($client);
+$client->mock("_get_auth_handler", sub { return $auth_handler; });
+
+use_ok("Google::Ads::Common::ReportUtils");
+use_ok("Google::Ads::Common::ReportDownloadError");
+
+# The download will not actually download anything due to the missing
+# report definition and test credentials, but the call should at least
+# complete without a runtime error.
+my $report_result = Google::Ads::Common::ReportUtils::download_report(
+  {
+    query =>
+        "SELECT CampaignId, Impressions " .
+        "FROM CAMPAIGN_PERFORMANCE_REPORT " .
+        "DURING THIS_MONTH",
+    format => "CSV"
+  },
+  $client
+);
+ok($report_result, "report result");
+# A ReportDownloadError indicates that the request was sent.
+ok($report_result->isa("Google::Ads::Common::ReportDownloadError"),
+    "check report result return type");

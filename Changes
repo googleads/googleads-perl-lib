@@ -1,3 +1,15 @@
+3.1.1
+- Changed the distribution name to comply with new CPAN/PAUSE naming
+  convention rules. Fixes github issue #6
+  (https://github.com/googleads/googleads-perl-lib/issues/6).
+- Fix github issue #7:
+  https://github.com/googleads/googleads-perl-lib/issues/7
+  Always ensure that a ReportingConfiguration is set on the
+  Client at construction time, and check for a missing
+  ReportingConfiguration in ReportUtils.
+- Removed examples and tests that created legacy location extensions
+  (CampaignAdExtensions).
+
 3.1.0
 - Added examples and support for v201409.
 

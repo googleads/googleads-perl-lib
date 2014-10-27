@@ -128,7 +128,7 @@ my $reporting_config_override =
     });
 ok($reporting_config_override, "create reporting config");
 
-my $client = Google::Ads::AdWords::Client->new({
+$client = Google::Ads::AdWords::Client->new({
     reporting_config => $reporting_config_override,
     properties_file => $properties_file,
 });
@@ -143,7 +143,7 @@ is($client->get_reporting_config()->get_skip_summary(), 0,
 
 # Test that if no ReportingConfiguration is passed to the constructor then
 # reporting settings are taken from the properties file.
-my $client = Google::Ads::AdWords::Client->new({
+$client = Google::Ads::AdWords::Client->new({
     properties_file => $properties_file
 });
 ok($client, "create client without reporting config override");

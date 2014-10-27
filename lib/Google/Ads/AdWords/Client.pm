@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("3.1.0");
+our $VERSION = qv("3.1.1");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -108,6 +108,8 @@ sub START {
     Google::Ads::AdWords::Constants::DEFAULT_VALIDATE_ONLY;
   $version_of{$ident} ||= Google::Ads::AdWords::Constants::DEFAULT_VERSION;
   $partial_failure_of{$ident} ||= 0;
+  $reporting_config_of{$ident} ||=
+    Google::Ads::AdWords::Reports::ReportingConfiguration->new();
 
   # Setup of auth handlers
   my %auth_handlers = ();

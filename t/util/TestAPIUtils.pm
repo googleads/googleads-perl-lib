@@ -30,8 +30,7 @@ use POSIX;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(get_api_package create_campaign delete_campaign create_ad_group
                 delete_ad_group create_text_ad delete_text_ad create_keyword
-                delete_keyword  create_campaign_location_extension
-                delete_campaign_ad_extension get_test_image
+                delete_keyword get_test_image
                 get_location_for_address create_experiment delete_experiment);
 
 sub get_api_package {
@@ -291,65 +290,6 @@ sub delete_text_ad {
   });
 
   return $client->AdGroupAdService()->mutate({
-    operations => [$operation]
-  });
-}
-
-sub create_campaign_location_extension {
-  my $client = shift;
-  my $campaign_id = shift;
-
-  my $address = get_api_package($client, "Address", 1)->new({
-    streetAddress => "1600 Amphitheatre Pkwy, Mountain View",
-    countryCode => "US"
-  });
-  my $location = get_location_for_address($client, $address);
-  my $location_extension =
-      get_api_package($client, "LocationExtension", 1)->new({
-        address => $location->get_address(),
-        geoPoint => $location->get_geoPoint(),
-        encodedLocation => $location->get_encodedLocation(),
-        source => "ADWORDS_FRONTEND"
-      });
-  my $extension = get_api_package($client, "CampaignAdExtension", 1)->new({
-    campaignId => $campaign_id,
-    adExtension => $location_extension
-  });
-  if ($client->get_version() ge "v201406") {
-    $extension->set_status("ENABLED");
-  } else {
-    $extension->set_status("ACTIVE");
-  }
-  my $result = $client->CampaignAdExtensionService()->mutate({
-    operations => [get_api_package($client, "CampaignAdExtensionOperation",
-                                   1)->new({
-      operator => "ADD",
-      operand => $extension
-    })]
-  });
-
-  return $result->get_value()->[0];
-}
-
-sub delete_campaign_ad_extension {
-  my $client = shift;
-  my $campaign_id = shift;
-  my $extension_id = shift;
-
-  my $extension = get_api_package($client, "CampaignAdExtension", 1)->new({
-    adExtension => get_api_package($client, "AdExtension", 1)->new({
-      id => $extension_id
-    }),
-    campaignId => $campaign_id
-  });
-
-  my $operation =
-      get_api_package($client, "CampaignAdExtensionOperation", 1)->new({
-        operand => $extension,
-        operator => "REMOVE"
-      });
-
-  return $client->CampaignAdExtensionService()->mutate({
     operations => [$operation]
   });
 }

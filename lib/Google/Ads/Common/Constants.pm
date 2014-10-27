@@ -21,7 +21,7 @@ use version;
 
 # Main version number that the rest of the modules on this package pick up
 # off of.
-our $VERSION = qv("3.1.0");
+our $VERSION = qv("3.1.1");
 
 use constant NO_AUTH_HANDLER_IS_SETUP_MESSAGE =>
     "The library couldn't find any authorization mechanism set up to " .

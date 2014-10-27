@@ -127,8 +127,8 @@ sub download_report {
 
   # Set reporting configuration headers.
   my $reporting_config = $client->get_reporting_config();
-  if (defined $reporting_config->get_skip_header() or
-        defined $reporting_config->get_skip_summary()) {
+  if ($reporting_config and (defined $reporting_config->get_skip_header() or
+        defined $reporting_config->get_skip_summary())) {
     if ($current_version <
         Google::Ads::AdWords::Reports::ReportingConfiguration::MIN_SUPPORTED_API_VERSION) {
         if ($client->get_die_on_faults()) {
