@@ -92,7 +92,7 @@ Google::Ads::AdWords::v201406::OperatingSystemVersion
 Perl data type class for the XML Schema defined complexType
 OperatingSystemVersion from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Represents a Operating System Version Criterion. <p>A criterion of this type can only be created using an ID. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
+Represents an Operating System Version Criterion. <a href="/adwords/api/docs/appendix/mobileplatforms">View the complete list of available mobile platforms</a>. You can also get the list from {@link ConstantDataService#getOperatingSystemVersionCriterion ConstantDataService}. <p>A criterion of this type can only be created using an ID. <span class="constraint AdxEnabled">This is enabled for AdX.</span> 
 
 
 

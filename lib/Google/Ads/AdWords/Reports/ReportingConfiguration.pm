@@ -24,8 +24,6 @@ use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Cons
 
 use Class::Std::Fast;
 
-use constant MIN_SUPPORTED_API_VERSION => "201409";
-
 my %skip_header_of :ATTR(:name<skip_header> :default<>);
 my %skip_summary_of :ATTR(:name<skip_summary> :default<>);
 

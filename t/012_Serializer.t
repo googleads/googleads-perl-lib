@@ -23,11 +23,13 @@ use lib qw(t/util);
 
 use File::Basename;
 use File::Spec;
+use Test::Deep;
 use Test::MockObject;
 use Test::More (tests => 7);
 use TestClientUtils qw(get_test_client_no_auth);
 use TestUtils qw(read_test_properties read_client_properties
                  replace_properties);
+use XML::Simple;
 
 use_ok("Google::Ads::AdWords::Client");
 use_ok("Google::Ads::AdWords::Serializer");
@@ -92,7 +94,12 @@ my $user_agent = sprintf("%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, ".
 $client_properties->{userAgent} = $user_agent;
 $expected_output = replace_properties($expected_output, $client_properties);
 
-is($envelope, $expected_output, "check serializer output");
+# Convert actual and expected output to hashes and compare deeply.
+cmp_deeply(
+  XML::Simple->new()->XMLin($envelope, ForceContent => 1),
+  XML::Simple->new()->XMLin($expected_output, ForceContent => 1),
+  "check serializer output"
+);
 
 # Test error propagation when invalid nested structure is given.
 # Issue #58, http://goo.gl/mZkw6z

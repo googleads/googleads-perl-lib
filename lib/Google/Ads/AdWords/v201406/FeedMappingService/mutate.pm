@@ -73,7 +73,7 @@ Google::Ads::AdWords::v201406::FeedMappingService::mutate
 Perl data type class for the XML Schema defined element
 mutate from the namespace https://adwords.google.com/api/adwords/cm/v201406.
 
-Add and remove FeedMappings. @param operations The operations to apply. @return The resulting FeedMappings. @throws ApiException indicates a problem with the request. 
+Add and remove FeedMappings. The following {@link Operator}s are supported: ADD, REMOVE. @param operations The operations to apply. @return The resulting FeedMappings. @throws ApiException indicates a problem with the request. 
 
 
 

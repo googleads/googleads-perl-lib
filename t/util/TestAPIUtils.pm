@@ -111,11 +111,7 @@ sub delete_campaign {
     id => $campaign_id,
   });
 
-  if ($client->get_version() ge "v201406") {
-    $campaign->set_status("REMOVED");
-  } else {
-    $campaign->set_status("DELETED");
-  }
+  $campaign->set_status("REMOVED");
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({
     operand => $campaign,
@@ -134,34 +130,20 @@ sub create_ad_group {
   my $bids = shift;
   my $adgroup;
 
-  if ($client->get_version() ge "v201302") {
-    $adgroup = get_api_package($client, "AdGroup", 1)->new({
-      name => $name,
-      campaignId => $campaign_id,
-      biddingStrategyConfiguration =>
-          get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
-            bids =>  $bids || [
-              get_api_package($client, "CpcBid", 1)->new({
-                bid => get_api_package($client, "Money", 1)->new({
-                  microAmount => "500000"
-                })
-              }),
-            ]
-          })
-    });
-  } else {
-    $adgroup = get_api_package($client, "AdGroup", 1)->new({
-      name => $name,
-      campaignId => $campaign_id,
-      bids => $bids || get_api_package($client, "ManualCPCAdGroupBids", 1)->new({
-        keywordMaxCpc => get_api_package($client, "Bid", 1)->new({
-          amount => get_api_package($client, "Money", 1)->new({
-            microAmount => "500000"
-          })
+  $adgroup = get_api_package($client, "AdGroup", 1)->new({
+    name => $name,
+    campaignId => $campaign_id,
+    biddingStrategyConfiguration =>
+        get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
+          bids =>  $bids || [
+            get_api_package($client, "CpcBid", 1)->new({
+              bid => get_api_package($client, "Money", 1)->new({
+                microAmount => "500000"
+              })
+            }),
+          ]
         })
-      })
-    });
-  }
+  });
 
   my $operations = [
     get_api_package($client, "AdGroupOperation", 1)->new({
@@ -185,11 +167,7 @@ sub delete_ad_group {
     id => $adgroup_id,
   });
 
-  if ($client->get_version() ge "v201406") {
-    $adgroup->set_status("REMOVED");
-  } else {
-    $adgroup->set_status("DELETED");
-  }
+  $adgroup->set_status("REMOVED");
 
   my $operation = get_api_package($client, "AdGroupOperation", 1)->new({
     operand => $adgroup,

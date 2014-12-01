@@ -35,11 +35,7 @@ use POSIX;
 use URI::Escape;
 use XML::Simple;
 
-use constant REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload?__rd=%s";
 use constant ADHOC_REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload/%s";
-use constant CLIENT_EMAIL_MAX_VERSION => "201101";
-use constant XML_ERRORS_MIN_VERSION => "201209";
-use constant MONEY_IN_MICROS_MAX_VERSION => "201402";
 use constant LWP_DEFAULT_TIMEOUT => 300; # 5 minutes.
 
 sub download_report {
@@ -51,12 +47,7 @@ sub download_report {
   $server = $server =~ /\/$/ ? substr($server, 0, -1) : $server;
   my $url;
 
-  if (isdigit($report_definition)) {
-    $url = sprintf(REPORT_DOWNLOAD_URL, $server, $report_definition);
-  } else {
-    # Assuming is a ReportDefinition object
-    $url = sprintf(ADHOC_REPORT_DOWNLOAD_URL, $server, $client->get_version());
-  }
+  $url = sprintf(ADHOC_REPORT_DOWNLOAD_URL, $server, $client->get_version());
 
   my $lwp = LWP::UserAgent->new();
 
@@ -90,55 +81,24 @@ sub download_report {
   my $current_version = $client->get_version();
   $current_version =~ s/[^0-9]//g;
   if ($client->get_client_id()) {
-    if ($client->get_client_id() =~ /@/) {
-      if ($current_version > CLIENT_EMAIL_MAX_VERSION) {
-        if ($client->get_die_on_faults()) {
-          die("Version " . $client->get_version() .
-              " has no support for identifying clients by email.");
-        } else {
-          warn("Version " . $client->get_version() .
-               " has no support for identifying clients by email.");
-        }
-      } else {
-        push @headers, "clientEmail" => $client->get_client_id();
-      }
-    } else {
-      push @headers, "clientCustomerId" => $client->get_client_id();
-    }
-  } elsif ($current_version <= CLIENT_EMAIL_MAX_VERSION &&
-           $client->get_email()) {
-    push @headers, "clientEmail" => $client->get_email();
+    push @headers, "clientCustomerId" => $client->get_client_id();
   }
 
   # Set other headers.
   if (defined $return_money_in_micros) {
-    if ($current_version > MONEY_IN_MICROS_MAX_VERSION) {
-        if ($client->get_die_on_faults()) {
-          die("Version " . $client->get_version() .
-              " does not support returnMoneyInMicros.");
-        } else {
-          warn("Version " . $client->get_version() .
-               " does not support returnMoneyInMicros.");
-        }
+    if ($client->get_die_on_faults()) {
+      die("Version " . $client->get_version() .
+          " does not support returnMoneyInMicros.");
+    } else {
+      warn("Version " . $client->get_version() .
+           " does not support returnMoneyInMicros.");
     }
-    push @headers, "returnMoneyInMicros" => $return_money_in_micros ?
-         "true" : "false";
   }
 
   # Set reporting configuration headers.
   my $reporting_config = $client->get_reporting_config();
   if ($reporting_config and (defined $reporting_config->get_skip_header() or
         defined $reporting_config->get_skip_summary())) {
-    if ($current_version <
-        Google::Ads::AdWords::Reports::ReportingConfiguration::MIN_SUPPORTED_API_VERSION) {
-        if ($client->get_die_on_faults()) {
-          die("Version " . $client->get_version() .
-              " does not support skipReportHeader or skipReportSummary.");
-        } else {
-          warn("Version " . $client->get_version() .
-               " does not support skipReportHeader or skipReportSummary.");
-        }
-    }
     if (defined $reporting_config->get_skip_header()) {
         push @headers, "skipReportHeader" =>
             $reporting_config->get_skip_header() ?
@@ -158,9 +118,7 @@ sub download_report {
   # Request the report.
   my $request;
   my $format;
-  if (isdigit($report_definition)) {
-    $request = HTTP::Request->new("GET", $url, \@headers);
-  } elsif (ref($report_definition) eq "HASH") {
+  if (ref($report_definition) eq "HASH") {
     push @headers, "Content-Type" => "application/x-www-form-urlencoded";
     $request = HTTP::Request->new("POST", $url, \@headers, "__rdquery=" .
         uri_escape_utf8($report_definition->{query}) . "&__fmt=" .
@@ -200,35 +158,18 @@ sub download_report {
       open(FILE, "<", $file_path) or return undef;
       my $result = <FILE>;
       close(FILE);
-      if (__extract_legacy_error($result)) {
-        return undef;
-      }
       return stat($file_path)->size;
     } else {
       return $response->decoded_content();
     }
   } elsif ($response->code == HTTP_BAD_REQUEST) {
     my $result = $response->decoded_content();
-    if ($current_version >= XML_ERRORS_MIN_VERSION) {
-      return __extract_xml_error($result);
-    } else {
-      __extract_legacy_error($result);
-      return undef;
-    }
+    __extract_xml_error($result);
   } else {
     warn("Report download failed with code '" . $response->code .
          "' and message '" . $response->message . ".");
     return undef;
   }
-}
-
-sub __extract_legacy_error {
-  my $report_result = shift;
-  if ($report_result =~ m/^!!![^|]*\|\|\|([^|]*)\|\|\|([^?]*)\?\?\?/) {
-    warn("Report download failed with error " . $2);
-    return $2;
-  }
-  return undef;
 }
 
 sub __extract_xml_error {
@@ -303,9 +244,8 @@ the report will be requested.
 
 =item *
 
-The return_money_in_micros is an optional parameter that can be set to alter
-the output of money kind of fields in the report. This parameter is not
-supported after v201402.
+The return_money_in_micros is a deprecated parameter. This parameter is no
+longer supported.
 
 =item *
 

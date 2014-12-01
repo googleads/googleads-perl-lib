@@ -77,7 +77,7 @@ Google::Ads::AdWords::v201409::AppPaymentModel
 Perl data type class for the XML Schema defined complexType
 AppPaymentModel from the namespace https://adwords.google.com/api/adwords/cm/v201409.
 
-Represents a criterion for targeting paid apps. <p>A criterion of this type can only be created using an ID. <span class="constraint AdxEnabled">This is disabled for AdX when it is contained within Operators: ADD, SET.</span> 
+Represents a criterion for targeting paid apps. <p>Possible IDs: {@code 30} ({@code APP_PAYMENT_MODEL_PAID}).</p> <p>A criterion of this type can only be created using an ID. <span class="constraint AdxEnabled">This is disabled for AdX when it is contained within Operators: ADD, SET.</span> 
 
 
 

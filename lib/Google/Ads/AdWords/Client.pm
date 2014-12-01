@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("3.1.1");
+our $VERSION = qv("3.2.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -312,7 +312,7 @@ sub _get_header {
   my $clientId = $self->get_client_id();
 
   # $clientId may not be set, in which case we're operating on the account
-  # specified in the email header.
+  # specified by the auth credentials.
   if ($clientId) {
     $headers->{clientCustomerId} = $clientId;
   }

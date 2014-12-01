@@ -25,7 +25,7 @@ You can refer to the [README](https://github.com/googleads/googleads-perl-lib/bl
 
 
 ## How do I Contribute?
-See [Becoming a Contributor](https://github.com/googleads/googleads-perl-lib/wiki/Becoming-A-Contributor) for details.
+See the [guidelines for contributing](https://github.com/googleads/googleads-perl-lib/blob/master/CONTRIBUTING.md) for details.
 
 ## Where do I report issues?
 Please report issues at <https://github.com/googleads/googleads-perl-lib/issues>
