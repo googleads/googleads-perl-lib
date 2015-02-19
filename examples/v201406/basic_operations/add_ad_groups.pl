@@ -69,14 +69,16 @@ sub add_ad_groups {
         Google::Ads::AdWords::v201406::TargetingSetting->new({
           details => [
             # Restricting to serve ads that match your ad group placements.
+            # This is equivalent to choosing "Target and bid" in the UI.
             Google::Ads::AdWords::v201406::TargetingSettingDetail->new({
               criterionTypeGroup => "PLACEMENT",
-              targetAll => 1
+              targetAll => 0
             }),
-            # Using your ad group verticals only for bidding.
+            # Using your ad group verticals only for bidding. This is equivalent
+            # to choosing "Bid only" in the UI.
             Google::Ads::AdWords::v201406::TargetingSettingDetail->new({
               criterionTypeGroup => "VERTICAL",
-              targetAll => 0
+              targetAll => 1
             })
           ]
         })

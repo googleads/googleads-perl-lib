@@ -299,7 +299,7 @@ sub create_ads_with_customizations() {
     headline => 'Luxury Cruise to {=CustomizerFeed.Name}',
     description1 => 'Only {=CustomizerFeed.Price}',
     description2 => 'Offer ends in {=countdown(CustomizerFeed.Date)}!',
-    url => 'http://www.example.com',
+    finalUrls => ['http://www.example.com'],
     displayUrl => 'www.example.com'
   });
 

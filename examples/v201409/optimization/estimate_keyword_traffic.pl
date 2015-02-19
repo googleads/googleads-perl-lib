@@ -122,34 +122,59 @@ sub estimate_keyword_traffic {
       my $keyword_estimate = $keyword_estimates->[$i];
 
       # Find the mean of the min and max values.
-      my $mean_average_cpc =
-          ($keyword_estimate->get_min()->get_averageCpc()->get_microAmount() +
-           $keyword_estimate->get_max()->get_averageCpc()->get_microAmount()) /
-          2;
-      my $mean_average_position =
-          ($keyword_estimate->get_min()->get_averagePosition() +
-           $keyword_estimate->get_max()->get_averagePosition()) /
-          2;
-      my $mean_clicks =
-          ($keyword_estimate->get_min()->get_clicksPerDay() +
-           $keyword_estimate->get_max()->get_clicksPerDay()) / 2;
-      my $mean_total_cost =
-          ($keyword_estimate->get_min()->get_totalCost()->get_microAmount() +
-           $keyword_estimate->get_max()->get_totalCost()->get_microAmount()) /
-          2;
+      my $mean_average_cpc = calculate_money_mean(
+          $keyword_estimate->get_min()->get_averageCpc(),
+          $keyword_estimate->get_max()->get_averageCpc()
+      );
+      my $mean_average_position = calculate_mean(
+          $keyword_estimate->get_min()->get_averagePosition(),
+          $keyword_estimate->get_max()->get_averagePosition()
+      );
+      my $mean_clicks = calculate_mean(
+          $keyword_estimate->get_min()->get_clicksPerDay(),
+          $keyword_estimate->get_max()->get_clicksPerDay()
+      );
+      my $mean_total_cost = calculate_money_mean(
+          $keyword_estimate->get_min()->get_totalCost(),
+          $keyword_estimate->get_max()->get_totalCost()
+      );
 
       printf "Results for the keyword with text '%s' and match type '%s':\n",
              $keyword->get_text(), $keyword->get_matchType();
-      printf "  Estimated average CPC: %d\n", $mean_average_cpc;
+      printf "  Estimated average CPC: %.2f\n", $mean_average_cpc;
       printf "  Estimated ad position: %.2f\n", $mean_average_position;
-      printf "  Estimated daily clicks: %d\n", $mean_clicks;
-      printf "  Estimated daily cost: %d\n\n", $mean_total_cost;
+      printf "  Estimated daily clicks: %.2f\n", $mean_clicks;
+      printf "  Estimated daily cost: %.2f\n\n", $mean_total_cost;
     }
   } else {
     print "No traffic estimates were returned.\n";
   }
 
   return 1;
+}
+
+# Calculates the mean microAmount of two Money objects if neither is
+# null, else returns NaN.
+sub calculate_money_mean {
+  my ($min_money, $max_money) = @_;
+
+  if ($min_money && $max_money) {
+    return calculate_mean(
+      $min_money->get_microAmount(),
+      $max_money->get_microAmount()
+    );
+  }
+  return 'NaN';
+}
+
+# Calculates the mean of two numbers if neither is null, else returns NaN.
+sub calculate_mean {
+  my ($min, $max) = @_;
+
+  if (defined($min) && defined($max)) {
+    return ($min + $max) / 2;
+  }
+  return 'NaN';
 }
 
 # Don't run the example if the file is being included.

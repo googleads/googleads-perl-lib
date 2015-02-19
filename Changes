@@ -1,9 +1,22 @@
+3.2.1
+- Fix github issue #5:
+  https://github.com/googleads/googleads-perl-lib/issues/5
+  Log report requests and responses.
+- Fix github issue #9:
+  https://github.com/googleads/googleads-perl-lib/issues/9
+  Properly handle missing values in the estimate_keyword_traffic.pl examples.
+- Improved targetAll comments in add_ad_groups.pl examples.
+- Added upgrade_ad_url example.
+- Updated multiple examples to use upgraded URLs. See
+  https://developers.google.com/adwords/api/docs/guides/upgraded-urls.
+
 3.2.0
 - Removed support for v201402.
 - Fix github issue #3:
   https://github.com/googleads/googleads-perl-lib/issues/3
   Perform a logical comparison of actual vs. expected XML output, ignoring
   the order of elements.
+
 3.1.1
 - Changed the distribution name to comply with new CPAN/PAUSE naming
   convention rules. Fixes github issue #6

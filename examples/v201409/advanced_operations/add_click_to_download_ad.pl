@@ -32,7 +32,6 @@ use Google::Ads::AdWords::v201409::TemplateElementField;
 use Google::Ads::Common::MediaUtils;
 
 use Cwd qw(abs_path);
-use Data::Uniqid qw(uniqid);
 
 # Replace with valid values of your account.
 my $ad_group_id = "INSERT_AD_GROUP_ID_HERE";
@@ -48,7 +47,9 @@ sub add_click_to_download_ad {
   my $click_to_download_ad = Google::Ads::AdWords::v201409::TemplateAd->new({
     name => "Ad for demo game",
     templateId => 353,
-    url => "http://play.google.com/store/apps/details?id=com.example.demogame",
+    finalUrls => [
+      "http://play.google.com/store/apps/details?id=com.example.demogame"
+    ],
     displayUrl => "play.google.com"
   });
 

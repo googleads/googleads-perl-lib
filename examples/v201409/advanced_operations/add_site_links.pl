@@ -42,34 +42,34 @@ use Google::Ads::AdWords::v201409::FunctionOperand;
 use Google::Ads::AdWords::v201409::RequestContextOperand;
 
 use Cwd qw(abs_path);
-use Data::Uniqid qw(uniqid);
 
 # See the Placeholder reference page for a list of all the placeholder types and
 # fields.
 # https://developers.google.com/adwords/api/docs/appendix/placeholders
 use constant PLACEHOLDER_SITELINKS => 1;
 use constant PLACEHOLDER_FIELD_SITELINK_LINK_TEXT => 1;
-use constant PLACEHOLDER_FIELD_SITELINK_URL => 2;
+use constant PLACEHOLDER_FIELD_SITELINK_FINAL_URL => 5;
 use constant PLACEHOLDER_FIELD_SITELINK_LINE_1_TEXT => 3;
 use constant PLACEHOLDER_FIELD_SITELINK_LINE_2_TEXT => 4;
 
 # Replace with valid values of your account.
 my $campaign_id = "INSERT_CAMPAIGN_ID_HERE";
+my $feed_name = "INSERT_FEED_NAME_HERE";
 
 # Example main subroutine.
 sub add_site_links {
-  my $client = shift;
+  my ($client, $campaign_id, $feed_name) = @_;
 
   my $site_links_data = {
     "siteLinksFeedId" => 0,
     "linkTextFeedAttributeId" => 0,
-    "linkUrlFeedAttributeId" => 0,
+    "linkFinalUrlFeedAttributeId" => 0,
     "line1FeedAttributeId" => 0,
     "line2FeedAttributeId" => 0,
     "feedItemIds" => []
   };
 
-  create_site_links_feed($client, $site_links_data);
+  create_site_links_feed($client, $site_links_data, $feed_name);
   create_site_links_feed_items($client, $site_links_data);
   create_site_links_feed_mapping($client, $site_links_data);
   create_site_links_campaign_feed($client, $site_links_data, $campaign_id);
@@ -78,15 +78,15 @@ sub add_site_links {
 }
 
 sub create_site_links_feed() {
-  my ($client, $site_links_data) = @_;
+  my ($client, $site_links_data, $feed_name) = @_;
 
   my $text_attribute = Google::Ads::AdWords::v201409::FeedAttribute->new({
     type => "STRING",
     name => "Link Text"
   });
-  my $url_attribute = Google::Ads::AdWords::v201409::FeedAttribute->new({
-    type => "URL",
-    name => "Link URL"
+  my $final_url_attribute = Google::Ads::AdWords::v201409::FeedAttribute->new({
+    type => "URL_LIST",
+    name => "Link Final URLs"
   });
   my $line_1_attribute = Google::Ads::AdWords::v201409::FeedAttribute->new({
     type => "STRING",
@@ -97,9 +97,11 @@ sub create_site_links_feed() {
     name => "Line 2 Description"
   });
   my $feed = Google::Ads::AdWords::v201409::Feed->new({
-    name => "Feed For Site Links " . uniqid(),
-    attributes => [ $text_attribute, $url_attribute, $line_1_attribute,
-        $line_2_attribute ],
+    name => $feed_name,
+    attributes => [
+      $text_attribute, $final_url_attribute, $line_1_attribute,
+      $line_2_attribute
+    ],
     origin => "USER"
   });
 
@@ -121,14 +123,14 @@ sub create_site_links_feed() {
 
   $site_links_data->{"linkTextFeedAttributeId"} = $saved_attributes->[0]->
     get_id();
-  $site_links_data->{"linkUrlFeedAttributeId"} = $saved_attributes->[1]->
+  $site_links_data->{"linkFinalUrlFeedAttributeId"} = $saved_attributes->[1]->
     get_id();
   $site_links_data->{"line1FeedAttributeId"} = $saved_attributes->[2]->
     get_id();
   $site_links_data->{"line2FeedAttributeId"} = $saved_attributes->[3]->
     get_id();
   printf("Feed with name '%s' and ID %d with linkTextAttributeId %d" .
-        " and linkUrlAttributeId %d and line1AttributeId %d" .
+        " and linkFinalUrlAttributeId %d and line1AttributeId %d" .
         " and line2AttributeId %d was created.\n",
         $saved_feed->get_name(),
         $saved_feed->get_id(),
@@ -179,17 +181,17 @@ sub create_site_links_feed_items() {
 }
 
 sub create_feed_item_add_operation() {
-  my ($site_links_data, $text, $url, $line_1, $line_2) = @_;
+  my ($site_links_data, $text, $final_url, $line_1, $line_2) = @_;
 
   my $text_attribute_value =
     Google::Ads::AdWords::v201409::FeedItemAttributeValue->new({
       feedAttributeId => $site_links_data->{"linkTextFeedAttributeId"},
       stringValue => $text
   });
-  my $url_attribute_value =
+  my $final_url_attribute_value =
     Google::Ads::AdWords::v201409::FeedItemAttributeValue->new({
-      feedAttributeId => $site_links_data->{"linkUrlFeedAttributeId"},
-      stringValue => $url
+      feedAttributeId => $site_links_data->{"linkFinalUrlFeedAttributeId"},
+      stringValues => [$final_url]
   });
   my $line_1_attribute_value =
     Google::Ads::AdWords::v201409::FeedItemAttributeValue->new({
@@ -204,8 +206,10 @@ sub create_feed_item_add_operation() {
 
   my $feed_item = Google::Ads::AdWords::v201409::FeedItem->new({
     feedId => $site_links_data->{"siteLinksFeedId"},
-    attributeValues => [ $text_attribute_value, $url_attribute_value,
-        $line_1_attribute_value, $line_2_attribute_value ]
+    attributeValues => [
+        $text_attribute_value, $final_url_attribute_value,
+        $line_1_attribute_value, $line_2_attribute_value
+    ]
   });
 
   my $operation = Google::Ads::AdWords::v201409::FeedItemOperation->new({
@@ -225,10 +229,10 @@ sub create_site_links_feed_mapping() {
       feedAttributeId => $site_links_data->{"linkTextFeedAttributeId"},
       fieldId => PLACEHOLDER_FIELD_SITELINK_LINK_TEXT
   });
-  my $url_field_mapping =
+  my $final_url_field_mapping =
     Google::Ads::AdWords::v201409::AttributeFieldMapping->new({
-      feedAttributeId => $site_links_data->{"linkUrlFeedAttributeId"},
-      fieldId => PLACEHOLDER_FIELD_SITELINK_URL
+      feedAttributeId => $site_links_data->{"linkFinalUrlFeedAttributeId"},
+      fieldId => PLACEHOLDER_FIELD_SITELINK_FINAL_URL
   });
   my $line_1_field_mapping =
     Google::Ads::AdWords::v201409::AttributeFieldMapping->new({
@@ -245,8 +249,10 @@ sub create_site_links_feed_mapping() {
   my $feed_mapping = Google::Ads::AdWords::v201409::FeedMapping->new({
     placeholderType => PLACEHOLDER_SITELINKS,
     feedId => $site_links_data->{"siteLinksFeedId"},
-    attributeFieldMappings => [ $text_field_mapping, $url_field_mapping,
-        $line_1_field_mapping, $line_2_field_mapping ]
+    attributeFieldMappings => [
+      $text_field_mapping, $final_url_field_mapping, $line_1_field_mapping,
+      $line_2_field_mapping
+    ]
   });
 
   my $operation = Google::Ads::AdWords::v201409::FeedMappingOperation->new({
@@ -363,4 +369,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201409"});
 $client->set_die_on_faults(1);
 
 # Call the example
-add_site_links($client, $campaign_id);
+add_site_links($client, $campaign_id, $feed_name);

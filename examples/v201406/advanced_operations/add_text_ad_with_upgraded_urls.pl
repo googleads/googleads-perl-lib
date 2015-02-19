@@ -61,7 +61,7 @@ sub add_text_ad_with_upgraded_urls {
   # specify one at customer, campaign, ad group, ad, criterion or
   # feed item levels.
   $text_ad->set_trackingUrlTemplate(
-      "http://tracker.example.com/?cid={_season}&promocode={_promocode}&" .
+      "http://tracker.example.com/?season={_season}&promocode={_promocode}&" .
       "u={lpurl}"
   );
 

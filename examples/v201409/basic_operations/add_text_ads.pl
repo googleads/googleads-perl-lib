@@ -54,7 +54,7 @@ sub add_text_ads {
       description1 => "Visit the Red Planet in style.",
       description2 => "Buy your tickets now!",
       displayUrl => "www.example.com/cruises",
-      url => "http://www.example.com"
+      finalUrls => ["http://www.example.com/" . $i]
     });
 
     # Create ad group ad for the text ad.

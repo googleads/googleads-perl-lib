@@ -32,9 +32,11 @@ use Google::Ads::AdWords::v201409::CpcBid;
 use Google::Ads::AdWords::v201409::Keyword;
 use Google::Ads::AdWords::v201409::Money;
 use Google::Ads::AdWords::v201409::Placement;
+use Google::Ads::AdWords::v201409::UrlList;
 
 use Cwd qw(abs_path);
 use Data::Uniqid qw(uniqid);
+use URI::Escape qw(uri_escape);
 
 # Replace with valid values of your account.
 my $ad_group_id = "INSERT_AD_GROUP_ID_HERE";
@@ -44,19 +46,19 @@ sub add_keywords {
   my $client = shift;
   my $ad_group_id = shift;
   # Create keywords.
-  my @keywords = ();
-
+  my @keywords = ("mars cruise", "space hotel");
 
   # Create operations.
-  my $num_keywords = 5;
   my @operations = ();
-  for(my $i = 0; $i < $num_keywords; $i++) {
+  foreach my $keyword_text (@keywords) {
     my $keyword = Google::Ads::AdWords::v201409::Keyword->new({
-      text => "mars cruise " . uniqid(),
+      text => $keyword_text,
       matchType => "BROAD"
     });
 
     # Create biddable ad group criterion.
+    my $final_url = 'http://www.example.com/mars/cruise/?kw=' .
+        uri_escape($keyword_text);
     my $keyword_biddable_ad_group_criterion =
         Google::Ads::AdWords::v201409::BiddableAdGroupCriterion->new({
           adGroupId => $ad_group_id,
@@ -74,8 +76,13 @@ sub add_keywords {
               }),
           # Additional properties (non-required).
           userStatus => "PAUSED",
-          destinationUrl => "http://www.example.com/mars"
+          finalUrls => [
+              Google::Ads::AdWords::v201409::UrlList->new({
+                urls => [$final_url]
+              })
+          ]
         });
+
     # Create operation.
     my $keyword_ad_group_operation =
       Google::Ads::AdWords::v201409::AdGroupCriterionOperation->new({

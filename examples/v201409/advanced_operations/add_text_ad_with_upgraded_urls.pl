@@ -14,9 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# This example adds a text ad that uses upgraded URLs. This example
-# will only work if your account is a test account or is whitelisted for
-# this feature.
+# This example adds a text ad that uses advanced features of upgraded URLs.
 #
 # Tags: AdGroupAdService.mutate
 # Author: Josh Radcliff <api.jradcliff@gmail.com>
@@ -61,7 +59,7 @@ sub add_text_ad_with_upgraded_urls {
   # specify one at customer, campaign, ad group, ad, criterion or
   # feed item levels.
   $text_ad->set_trackingUrlTemplate(
-      "http://tracker.example.com/?cid={_season}&promocode={_promocode}&" .
+      "http://tracker.example.com/?season={_season}&promocode={_promocode}&" .
       "u={lpurl}"
   );
 

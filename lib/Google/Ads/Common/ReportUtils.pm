@@ -18,7 +18,9 @@ use strict;
 use utf8;
 use version;
 
+use Google::Ads::AdWords::Logging;
 use Google::Ads::AdWords::Reports::ReportingConfiguration;
+use Google::Ads::AdWords::RequestStats;
 
 # The following needs to be on one line because CPAN uses a particularly hacky
 # eval() to determine module versions.
@@ -29,14 +31,17 @@ use Google::Ads::Common::ReportDownloadError;
 use File::stat;
 use HTTP::Request;
 use HTTP::Status qw(:constants);
+use Log::Log4perl qw(:levels);
 use LWP::UserAgent;
 use MIME::Base64;
 use POSIX;
+use Time::HiRes qw(gettimeofday tv_interval);
 use URI::Escape;
 use XML::Simple;
 
 use constant ADHOC_REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload/%s";
 use constant LWP_DEFAULT_TIMEOUT => 300; # 5 minutes.
+use constant SCRUBBED_HEADERS => qw(DeveloperToken Authorization);
 
 sub download_report {
   my ($report_definition, $client, $file_path, $server,
@@ -132,6 +137,7 @@ sub download_report {
     $format = $report_definition->get_downloadFormat() . "";
   }
 
+  my $start_time = [gettimeofday()];
   my $response;
   if ($file_path) {
     ($file_path) = glob($file_path);
@@ -153,23 +159,38 @@ sub download_report {
   } else {
     $response = $lwp->request($request);
   }
+  my $is_successful = 0;
+  my $error_message;
+  my $return_val;
   if ($response->code == HTTP_OK) {
+    $is_successful = 1;
     if ($file_path) {
       open(FILE, "<", $file_path) or return undef;
       my $result = <FILE>;
       close(FILE);
-      return stat($file_path)->size;
+      $return_val = stat($file_path)->size;
     } else {
-      return $response->decoded_content();
+      $return_val = $response->decoded_content();
     }
   } elsif ($response->code == HTTP_BAD_REQUEST) {
     my $result = $response->decoded_content();
-    __extract_xml_error($result);
+    $return_val = __extract_xml_error($result);
+    $error_message = $return_val;
   } else {
-    warn("Report download failed with code '" . $response->code .
-         "' and message '" . $response->message . ".");
-    return undef;
+    $return_val = undef;
   }
+
+  # Log request and response information before returning the result.
+  __log_report_request_response(
+    $client,
+    $request,
+    $response,
+    $is_successful,
+    $error_message,
+    tv_interval($start_time)
+  );
+
+  return $return_val;
 }
 
 sub __extract_xml_error {
@@ -182,6 +203,76 @@ sub __extract_xml_error {
     trigger => $ref->{ApiError}->{trigger}->{content} ?
         $ref->{ApiError}->{trigger}->{content} : ""
   });
+}
+
+sub __log_report_request_response {
+  my ($client, $request, $response, $is_successful, $error_message,
+    $elapsed_seconds) = @_;
+
+  # Always log the request stats to the AdWordsAPI logger.
+  my $auth_handler = $client->_get_auth_handler();
+
+  my $request_stats = Google::Ads::AdWords::RequestStats->new({
+    authentication =>
+      !$auth_handler ? "" :
+        $auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler") ?
+          "OAuth" : "Unknown",
+    client_id => $client->get_client_id(),
+    service_name => $request->uri,
+    method_name => $request->method,
+    is_fault => !$is_successful,
+    response_time => int(($elapsed_seconds * 1000) + 0.5),
+  });
+  $client->_push_new_request_stats($request_stats);
+  Google::Ads::AdWords::Logging::get_awapi_logger->info($request_stats);
+
+  # Log the request.
+  if ($request) {
+    # Log the full request:
+    #  To WARN if the request failed OR
+    #  To INFO if the request succeeded
+    my $request_string = $request->as_string("\n");
+    # Remove sensitive information from the log message.
+    foreach my $header (SCRUBBED_HEADERS) {
+      $request_string =~
+        s!(\n$header):(.*)\n!$1: REDACTED\n!;
+    }
+    my $log_message = sprintf("Outgoing %s report request:\n%s",
+      $is_successful ? 'successful' : 'failed',
+      $request_string
+    );
+    Google::Ads::AdWords::Logging::get_soap_logger->log(
+      $is_successful ? $INFO : $WARN,
+      $log_message
+    );
+  }
+
+  # Log the response.
+  if ($response) {
+    # Log:
+    #  To WARN if the request failed OR
+    #  To INFO (status and message only)
+    my $log_message = sprintf(
+      "Incoming %s report response with status code %s and message '%s'",
+      $is_successful ? 'successful' : 'failed',
+      $response->code,
+      $response->message
+    );
+
+    if ($is_successful) {
+      Google::Ads::AdWords::Logging::get_soap_logger->info($log_message);
+    } else {
+      if (ref $error_message eq "Google::Ads::Common::ReportDownloadError") {
+        $log_message = $log_message . sprintf(
+          ": An error has occurred of type '%s', triggered by '%s'",
+          $error_message->get_type(), $error_message->get_trigger()
+        );
+      } elsif ($error_message) {
+        $log_message = $log_message . ': ' . $error_message;
+      }
+      Google::Ads::AdWords::Logging::get_soap_logger->logwarn($log_message);
+    }
+  }
 }
 
 return 1;

@@ -51,7 +51,7 @@ sub validate_text_ad {
     description1 => "Visit the Red Planet in style.",
     description2 => "Low-gravity fun for all astronauts in orbit.",
     displayUrl => "www.example.com/cruises",
-    url => "http://www.example.com"
+    finalUrls => ["http://www.example.com"]
   });
   my $text_ad_group_ad = Google::Ads::AdWords::v201409::AdGroupAd->new({
     adGroupId => $ad_group_id,

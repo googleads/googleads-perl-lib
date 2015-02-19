@@ -23,8 +23,9 @@ use strict;
 use lib qw(t/util);
 use lib qw(lib);
 
+use Data::Uniqid qw(uniqid);
 use File::Temp qw(tempfile);
-use Test::More (tests => 49);
+use Test::More (tests => 51);
 use TestClientUtils qw(get_test_client get_test_mcc_client);
 use TestAPIUtils;
 
@@ -106,6 +107,10 @@ ok(add_ad_group_bid_modifier($client, $ad_group_id),
 require qw(examples/v201409/advanced_operations/get_ad_group_bid_modifier.pl);
 ok(get_ad_group_bid_modifier($client),
    "Test of get_ad_group_bid_modifier example");
+require qw(examples/v201409/advanced_operations/add_site_links.pl);
+my $feed_name = 'Feed for sitelinks #' . uniqid();
+ok(add_site_links($client, $campaign_id, $feed_name),
+   "Test of add_site_links example");
 
 # Campaign Management examples.
 require qw(examples/v201409/campaign_management/add_keywords_in_bulk.pl);
@@ -192,6 +197,11 @@ ok(get_targetable_languages_and_carriers($client, $campaign_id),
    "Test of get_targetable_languages_and_carriers example");
 require qw(examples/v201409/targeting/lookup_location.pl);
 ok(lookup_location($client), "Test of lookup_location example");
+
+# Migration examples.
+require qw(examples/v201409/migration/upgrade_ad_url.pl);
+ok(upgrade_ad_url($client, $ad_group_id, $text_ad_id),
+   "Test of upgrade_ad_url example");
 
 # Basic Operations delete and remove examples.
 require qw(examples/v201409/basic_operations/remove_ad.pl);
