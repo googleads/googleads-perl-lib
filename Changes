@@ -1,3 +1,10 @@
+3.3.0
+- Added examples and support for v201502.
+- Renamed add_site_links.pl to add_site_links_using_feeds.pl, and added new
+  add_site_links.pl and migrate_to_extension_settings.pl examples that use
+  the new extension settings services.
+- Moved all extensions-related examples to the extensions folder.
+
 3.2.1
 - Fix github issue #5:
   https://github.com/googleads/googleads-perl-lib/issues/5

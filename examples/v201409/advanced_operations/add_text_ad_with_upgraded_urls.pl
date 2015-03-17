@@ -52,7 +52,6 @@ sub add_text_ad_with_upgraded_urls {
       description1 => "Visit the Red Planet in style.",
       description2 => "Buy your tickets now!",
       displayUrl => "www.example.com/cruises",
-      url => "http://www.example.com"
   });
 
   # Specify a tracking url for 3rd party tracking provider. You may

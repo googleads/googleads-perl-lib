@@ -48,7 +48,9 @@ sub download_criteria_report {
 
   # Create selector.
   my $selector = Google::Ads::AdWords::Reports::Selector->new({
-    fields => ["CampaignId", "AdGroupId", "Id", "Impressions", "Clicks", "Cost"],
+    fields => [
+      "CampaignId", "AdGroupId", "Id", "Impressions", "Clicks", "Cost"
+    ],
     predicates => [$predicate]
   });
 

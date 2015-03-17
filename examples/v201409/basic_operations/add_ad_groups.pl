@@ -64,7 +64,7 @@ sub add_ad_groups {
       # Additional properties (non-required).
       status => "ENABLED",
       settings => [
-        # Targetting restriction settings - these setting only affect serving
+        # Targeting restriction settings - these settings only affect serving
         # for the Display Network.
         Google::Ads::AdWords::v201409::TargetingSetting->new({
           details => [

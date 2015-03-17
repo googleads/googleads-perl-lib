@@ -53,8 +53,7 @@ sub add_text_ad_with_upgraded_urls {
       headline => "Cruise to Mars #" . substr(uniqid(), 0, 8),
       description1 => "Visit the Red Planet in style.",
       description2 => "Buy your tickets now!",
-      displayUrl => "www.example.com/cruises",
-      url => "http://www.example.com"
+      displayUrl => "www.example.com/cruises"
   });
 
   # Specify a tracking url for 3rd party tracking provider. You may
