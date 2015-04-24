@@ -5,4 +5,5 @@ developerToken=dev-token
 alternateUrl=https://adwords.google.com
 oAuth2RefreshToken=refresh-token
 reporting.skipHeader=1
+reporting.skipColumnHeader=1
 reporting.skipSummary=1

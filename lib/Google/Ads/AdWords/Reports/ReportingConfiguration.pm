@@ -25,13 +25,16 @@ use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Cons
 use Class::Std::Fast;
 
 my %skip_header_of :ATTR(:name<skip_header> :default<>);
+my %skip_column_header_of :ATTR(:name<skip_column_header> :default<>);
 my %skip_summary_of :ATTR(:name<skip_summary> :default<>);
 
 sub as_string : STRINGIFY {
     my ( $self, $ident ) = @_;
     return sprintf("ReportingConfiguration {\n  skip_header: %s\n" .
+        "  skip_column_header: %s\n" .
         "  skip_summary: %s\n}",
         $self->get_skip_header() || "<undef>",
+        $self->get_skip_column_header() || "<undef>",
         $self->get_skip_summary() || "<undef>");
 }
 
@@ -60,6 +63,10 @@ methods:
 Set this to true to request that report output excludes the report header
 row containing the report name and date range.
 
+=item * skip_column_header
+
+Set this to true to request that the report output excludes the row
+containing column names.
 
 =item * skip_summary
 
@@ -77,6 +84,7 @@ Constructor. The following data structure may be passed to new():
 
  { # Google::Ads::AdWords::Reports::ReportingConfiguration
    skip_header =>  $some_value, # boolean
+   skip_column_header => $some_value, #boolean
    skip_summary =>  $some_value, # boolean
  },
 

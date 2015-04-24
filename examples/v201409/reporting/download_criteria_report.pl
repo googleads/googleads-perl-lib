@@ -70,9 +70,10 @@ sub download_criteria_report {
   });
 
   # Optional: Modify the reporting configuration of the client to suppress
-  # header or summary rows in the report output. You can also configure this via
-  # your adwords.properties configuration file.
+  # header, column, or summary rows in the report output.
+  # You can also configure this via your adwords.properties configuration file.
   $client->get_reporting_config()->set_skip_header(0);
+  $client->get_reporting_config()->set_skip_column_header(0);
   $client->get_reporting_config()->set_skip_summary(0);
 
   # Download report.

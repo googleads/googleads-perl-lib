@@ -23,7 +23,7 @@ use strict;
 use lib qw(lib t t/util);
 
 use Test::MockObject::Extends;
-use Test::More (tests => 13);
+use Test::More (tests => 16);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
 
 use_ok("Google::Ads::AdWords::Reports::ReportingConfiguration");
@@ -33,6 +33,8 @@ ok($client->get_reporting_config(), "reporting configuration present");
 
 is($client->get_reporting_config()->get_skip_header(), undef,
     "skip_header should be undef");
+is($client->get_reporting_config()->get_skip_column_header(), undef,
+    "skip_column_header should be undef");
 is($client->get_reporting_config()->get_skip_summary(), undef,
     "skip_summary should be undef");
 
@@ -40,6 +42,7 @@ is($client->get_reporting_config()->get_skip_summary(), undef,
 my $reporting_config =
     Google::Ads::AdWords::Reports::ReportingConfiguration->new({
         skip_header => 1,
+        skip_column_header => 0,
         skip_summary => 0
     });
 
@@ -47,6 +50,8 @@ $client->set_reporting_config($reporting_config);
 
 is($client->get_reporting_config()->get_skip_header(), 1,
     "skip_header should be set by constructor");
+is($client->get_reporting_config()->get_skip_column_header(), 0,
+    "skip_column_header should be set by constructor");
 is($client->get_reporting_config()->get_skip_summary(), 0,
     "skip_summary should be set by constructor");
 
@@ -54,6 +59,10 @@ is($client->get_reporting_config()->get_skip_summary(), 0,
 $client->get_reporting_config->set_skip_header(0);
 is($client->get_reporting_config()->get_skip_header(), 0,
     "skip_header should be set to false");
+
+$client->get_reporting_config->set_skip_column_header(1);
+is($client->get_reporting_config()->get_skip_column_header(), 1,
+    "skip_column_header should be set to true");
 
 $client->get_reporting_config->set_skip_summary(1);
 is($client->get_reporting_config()->get_skip_summary(), 1,

@@ -1,3 +1,10 @@
+3.4.0
+- Removed support for v201406.
+- Added support in the reporting utilities to skip column headers.
+- Rewrote the add_ad_customizers.pl example to use extension setting services.
+- Modfied the ad_site_links_using_feeds.pl example to use a function string.
+- Updated the migrate_to_extension_settings.pl example to support matching functions.
+
 3.3.0
 - Added examples and support for v201502.
 - Renamed add_site_links.pl to add_site_links_using_feeds.pl, and added new

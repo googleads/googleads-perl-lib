@@ -81,14 +81,6 @@ sub create_campaign {
     budget => $budget,
   });
 
-  if ($client->get_version() le "v201406") {
-    $campaign->set_settings([
-      get_api_package($client, "KeywordMatchSetting", 1)->new({
-        optIn => 1
-      })
-    ]);
-  }
-
   $campaign->set_advertisingChannelType("SEARCH");
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({

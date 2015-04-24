@@ -30,7 +30,6 @@ use Google::Ads::AdWords::Logging;
 use Google::Ads::AdWords::v201502::AttributeFieldMapping;
 use Google::Ads::AdWords::v201502::CampaignFeed;
 use Google::Ads::AdWords::v201502::CampaignFeedOperation;
-use Google::Ads::AdWords::v201502::ConstantOperand;
 use Google::Ads::AdWords::v201502::Feed;
 use Google::Ads::AdWords::v201502::FeedAttribute;
 use Google::Ads::AdWords::v201502::FeedItem;
@@ -40,8 +39,6 @@ use Google::Ads::AdWords::v201502::FeedMapping;
 use Google::Ads::AdWords::v201502::FeedMappingOperation;
 use Google::Ads::AdWords::v201502::FeedOperation;
 use Google::Ads::AdWords::v201502::Function;
-use Google::Ads::AdWords::v201502::FunctionOperand;
-use Google::Ads::AdWords::v201502::RequestContextOperand;
 
 use Cwd qw(abs_path);
 
@@ -278,64 +275,26 @@ sub create_site_links_feed_mapping() {
 sub create_site_links_campaign_feed() {
   my ($client, $site_links_data, $campaign_id) = @_;
 
-  my $request_context_operand =
-    Google::Ads::AdWords::v201502::RequestContextOperand->new({
-      contextType => "FEED_ITEM_ID"
-  });
+  # Construct a matching function that assoicates the sitelink feed items
+  # to the campaign, and sets the device preference to mobile.
+  # See the matching function guide at
+  # https://developers.google.com/adwords/api/docs/guides/feed-matching-functions
+  # for more details.
+  my $matching_function_string =
+    sprintf(
+      "AND( IN(FEED_ITEM_ID, {%s}), EQUALS(CONTEXT.DEVICE, 'Mobile') )",
+      (join ' ,', @{$site_links_data->{"feedItemIds"}})
+    );
 
-  my @feed_item_id_operands = ();
-  foreach my $feed_item_id (@{$site_links_data->{"feedItemIds"}}) {
-    push @feed_item_id_operands,
-      Google::Ads::AdWords::v201502::ConstantOperand->new({
-        longValue => $feed_item_id,
-        type => "LONG"
-      });
-  }
-
-  my $feed_item_function = Google::Ads::AdWords::v201502::Function->new({
-    lhsOperand => [ $request_context_operand ],
-    operator => "IN",
-    rhsOperand => \@feed_item_id_operands
-  });
-
-  # Optional: to target to a platform, define a function and 'AND' it with
-  # the feed item ID link:
-  my $platform_request_context_operand =
-    Google::Ads::AdWords::v201502::RequestContextOperand->new({
-      contextType => "DEVICE_PLATFORM"
-  });
-
-  my $platform_operand = Google::Ads::AdWords::v201502::ConstantOperand->new({
-    stringValue => "Mobile",
-    type => "STRING"
-  });
-
-  my $platform_function = Google::Ads::AdWords::v201502::Function->new({
-    lhsOperand => [ $platform_request_context_operand ],
-    operator => "EQUALS",
-    rhsOperand => [ $platform_operand ]
-  });
-
-  # Combine the two functions using an AND operation.
-  my $feed_item_function_operand =
-    Google::Ads::AdWords::v201502::FunctionOperand->new({
-      value => $feed_item_function
-  });
-
-  my $platform_function_operand =
-    Google::Ads::AdWords::v201502::FunctionOperand->new({
-      value => $platform_function
-  });
-
-  my $combined_function = Google::Ads::AdWords::v201502::Function->new({
-    lhsOperand => [ $feed_item_function_operand, $platform_function_operand ],
-    operator => "AND"
-  });
+  my $matching_function =
+    Google::Ads::AdWords::v201502::Function->new({
+      functionString => $matching_function_string
+    });
 
   my $campaign_feed = Google::Ads::AdWords::v201502::CampaignFeed->new({
     feedId => $site_links_data->{"siteLinksFeedId"},
     campaignId => $campaign_id,
-    matchingFunction => $combined_function,
+    matchingFunction => $matching_function,
     # Specifying placeholder types on the CampaignFeed allows the same feed
     # to be used for different placeholders in different Campaigns.
     placeholderTypes => [ PLACEHOLDER_SITELINKS ]

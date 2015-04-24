@@ -35,6 +35,7 @@ use Google::Ads::AdWords::v201502::CampaignExtensionSetting;
 use Google::Ads::AdWords::v201502::CampaignExtensionSettingOperation;
 use Google::Ads::AdWords::v201502::CampaignFeedOperation;
 use Google::Ads::AdWords::v201502::ExtensionSetting;
+use Google::Ads::AdWords::v201502::ExtensionSetting::Platform;
 use Google::Ads::AdWords::v201502::FeedItem;
 use Google::Ads::AdWords::v201502::FeedItemOperation;
 use Google::Ads::AdWords::v201502::SitelinkFeedItem;
@@ -78,6 +79,8 @@ sub migrate_to_extension_settings {
       # Retrieve the sitelinks that have been associated with this campaign.
       my $feed_item_ids = get_feed_item_ids_for_campaign($client,
                                                          $campaign_feed);
+      my $platform_restriction =
+        get_platform_restrictions_for_campaign($campaign_feed);
 
       if (@{$feed_item_ids}) {
         # Delete the campaign feed that associates the sitelinks from the feed
@@ -86,7 +89,7 @@ sub migrate_to_extension_settings {
 
         # Create extension settings instead of sitelinks.
         create_extension_setting($client, $feed_items, $campaign_feed,
-                                 $feed_item_ids);
+                                 $feed_item_ids, $platform_restriction);
 
         # Mark the sitelinks from the feed for deletion.
         push @all_feed_items_to_delete, @{$feed_item_ids};
@@ -276,6 +279,34 @@ sub get_campaign_feeds() {
   return \@campaign_feeds;
 }
 
+# Returns platform restrictions for site links in a campaign.
+sub get_platform_restrictions_for_campaign() {
+  my ($campaign_feed) = @_;
+
+  # If the campaign feed has multiple arguments joined with AND in the matching
+  # function, then iterate through each of the arguments looking for
+  # something similar to EQUALS(CONTEXT.DEVICE, 'Mobile').
+  my $matching_function = $campaign_feed->get_matchingFunction();
+  if ($matching_function->get_operator() eq 'AND') {
+    foreach my $argument (@{$matching_function->get_lhsOperand()}) {
+      if ($argument->isa("Google::Ads::AdWords::v201502::FunctionOperand")
+          && $argument->get_value()->get_operator() eq 'EQUALS') {
+        my $lhs_operand = $argument->get_value()->get_lhsOperand()->[0];
+        if ($lhs_operand->isa(
+            "Google::Ads::AdWords::v201502::RequestContextOperand")
+            && $lhs_operand->get_contextType() eq 'DEVICE_PLATFORM') {
+            my $platformRestriction = $argument->get_value()->
+              get_rhsOperand()->[0]->get_stringValue();
+            return Google::Ads::AdWords::v201502::ExtensionSetting::Platform->
+              new({ value => uc $platformRestriction });
+        }
+      }
+    }
+  }
+  return Google::Ads::AdWords::v201502::ExtensionSetting::Platform->
+    new({ value => 'NONE' });
+}
+
 # Returns the list of feed item IDs that are used by a campaign through a given
 # campaign feed.
 sub get_feed_item_ids_for_campaign() {
@@ -284,30 +315,43 @@ sub get_feed_item_ids_for_campaign() {
   my @feed_item_ids = ();
 
   my $matching_function = $campaign_feed->get_matchingFunction();
-  my $lhs_operand = $matching_function->get_lhsOperand();
+  my $operator = $matching_function->get_operator();
 
-  my $lhs_operand_size = @{$lhs_operand};
-  if ($lhs_operand_size == 1 && $lhs_operand->[0]->isa(
-        "Google::Ads::AdWords::v201502::RequestContextOperand")) {
-    my $request_context_operand = $lhs_operand->[0];
-    if ($request_context_operand->get_contextType() eq 'FEED_ITEM_ID' &&
-        $matching_function->get_operator() eq 'IN') {
-      foreach my $argument (@{$matching_function->get_rhsOperand()}) {
-        push @feed_item_ids, $argument->get_longValue();
+  if ($operator eq 'IN') {
+    # Check if matchingFunction is of the form IN(FEED_ITEM_ID,{xxx,xxx}).
+    push @feed_item_ids,
+      @{get_feed_items_from_argument($campaign_feed->get_matchingFunction())};
+  } elsif ($operator eq 'AND') {
+    foreach my $argument (@{$matching_function->get_lhsOperand()}) {
+      # Check if matchingFunction is of the form IN(FEED_ITEM_ID,{xxx,xxx}).
+      if ($argument->isa("Google::Ads::AdWords::v201502::FunctionOperand")
+          && $argument->get_value()->get_operator() eq 'IN') {
+        push @feed_item_ids,
+          @{get_feed_items_from_argument($argument->get_value())};
       }
     }
   }
+  return \@feed_item_ids;
+}
 
-  if (@feed_item_ids) {
-    printf "Feed item IDs found for campaign ID %d and feed ID %d: " .
-           "@feed_item_ids.\n",
-           $campaign_feed->get_campaignId(),
-           $campaign_feed->get_feedId();
-  } else {
-    printf "No feed item IDs found for campaign ID %d and feed ID %d.\n",
-           $campaign_feed->get_campaignId(),
-           $campaign_feed->get_feedId();
+# Returns an array of feed item ids for a specified Function.
+sub get_feed_items_from_argument() {
+  my ($function) = @_;
+
+  my @feed_item_ids = ();
+
+  my $lhs_operand = $function->get_lhsOperand();
+  my $lhs_operand_size = @{$lhs_operand};
+  if ($lhs_operand_size == 1
+      && $lhs_operand->[0]->isa(
+        "Google::Ads::AdWords::v201502::RequestContextOperand")
+      && $lhs_operand->get_contextType eq 'FEED_ITEM_ID') {
+
+    foreach my $argument (@{$function->get_rhsOperand()}) {
+      push @feed_item_ids, $argument->get_longValue();
+    }
   }
+
   return \@feed_item_ids;
 }
 
@@ -331,7 +375,8 @@ sub delete_campaign_feed() {
 
 # Creates the extension setting for a list of feed items.
 sub create_extension_setting() {
-  my ($client, $feed_items, $campaign_feed, $feed_item_ids) = @_;
+  my ($client, $feed_items, $campaign_feed, $feed_item_ids,
+    $platform_restriction) = @_;
 
   my $campaign_extension_setting =
     Google::Ads::AdWords::v201502::CampaignExtensionSetting->new({
@@ -382,7 +427,8 @@ sub create_extension_setting() {
 
   $campaign_extension_setting->set_extensionSetting(
     Google::Ads::AdWords::v201502::ExtensionSetting->new({
-      extensions => \@extension_feed_items
+      extensions => \@extension_feed_items,
+      platformRestrictions => $platform_restriction
     })
   );
 
@@ -413,6 +459,7 @@ sub delete_old_feed_items() {
   my @operations = ();
   foreach my $feed_item_id (@{$feed_item_ids}) {
     push @operations, Google::Ads::AdWords::v201502::FeedItemOperation->new({
+      operator => 'REMOVE',
       operand => Google::Ads::AdWords::v201502::FeedItem->new({
         feedId => $feed->get_id(),
         feedItemId => $feed_item_id

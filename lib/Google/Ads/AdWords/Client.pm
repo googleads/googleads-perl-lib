@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("3.3.0");
+our $VERSION = qv("3.4.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -93,6 +93,7 @@ sub START {
     $reporting_config_of{$ident} ||=
         Google::Ads::AdWords::Reports::ReportingConfiguration->new({
             skip_header => $properties{"reporting.skipHeader"},
+            skip_column_header => $properties{"reporting.skipColumnHeader"},
             skip_summary => $properties{"reporting.skipSummary"}
         });
 

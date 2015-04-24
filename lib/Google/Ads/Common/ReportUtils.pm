@@ -103,10 +103,16 @@ sub download_report {
   # Set reporting configuration headers.
   my $reporting_config = $client->get_reporting_config();
   if ($reporting_config and (defined $reporting_config->get_skip_header() or
+        defined $reporting_config->get_skip_column_header() or
         defined $reporting_config->get_skip_summary())) {
     if (defined $reporting_config->get_skip_header()) {
         push @headers, "skipReportHeader" =>
             $reporting_config->get_skip_header() ?
+                "true" : "false";
+    }
+    if (defined $reporting_config->get_skip_column_header()) {
+        push @headers, "skipColumnHeader" =>
+            $reporting_config->get_skip_column_header() ?
                 "true" : "false";
     }
     if (defined $reporting_config->get_skip_summary()) {
