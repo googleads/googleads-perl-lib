@@ -27,18 +27,18 @@ use File::Basename;
 use File::Spec;
 use POSIX;
 
-@ISA = qw(Exporter);
+@ISA       = qw(Exporter);
 @EXPORT_OK = qw(get_api_package create_campaign delete_campaign create_ad_group
-                delete_ad_group create_text_ad delete_text_ad create_keyword
-                delete_keyword get_test_image
-                get_location_for_address create_experiment delete_experiment);
+  delete_ad_group create_text_ad delete_text_ad create_keyword
+  delete_keyword get_test_image
+  get_location_for_address create_experiment delete_experiment);
 
 sub get_api_package {
   my $client = shift;
-  my $name = shift;
+  my $name   = shift;
   my $import = shift;
 
-  my $api_version = $client->get_version();
+  my $api_version       = $client->get_version();
   my $full_package_name = "Google::Ads::AdWords::${api_version}::${name}";
   if ($import) {
     eval("use $full_package_name");
@@ -48,290 +48,263 @@ sub get_api_package {
 }
 
 sub create_campaign {
-  my $client = shift;
+  my $client           = shift;
   my $bidding_strategy = shift;
   if (!$bidding_strategy) {
     $bidding_strategy =
-        get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
-          biddingStrategyType => "MANUAL_CPC",
-          biddingScheme =>
-              get_api_package($client, "ManualCpcBiddingScheme", 1)->new({
-                enhancedCpcEnabled => 0
-              })
-        });
+      get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
+        biddingStrategyType => "MANUAL_CPC",
+        biddingScheme =>
+          get_api_package($client, "ManualCpcBiddingScheme", 1)
+          ->new({enhancedCpcEnabled => 0})});
   }
 
   my $budget = get_api_package($client, "Budget", 1)->new({
-    name => "Test " . uniqid(),
-    period => "DAILY",
-    amount => { microAmount => 50000000 },
-    deliveryMethod => "STANDARD"
+      name           => "Test " . uniqid(),
+      period         => "DAILY",
+      amount         => {microAmount => 50000000},
+      deliveryMethod => "STANDARD"
   });
   my $budget_operation = get_api_package($client, "BudgetOperation", 1)->new({
-    operand => $budget,
-    operator => "ADD"
+      operand  => $budget,
+      operator => "ADD"
   });
-  $budget = $client->BudgetService()->mutate({
-    operations => ($budget_operation)
-  })->get_value();
+  $budget =
+    $client->BudgetService()->mutate({operations => ($budget_operation)})
+    ->get_value();
 
   my $campaign = get_api_package($client, "Campaign", 1)->new({
-    name => "Campaign #" . uniqid(),
-    biddingStrategyConfiguration => $bidding_strategy,
-    budget => $budget,
+      name                         => "Campaign #" . uniqid(),
+      biddingStrategyConfiguration => $bidding_strategy,
+      budget                       => $budget,
   });
 
   $campaign->set_advertisingChannelType("SEARCH");
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({
-    operand => $campaign,
-    operator => "ADD"
+      operand  => $campaign,
+      operator => "ADD"
   });
 
-  $campaign = $client->CampaignService()->mutate({
-    operations => [$operation]
-  })->get_value();
+  $campaign =
+    $client->CampaignService()->mutate({operations => [$operation]})
+    ->get_value();
 
   return $campaign;
 }
 
 sub delete_campaign {
-  my $client = shift;
+  my $client      = shift;
   my $campaign_id = shift;
 
-  my $campaign = get_api_package($client, "Campaign", 1)->new({
-    id => $campaign_id,
-  });
+  my $campaign =
+    get_api_package($client, "Campaign", 1)->new({id => $campaign_id,});
 
   $campaign->set_status("REMOVED");
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({
-    operand => $campaign,
-    operator => "SET"
+      operand  => $campaign,
+      operator => "SET"
   });
 
-  $client->CampaignService()->mutate({
-    operations => [$operation]
-  });
+  $client->CampaignService()->mutate({operations => [$operation]});
 }
 
 sub create_ad_group {
-  my $client = shift;
+  my $client      = shift;
   my $campaign_id = shift;
-  my $name = shift || uniqid();
-  my $bids = shift;
+  my $name        = shift || uniqid();
+  my $bids        = shift;
   my $adgroup;
 
   $adgroup = get_api_package($client, "AdGroup", 1)->new({
-    name => $name,
-    campaignId => $campaign_id,
-    biddingStrategyConfiguration =>
+      name       => $name,
+      campaignId => $campaign_id,
+      biddingStrategyConfiguration =>
         get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
-          bids =>  $bids || [
+          bids => $bids
+            || [
             get_api_package($client, "CpcBid", 1)->new({
-              bid => get_api_package($client, "Money", 1)->new({
-                microAmount => "500000"
-              })
-            }),
-          ]
-        })
-  });
+                bid => get_api_package($client, "Money", 1)
+                  ->new({microAmount => "500000"})}
+            ),
+            ]})});
 
   my $operations = [
     get_api_package($client, "AdGroupOperation", 1)->new({
-      operand => $adgroup,
-      operator => "ADD"
-    })
-  ];
+        operand  => $adgroup,
+        operator => "ADD"
+      })];
 
-  my $return_ad_group = $client->AdGroupService()->mutate({
-    operations => $operations
-  })->get_value();
+  my $return_ad_group =
+    $client->AdGroupService()->mutate({operations => $operations})->get_value();
 
   return $return_ad_group;
 }
 
 sub delete_ad_group {
-  my $client = shift;
+  my $client     = shift;
   my $adgroup_id = shift;
 
-  my $adgroup = get_api_package($client, "AdGroup", 1)->new({
-    id => $adgroup_id,
-  });
+  my $adgroup =
+    get_api_package($client, "AdGroup", 1)->new({id => $adgroup_id,});
 
   $adgroup->set_status("REMOVED");
 
   my $operation = get_api_package($client, "AdGroupOperation", 1)->new({
-    operand => $adgroup,
-    operator => "SET"
+      operand  => $adgroup,
+      operator => "SET"
   });
 
-  return $client->AdGroupService()->mutate({
-    operations => [$operation]
-  });
+  return $client->AdGroupService()->mutate({operations => [$operation]});
 }
 
 sub create_keyword {
-  my $client = shift;
+  my $client      = shift;
   my $ad_group_id = shift;
 
   my $criterion = get_api_package($client, "Keyword", 1)->new({
-    text => "Luxury Cruise to Mars",
-    matchType => "BROAD"
+      text      => "Luxury Cruise to Mars",
+      matchType => "BROAD"
   });
   my $keyword_biddable_ad_group_criterion =
-      get_api_package($client, "BiddableAdGroupCriterion", 1)->new({
-        adGroupId => $ad_group_id,
-        criterion => $criterion
-      });
+    get_api_package($client, "BiddableAdGroupCriterion", 1)->new({
+      adGroupId => $ad_group_id,
+      criterion => $criterion
+    });
   my $result = $client->AdGroupCriterionService()->mutate({
-    operations => [get_api_package($client,
-                                   "AdGroupCriterionOperation", 1)->new({
-      operator => "ADD",
-      operand => $keyword_biddable_ad_group_criterion
-    })]
-  });
+      operations => [
+        get_api_package($client, "AdGroupCriterionOperation", 1)->new({
+            operator => "ADD",
+            operand  => $keyword_biddable_ad_group_criterion
+          })]});
 
   return $result->get_value()->[0]->get_criterion();
 }
 
 sub delete_keyword {
-  my $client = shift;
-  my $ad_group_id = shift;
+  my $client       = shift;
+  my $ad_group_id  = shift;
   my $criterion_id = shift;
 
-  my $ad_group_criterion =
-      get_api_package($client, "AdGroupCriterion", 1)->new({
-        adGroupId => $ad_group_id,
-        criterion => get_api_package($client, "Criterion", 1)->new({
-          id => $criterion_id
-        })
-      });
+  my $ad_group_criterion = get_api_package($client, "AdGroupCriterion", 1)->new(
+    {
+      adGroupId => $ad_group_id,
+      criterion =>
+        get_api_package($client, "Criterion", 1)->new({id => $criterion_id})});
 
-  my $operation =
-      get_api_package($client, "AdGroupCriterionOperation", 1)->new({
-        operand => $ad_group_criterion,
-        operator => "REMOVE"
-      });
+  my $operation = get_api_package($client, "AdGroupCriterionOperation", 1)->new(
+    {
+      operand  => $ad_group_criterion,
+      operator => "REMOVE"
+    });
 
-  return $client->AdGroupCriterionService()->mutate({
-    operations => [$operation]
-  });
+  return $client->AdGroupCriterionService()
+    ->mutate({operations => [$operation]});
 }
 
 sub create_text_ad {
-  my $client = shift;
+  my $client      = shift;
   my $ad_group_id = shift;
 
   my $text_ad = get_api_package($client, "TextAd", 1)->new({
-    headline => "Luxury Cruise to Mars",
-    description1 => "Visit the Red Planet in style.",
-    description2 => "Low-gravity fun for everyone!",
-    displayUrl => "www.example.com",
-    url => "http://www.example.com"
+      headline     => "Luxury Cruise to Mars",
+      description1 => "Visit the Red Planet in style.",
+      description2 => "Low-gravity fun for everyone!",
+      displayUrl   => "www.example.com",
+      url          => "http://www.example.com"
   });
   my $ad_group_ad = get_api_package($client, "AdGroupAd", 1)->new({
-    adGroupId => $ad_group_id,
-    ad => $text_ad
+      adGroupId => $ad_group_id,
+      ad        => $text_ad
   });
   my $result = $client->AdGroupAdService()->mutate({
-    operations => [get_api_package($client, "AdGroupAdOperation", 1)->new({
-      operator => "ADD",
-      operand => $ad_group_ad
-    })]
-  });
+      operations => [
+        get_api_package($client, "AdGroupAdOperation", 1)->new({
+            operator => "ADD",
+            operand  => $ad_group_ad
+          })]});
 
   return $result->get_value()->[0]->get_ad();
 }
 
 sub delete_text_ad {
-  my $client = shift;
+  my $client     = shift;
   my $text_ad_id = shift;
 
-  my $ad_group_ad = get_api_package($client, "AdGroupAd", 1)->new({
-    ad => get_api_package($client, "Ad", 1)->new({
-      id => $text_ad_id
-    })
-  });
+  my $ad_group_ad =
+    get_api_package($client, "AdGroupAd", 1)
+    ->new({ad => get_api_package($client, "Ad", 1)->new({id => $text_ad_id})});
 
   my $operation = get_api_package($client, "AdGroupAdOperation", 1)->new({
-    operand => $ad_group_ad,
-    operator => "REMOVE"
+      operand  => $ad_group_ad,
+      operator => "REMOVE"
   });
 
-  return $client->AdGroupAdService()->mutate({
-    operations => [$operation]
-  });
+  return $client->AdGroupAdService()->mutate({operations => [$operation]});
 }
 
 sub create_experiment {
-  my $client = shift;
+  my $client      = shift;
   my $campaign_id = shift;
 
   my $experiment = get_api_package($client, "Experiment", 1)->new({
-    campaignId => $campaign_id,
-    name => "Test experiment",
-    queryPercentage => 50
+      campaignId      => $campaign_id,
+      name            => "Test experiment",
+      queryPercentage => 50
   });
   my $result = $client->ExperimentService()->mutate({
-    operations => [get_api_package($client, "ExperimentOperation", 1)->new({
-      operator => "ADD",
-      operand => $experiment
-    })]
-  });
+      operations => [
+        get_api_package($client, "ExperimentOperation", 1)->new({
+            operator => "ADD",
+            operand  => $experiment
+          })]});
 
   return $result->get_value()->[0];
 }
 
 sub delete_experiment {
-  my $client = shift;
+  my $client        = shift;
   my $experiment_id = shift;
 
-  my $experiment = get_api_package($client, "Experiment", 1)->new({
-    id => $experiment_id
-  });
+  my $experiment =
+    get_api_package($client, "Experiment", 1)->new({id => $experiment_id});
 
   my $operation = get_api_package($client, "ExperimentOperation", 1)->new({
-    operand => $experiment,
-    operator => "REMOVE"
+      operand  => $experiment,
+      operator => "REMOVE"
   });
 
-  return $client->ExperimentService()->mutate({
-    operations => [$operation]
-  });
+  return $client->ExperimentService()->mutate({operations => [$operation]});
 }
 
 sub get_test_image {
   return Google::Ads::Common::MediaUtils::get_base64_data_from_url(
-      "http://goo.gl/HJM3L");
+    "http://goo.gl/HJM3L");
 }
 
 sub get_location_for_address {
-  my $client = shift;
+  my $client  = shift;
   my $address = shift;
 
-  my $selector = get_api_package($client, "GeoLocationSelector", 1)->new({
-    addresses => [$address]
-  });
+  my $selector =
+    get_api_package($client, "GeoLocationSelector", 1)
+    ->new({addresses => [$address]});
 
-  return $client->GeoLocationService()->get({
-    selector => [$selector]
-  })->[0];
+  return $client->GeoLocationService()->get({selector => [$selector]})->[0];
 }
 
 sub get_any_child_client_email {
-  my $client = shift;
+  my $client            = shift;
   my $current_client_id = $client->get_client_id();
   $client->set_client_id(undef);
 
   my $email;
   if ($client->get_version() lt "v201209") {
-    my $selector = get_api_package($client, "ServicedAccountSelector", 1)->new({
-      enablePaging => 0
-    });
-    my $graph = $client->ServicedAccountService()->get({
-      selector => $selector
-    });
+    my $selector =
+      get_api_package($client, "ServicedAccountSelector", 1)
+      ->new({enablePaging => 0});
+    my $graph = $client->ServicedAccountService()->get({selector => $selector});
     foreach my $account (@{$graph->get_accounts()}) {
       if ($account->get_login() ne "" && !$account->get_canManageClients()) {
         $email = $account->get_login()->get_value();
@@ -339,12 +312,11 @@ sub get_any_child_client_email {
       }
     }
   } else {
-    my $selector = get_api_package($client, "Selector", 1)->new({
-      fields => ["Login", "CanManageClients"]
-    });
-    my $page = $client->ManagedCustomerService()->get({
-      serviceSelector => $selector
-    });
+    my $selector =
+      get_api_package($client, "Selector", 1)
+      ->new({fields => ["Login", "CanManageClients"]});
+    my $page =
+      $client->ManagedCustomerService()->get({serviceSelector => $selector});
     foreach my $customer (@{$page->get_entries()}) {
       if ($customer->get_login() ne "" && !$customer->get_canManageClients()) {
         $email = $customer->get_login()->get_value();

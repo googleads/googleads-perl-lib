@@ -26,7 +26,7 @@ use Class::Std::Fast::Storable constructor => 'none';
 
 __PACKAGE__->_set_element_form_qualified(1);
 
-sub get_xmlns {'http://schemas.xmlsoap.org/soap/envelope/'};
+sub get_xmlns { 'http://schemas.xmlsoap.org/soap/envelope/' }
 
 our $XML_ATTRIBUTE_CLASS;
 undef $XML_ATTRIBUTE_CLASS;
@@ -55,17 +55,17 @@ sub AUTOMETHOD {
   }
 }
 
-{ # BLOCK to scope variables
+{    # BLOCK to scope variables
 
-  my %ApiExceptionFault_of :ATTR(:get<ApiExceptionFault>);
+  my %ApiExceptionFault_of : ATTR(:get<ApiExceptionFault>);
 
   __PACKAGE__->_factory(
-      [qw(exception)],
-      {'ApiExceptionFault' => \%ApiExceptionFault_of},
-      {'ApiExceptionFault' => 'SOAP::WSDL::XSD::Typelib::ComplexType'},
-      {'ApiExceptionFault' => 'ApiExceptionFault'});
+    [qw(exception)],
+    {'ApiExceptionFault' => \%ApiExceptionFault_of},
+    {'ApiExceptionFault' => 'SOAP::WSDL::XSD::Typelib::ComplexType'},
+    {'ApiExceptionFault' => 'ApiExceptionFault'});
 
-} # end BLOCK
+}    # end BLOCK
 
 1;
 

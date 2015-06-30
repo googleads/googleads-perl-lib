@@ -30,24 +30,26 @@ use Test::More (tests => 15);
 my $oauth2_handler_mock = Test::MockObject->new();
 
 my $client = Google::Ads::AdWords::Client->new();
-$client->get_auth_handlers()->
-    {Google::Ads::AdWords::Client::OAUTH_2_APPLICATIONS_HANDLER} =
-        $oauth2_handler_mock;
+$client->get_auth_handlers()
+  ->{Google::Ads::AdWords::Client::OAUTH_2_APPLICATIONS_HANDLER} =
+  $oauth2_handler_mock;
 
 my $client_id;
 my $client_secret;
 my $access_token;
 my $refresh_token;
 $oauth2_handler_mock->set_false("issue_access_token");
-$oauth2_handler_mock->set_always("get_access_token", "access_token");
-$oauth2_handler_mock->set_always("get_refresh_token", "refresh_token");
+$oauth2_handler_mock->set_always("get_access_token",      "access_token");
+$oauth2_handler_mock->set_always("get_refresh_token",     "refresh_token");
 $oauth2_handler_mock->set_always("get_authorization_url", "auth_url");
-$oauth2_handler_mock->mock(set_client_id => sub {
-  $client_id = $_[1];
-});
-$oauth2_handler_mock->mock(set_client_secret => sub {
-  $client_secret = $_[1];
-});
+$oauth2_handler_mock->mock(
+  set_client_id => sub {
+    $client_id = $_[1];
+  });
+$oauth2_handler_mock->mock(
+  set_client_secret => sub {
+    $client_secret = $_[1];
+  });
 
 # Faking STDOUT and IN
 close STDIN;
@@ -61,7 +63,7 @@ require qw(examples/oauth/generate_offline_credentials.pl);
 ok(generate_offline_credentials($client));
 
 # Checking the auth mock was correctly called
-is($client_id, "client_id");
+is($client_id,     "client_id");
 is($client_secret, "client_secret");
 $oauth2_handler_mock->called_ok("issue_access_token");
 is($oauth2_handler_mock->call_args_pos(4, 2), "confirmation_code");

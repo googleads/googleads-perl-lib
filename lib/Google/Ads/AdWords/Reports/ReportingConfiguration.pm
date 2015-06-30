@@ -24,18 +24,23 @@ use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Cons
 
 use Class::Std::Fast;
 
-my %skip_header_of :ATTR(:name<skip_header> :default<>);
-my %skip_column_header_of :ATTR(:name<skip_column_header> :default<>);
-my %skip_summary_of :ATTR(:name<skip_summary> :default<>);
+my %skip_header_of : ATTR(:name<skip_header> :default<>);
+my %skip_column_header_of : ATTR(:name<skip_column_header> :default<>);
+my %skip_summary_of : ATTR(:name<skip_summary> :default<>);
+my %include_zero_impressions_of :
+  ATTR(:name<include_zero_impressions> :default<>);
 
 sub as_string : STRINGIFY {
-    my ( $self, $ident ) = @_;
-    return sprintf("ReportingConfiguration {\n  skip_header: %s\n" .
-        "  skip_column_header: %s\n" .
-        "  skip_summary: %s\n}",
-        $self->get_skip_header() || "<undef>",
-        $self->get_skip_column_header() || "<undef>",
-        $self->get_skip_summary() || "<undef>");
+  my ($self, $ident) = @_;
+  return sprintf(
+    "ReportingConfiguration {\n  skip_header: %s\n" .
+      "  skip_column_header: %s\n" . "  skip_summary: %s\n" .
+      "  include_zero_impressions: %s\n}",
+    $self->get_skip_header()              || "<undef>",
+    $self->get_skip_column_header()       || "<undef>",
+    $self->get_skip_summary()             || "<undef>",
+    $self->get_include_zero_impressions() || "<undef>"
+  );
 }
 
 1;
@@ -73,6 +78,11 @@ containing column names.
 Set this to true to request that report output excludes the report summary
 row containing totals.
 
+=item * include_zero_impressions
+
+Set this to true to request that report output includes data with zero
+impressions.
+
 =back
 
 
@@ -86,6 +96,7 @@ Constructor. The following data structure may be passed to new():
    skip_header =>  $some_value, # boolean
    skip_column_header => $some_value, #boolean
    skip_summary =>  $some_value, # boolean
+   include_zero_impressions => $some_value, # boolean
  },
 
 

@@ -24,7 +24,7 @@ use Exporter;
 use File::Basename;
 use File::Spec;
 
-@ISA = qw(Exporter);
+@ISA       = qw(Exporter);
 @EXPORT_OK = qw(read_test_properties read_client_properties replace_properties);
 
 sub __read_properties($) {
@@ -37,12 +37,12 @@ sub __read_properties($) {
 
 sub read_test_properties() {
   return __read_properties(
-      File::Spec->catdir(dirname($0), qw(testdata test.properties)));
+    File::Spec->catdir(dirname($0), qw(testdata test.properties)));
 }
 
 sub read_client_properties() {
   return __read_properties(
-      File::Spec->catdir(dirname($0), qw(testdata client.properties)));
+    File::Spec->catdir(dirname($0), qw(testdata client.properties)));
 }
 
 sub replace_properties($$) {

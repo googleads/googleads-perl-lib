@@ -28,11 +28,11 @@ my %message_of : ATTR(:name<message>);
 my %code_of : ATTR(:name<code>);
 my %content_of : ATTR(:name<content>);
 
-sub as_string :STRINGIFY {
+sub as_string : STRINGIFY {
   my $self = shift;
-  return sprintf("AuthError {\n  message: %s\n  code: %s\n" .
-                 "  content: %s\n}", $self->get_message(), $self->get_code(),
-                 $self->get_content());
+  return
+    sprintf("AuthError {\n  message: %s\n  code: %s\n" . "  content: %s\n}",
+    $self->get_message(), $self->get_code(), $self->get_content());
 }
 
 1;

@@ -29,15 +29,14 @@ use File::Spec;
 sub BUILD {
   my ($self, $ident, $arg_ref) = @_;
 
-  $self->set_INCLUDE_PATH($self->_get_local_include_path() .
-                          q{:} .
-                          $self->get_INCLUDE_PATH());
+  $self->set_INCLUDE_PATH(
+    $self->_get_local_include_path() . q{:} . $self->get_INCLUDE_PATH());
 }
 
 sub _get_local_include_path {
 
-  my $template_path = File::Spec->catdir(File::Spec->rel2abs(dirname(__FILE__)),
-                                         "Template");
+  my $template_path =
+    File::Spec->catdir(File::Spec->rel2abs(dirname(__FILE__)), "Template");
   return abs_path($template_path);
 }
 
@@ -53,39 +52,37 @@ sub generate_filename {
 sub visit_XSD_ComplexType {
   my ($self, $type) = @_;
 
-  my $output = defined $output_of{ident $self}
-      ? $output_of{ident $self}
-      : $self->generate_filename(
-          $self->get_name_resolver()->create_xsd_name($type));
+  my $output =
+    defined $output_of{ident $self}
+    ? $output_of{ident $self}
+    : $self->generate_filename(
+    $self->get_name_resolver()->create_xsd_name($type));
   warn "Creating complexType class $output \n" if not $self->get_silent();
-  $self->_process('complexType.tt',
-                  {complexType => $type, NO_POD => 1},
-                  $output);
+  $self->_process('complexType.tt', {complexType => $type, NO_POD => 1},
+    $output);
 }
 
-sub generate_typemap{
+sub generate_typemap {
   my ($self, $arg_ref) = @_;
-  my $visitor =
-    Google::Ads::SOAP::Generator::TypemapVisitor->new({
-      type_prefix => $self->get_type_prefix(),
+  my $visitor = Google::Ads::SOAP::Generator::TypemapVisitor->new({
+      type_prefix    => $self->get_type_prefix(),
       element_prefix => $self->get_element_prefix(),
-      definitions => $self->get_definitions(),
-      typemap => {
+      definitions    => $self->get_definitions(),
+      typemap        => {
         'Fault'             => 'SOAP::WSDL::SOAP::Typelib::Fault11',
         'Fault/faultcode'   => 'SOAP::WSDL::XSD::Typelib::Builtin::anyURI',
         'Fault/faultactor'  => 'SOAP::WSDL::XSD::Typelib::Builtin::token',
         'Fault/faultstring' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
         # PATCH Map our own FaultDetail object.
-        'Fault/detail'      => 'Google::Ads::AdWords::FaultDetail',
+        'Fault/detail' => 'Google::Ads::AdWords::FaultDetail',
         # END OF PATCH.
       },
       resolver => $self->get_name_resolver(),
     });
 
   use SOAP::WSDL::Generator::Iterator::WSDL11;
-  my $iterator = SOAP::WSDL::Generator::Iterator::WSDL11->new({
-    definitions => $self->get_definitions
-  });
+  my $iterator = SOAP::WSDL::Generator::Iterator::WSDL11->new(
+    {definitions => $self->get_definitions});
 
   for my $service (@{$self->get_definitions->get_service}) {
     $iterator->init({node => $service});
@@ -93,15 +90,21 @@ sub generate_typemap{
       $node->_accept($visitor);
     }
 
-    my $output = $arg_ref->{output} ? $arg_ref->{output} :
-        $self->generate_filename(
-            $self->get_name_resolver()->create_typemap_name($service));
+    my $output =
+        $arg_ref->{output}
+      ? $arg_ref->{output}
+      : $self->generate_filename(
+      $self->get_name_resolver()->create_typemap_name($service));
     print "Creating typemap class $output\n" if not $self->get_silent();
-    $self->_process('Typemap.tt', {
-      service => $service,
-      typemap => $visitor->get_typemap(),
-      NO_POD  => 1,
-    }, $output);
+    $self->_process(
+      'Typemap.tt',
+      {
+        service => $service,
+        typemap => $visitor->get_typemap(),
+        NO_POD  => 1,
+      },
+      $output
+    );
   }
 }
 

@@ -29,6 +29,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -76,26 +77,24 @@ sub get_text_ads {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get text ads.
-    $page = $client->AdGroupAdService()->get({serviceSelector => $selector});
-
-    # Display a page of text ads.
-    if ($page->get_entries()) {
-      foreach my $ad_group_ad (@{$page->get_entries()}) {
-        printf "Text ad with id \"%s\", and status \"%s\" was found:\n",
-               $ad_group_ad->get_ad()->get_id(),
-               $ad_group_ad->get_status();
-        printf "%s\n%s\n%s\n%s\n\n",
-               $ad_group_ad->get_ad()->get_headline(),
-               $ad_group_ad->get_ad()->get_description1(),
-               $ad_group_ad->get_ad()->get_description2(),
-               $ad_group_ad->get_ad()->get_displayUrl();
-      }
+  # The contents of the subroutine will be executed for each text ad.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->AdGroupAdService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($ad_group_ad) = @_;
+      printf "Text ad with id \"%s\", and status \"%s\" was found:\n",
+             $ad_group_ad->get_ad()->get_id(),
+             $ad_group_ad->get_status();
+      printf "%s\n%s\n%s\n%s\n\n",
+             $ad_group_ad->get_ad()->get_headline(),
+             $ad_group_ad->get_ad()->get_description1(),
+             $ad_group_ad->get_ad()->get_description2(),
+             $ad_group_ad->get_ad()->get_displayUrl();
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

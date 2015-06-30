@@ -28,7 +28,7 @@ use LWP::UserAgent;
 use URI::Escape;
 
 use constant OAUTH2_TOKEN_INFO_URL =>
-    "https://www.googleapis.com/oauth2/v1/tokeninfo";
+  "https://www.googleapis.com/oauth2/v1/tokeninfo";
 
 # Class::Std-style attributes. Need to be kept in the same line.
 # These need to go in the same line for older Perl interpreters to understand.
@@ -46,15 +46,15 @@ sub START {
 }
 
 # Methods from Google::Ads::Common::AuthHandlerInterface
-sub initialize :CUMULATIVE(BASE FIRST) {
+sub initialize : CUMULATIVE(BASE FIRST) {
   my ($self, $api_client, $properties) = @_;
   my $ident = ident $self;
 
   $api_client_of{$ident} = $api_client;
-  $client_id_of{$ident} = $properties->{oAuth2ClientId} ||
-      $client_id_of{$ident};
-  $access_token_of{$ident} = $properties->{oAuth2AccessToken} ||
-      $access_token_of{$ident};
+  $client_id_of{$ident}  = $properties->{oAuth2ClientId}
+    || $client_id_of{$ident};
+  $access_token_of{$ident} = $properties->{oAuth2AccessToken}
+    || $access_token_of{$ident};
 }
 
 sub prepare_request {
@@ -64,7 +64,8 @@ sub prepare_request {
 
   if (!$access_token) {
     my $api_client = $self->get_api_client();
-    my $err_msg = "Unable to prepare a request, authorization info is " .
+    my $err_msg =
+      "Unable to prepare a request, authorization info is " .
       "incomplete or invalid.";
     $api_client->get_die_on_faults() ? die($err_msg) : warn($err_msg);
     return;
@@ -83,7 +84,7 @@ sub is_auth_enabled {
 
 # Custom getters and setters for the access token with logic to auto-refresh.
 sub get_access_token {
-  my $self = shift;
+  my $self  = shift;
   my $ident = ident $self;
 
   if (!$self->_is_access_token_valid()) {
@@ -100,7 +101,7 @@ sub get_access_token {
 sub set_access_token {
   my ($self, $token) = @_;
 
-  $access_token_of{ident $self} = $token;
+  $access_token_of{ident $self}         = $token;
   $access_token_expires_of{ident $self} = undef;
 }
 
@@ -113,7 +114,7 @@ sub set_access_token {
 #       - checks the token scopes
 #   - checks the token has not expired
 sub _is_access_token_valid {
-  my $self = shift;
+  my $self  = shift;
   my $ident = ident $self;
 
   my $access_token = $access_token_of{$ident};
@@ -122,8 +123,8 @@ sub _is_access_token_valid {
   }
 
   if (!$self->get_access_token_expires()) {
-    my $url = OAUTH2_TOKEN_INFO_URL .
-        "?access_token=" . uri_escape($access_token);
+    my $url =
+      OAUTH2_TOKEN_INFO_URL . "?access_token=" . uri_escape($access_token);
     my $res = $self->get___user_agent()->request(GET $url);
     if (!$res->is_success()) {
       return 0;
@@ -146,7 +147,9 @@ sub __parse_auth_response {
   my ($self, $response_content) = @_;
 
   my %content_hash = ();
-  while ($response_content =~ m/([^"]+)"\s*:\s*"([^"]+)|([^"]+)"\s*:\s*([0-9]+)/g) {
+  while (
+    $response_content =~ m/([^"]+)"\s*:\s*"([^"]+)|([^"]+)"\s*:\s*([0-9]+)/g)
+  {
     if ($1 && $2) {
       $content_hash{$1} = $2;
     } else {

@@ -29,7 +29,7 @@ our @EXPORT_OK = qw(get_map build_api_map);
 # any object that has a key and value field.
 sub get_map($) {
   my $map_entries = $_[0];
-  my %result = ();
+  my %result      = ();
   foreach my $map_entry (@{$map_entries}) {
     $result{$map_entry->get_key()} = $map_entry->get_value();
   }
@@ -41,7 +41,7 @@ sub build_api_map {
 
   my @result = ();
   foreach my $key (keys %{$map}) {
-    push @result, { key => $key, value => $map->{$key} };
+    push @result, {key => $key, value => $map->{$key}};
   }
 
   return \@result;

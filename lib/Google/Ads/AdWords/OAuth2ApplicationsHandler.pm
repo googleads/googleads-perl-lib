@@ -31,7 +31,6 @@ sub _scope {
 
 1;
 
-
 =pod
 
 =head1 NAME

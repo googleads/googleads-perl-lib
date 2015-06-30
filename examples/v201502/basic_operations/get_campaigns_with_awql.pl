@@ -29,6 +29,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -42,23 +43,19 @@ sub get_campaigns_with_awql {
   my $query = "SELECT Id, Name, Status ORDER BY Name";
 
   # Paginate through results.
-  my $page;
-  my $offset = 0;
-  do {
-    my $page_query = "${query} LIMIT ${offset}," . PAGE_SIZE;
-
-    # Get all campaigns.
-    $page = $client->CampaignService()->query({query => $page_query});
-
-    # Display campaigns.
-    if ($page->get_entries()) {
-      foreach my $campaign (@{$page->get_entries()}) {
-        printf "Campaign with name \"%s\" and id \"%d\" was found.\n",
-               $campaign->get_name(), $campaign->get_id();
-      }
+  # The contents of the subroutine will be executed for each campaign.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->CampaignService(),
+    query => $query,
+    page_size => PAGE_SIZE
+  })->process_entries(
+    sub {
+      my ($campaign) = @_;
+      printf "Campaign with name \"%s\" and id \"%d\" was found.\n",
+             $campaign->get_name(), $campaign->get_id();
     }
-    $offset += PAGE_SIZE;
-  } while ($offset < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

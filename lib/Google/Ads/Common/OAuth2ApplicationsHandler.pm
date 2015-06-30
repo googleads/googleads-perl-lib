@@ -17,7 +17,7 @@ package Google::Ads::Common::OAuth2ApplicationsHandler;
 use strict;
 use version;
 use base qw(Google::Ads::Common::OAuth2BaseHandler
-            Google::Ads::Common::OAuthApplicationsHandlerInterface);
+  Google::Ads::Common::OAuthApplicationsHandlerInterface);
 
 # The following needs to be on one line because CPAN uses a particularly hacky
 # eval() to determine module versions.
@@ -30,7 +30,7 @@ use URI::Escape;
 
 use constant OAUTH2_BASE_URL => "https://accounts.google.com/o/oauth2";
 use constant OAUTH2_TOKEN_INFO_URL =>
-    "https://www.googleapis.com/oauth2/v1/tokeninfo";
+  "https://www.googleapis.com/oauth2/v1/tokeninfo";
 
 # Class::Std-style attributes. Need to be kept in the same line.
 # These need to go in the same line for older Perl interpreters to understand.
@@ -38,23 +38,24 @@ my %client_secret_of : ATTR(:name<client_secret> :default<>);
 my %access_type_of : ATTR(:name<access_type> :default<offline>);
 my %approval_prompt_of : ATTR(:name<approval_prompt> :default<auto>);
 my %refresh_token_of : ATTR(:name<refresh_token> :default<>);
-my %redirect_uri_of : ATTR(:name<redirect_uri> :default<urn:ietf:wg:oauth:2.0:oob>);
+my %redirect_uri_of :
+  ATTR(:name<redirect_uri> :default<urn:ietf:wg:oauth:2.0:oob>);
 
 # Methods from Google::Ads::Common::AuthHandlerInterface
-sub initialize :CUMULATIVE(BASE FIRST) {
+sub initialize : CUMULATIVE(BASE FIRST) {
   my ($self, $api_client, $properties) = @_;
   my $ident = ident $self;
 
-  $client_secret_of{$ident} = $properties->{oAuth2ClientSecret} ||
-      $client_secret_of{$ident};
-  $access_type_of{$ident} = $properties->{oAuth2AccessType} ||
-      $access_type_of{$ident};
-  $approval_prompt_of{$ident} = $properties->{oAuth2ApprovalPrompt} ||
-      $approval_prompt_of{$ident};
-  $refresh_token_of{$ident} = $properties->{oAuth2RefreshToken} ||
-      $refresh_token_of{$ident};
-  $redirect_uri_of{$ident} = $properties->{oAuth2RedirectUri} ||
-      $redirect_uri_of{$ident};
+  $client_secret_of{$ident} = $properties->{oAuth2ClientSecret}
+    || $client_secret_of{$ident};
+  $access_type_of{$ident} = $properties->{oAuth2AccessType}
+    || $access_type_of{$ident};
+  $approval_prompt_of{$ident} = $properties->{oAuth2ApprovalPrompt}
+    || $approval_prompt_of{$ident};
+  $refresh_token_of{$ident} = $properties->{oAuth2RefreshToken}
+    || $refresh_token_of{$ident};
+  $redirect_uri_of{$ident} = $properties->{oAuth2RedirectUri}
+    || $redirect_uri_of{$ident};
 }
 
 # Methods from Google::Ads::Common::OAuthHandlerInterface
@@ -62,31 +63,28 @@ sub get_authorization_url {
   my ($self, $state) = @_;
 
   $state ||= "";
-  my ($client_id, $redirect_uri, $access_type, $approval_prompt) =
-      ($self->get_client_id(), $self->get_redirect_uri(),
-       $self->get_access_type(), $self->get_approval_prompt());
+  my ($client_id, $redirect_uri, $access_type, $approval_prompt) = (
+    $self->get_client_id(),   $self->get_redirect_uri(),
+    $self->get_access_type(), $self->get_approval_prompt());
 
-  return OAUTH2_BASE_URL . "/auth?response_type=code" .
-      "&client_id=" . uri_escape($client_id) .
-      "&redirect_uri=" . $redirect_uri .
-      "&scope=" . uri_escape($self->_scope()) .
-      "&access_type=" . $access_type .
-      "&approval_prompt=" . $approval_prompt .
-      "&state=" . uri_escape($state);
+  return OAUTH2_BASE_URL . "/auth?response_type=code" . "&client_id=" .
+    uri_escape($client_id) . "&redirect_uri=" . $redirect_uri . "&scope=" .
+    uri_escape($self->_scope()) . "&access_type=" . $access_type .
+    "&approval_prompt=" . $approval_prompt . "&state=" . uri_escape($state);
 }
 
 sub issue_access_token {
   my ($self, $authorization_code) = @_;
 
-  my $body = "code=" . uri_escape($authorization_code) .
-      "&client_id=" . uri_escape($self->get_client_id()) .
-      "&client_secret=" . uri_escape($self->get_client_secret()) .
-      "&redirect_uri=" . uri_escape($self->get_redirect_uri()) .
-      "&grant_type=authorization_code";
+  my $body =
+    "code=" . uri_escape($authorization_code) . "&client_id=" .
+    uri_escape($self->get_client_id()) . "&client_secret=" .
+    uri_escape($self->get_client_secret()) . "&redirect_uri=" .
+    uri_escape($self->get_redirect_uri()) . "&grant_type=authorization_code";
 
   push my @headers, "Content-Type" => "application/x-www-form-urlencoded";
-  my $request = HTTP::Request->new("POST", OAUTH2_BASE_URL . "/token",
-                                   \@headers, $body);
+  my $request =
+    HTTP::Request->new("POST", OAUTH2_BASE_URL . "/token", \@headers, $body);
   my $res = $self->get___user_agent()->request($request);
 
   if (!$res->is_success()) {
@@ -107,20 +105,23 @@ sub issue_access_token {
 sub _refresh_access_token {
   my $self = shift;
 
-  if (!($self->get_client_id() &&
-        $self->get_client_secret() &&
-        $self->get_refresh_token())) {
+  if (
+    !(
+         $self->get_client_id()
+      && $self->get_client_secret()
+      && $self->get_refresh_token()))
+  {
     return 0;
   }
 
-  my $body = "refresh_token=" . uri_escape($self->get_refresh_token()) .
-      "&client_id=" . uri_escape($self->get_client_id()) .
-      "&client_secret=" . uri_escape($self->get_client_secret()) .
-      "&grant_type=refresh_token";
+  my $body =
+    "refresh_token=" . uri_escape($self->get_refresh_token()) .
+    "&client_id=" . uri_escape($self->get_client_id()) . "&client_secret=" .
+    uri_escape($self->get_client_secret()) . "&grant_type=refresh_token";
 
   push my @headers, "Content-Type" => "application/x-www-form-urlencoded";
-  my $request = HTTP::Request->new("POST", OAUTH2_BASE_URL . "/token",
-                                   \@headers, $body);
+  my $request =
+    HTTP::Request->new("POST", OAUTH2_BASE_URL . "/token", \@headers, $body);
   my $res = $self->get___user_agent()->request($request);
 
   if (!$res->is_success()) {

@@ -29,8 +29,8 @@ sub client {
     $self->{_client} = $client;
     my $can_accept = HTTP::Message::decodable;
     $self->default_header('Accept-Encoding' => scalar $can_accept);
-    $self->{_user_agent} = $client->get_user_agent() .
-         ($can_accept =~ /gzip/i ? " gzip" : "");
+    $self->{_user_agent} =
+      $client->get_user_agent() . ($can_accept =~ /gzip/i ? " gzip" : "");
   }
 
   return $self->{_client};
@@ -39,14 +39,14 @@ sub client {
 sub send_receive {
   my ($self, %parameters) = @_;
   my ($envelope, $soap_action, $endpoint, $encoding, $content_type) =
-      @parameters{qw(envelope action endpoint encoding content_type)};
+    @parameters{qw(envelope action endpoint encoding content_type)};
 
   my $auth_handler = $self->client->_get_auth_handler();
 
   if (!$auth_handler) {
-    $self->{_client}->get_die_on_faults() ?
-        die(Google::Ads::Common::Constants::NO_AUTH_HANDLER_IS_SETUP_MESSAGE) :
-        warn(Google::Ads::Common::Constants::NO_AUTH_HANDLER_IS_SETUP_MESSAGE);
+    $self->{_client}->get_die_on_faults()
+      ? die(Google::Ads::Common::Constants::NO_AUTH_HANDLER_IS_SETUP_MESSAGE)
+      : warn(Google::Ads::Common::Constants::NO_AUTH_HANDLER_IS_SETUP_MESSAGE);
     return;
   }
 
@@ -56,14 +56,14 @@ sub send_receive {
   $encoding = defined($encoding) ? lc($encoding) : 'utf-8';
 
   $content_type = "text/xml; charset=$encoding"
-      if not defined($content_type);
+    if not defined($content_type);
 
   my $headers = ["Content-Type", "$content_type", "SOAPAction", $soap_action];
   my $request = $auth_handler->prepare_request($endpoint, $headers, $envelope);
-  my $response = $self->request( $request );
+  my $response = $self->request($request);
 
-  $self->code( $response->code);
-  $self->message( $response->message);
+  $self->code($response->code);
+  $self->message($response->message);
   $self->is_success($response->is_success);
   $self->status($response->status_line);
 

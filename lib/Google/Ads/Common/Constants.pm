@@ -24,9 +24,9 @@ use version;
 our $VERSION = qv("3.1.2");
 
 use constant NO_AUTH_HANDLER_IS_SETUP_MESSAGE =>
-    "The library couldn't find any authorization mechanism set up to " .
-    "properly sign the requests against the API. Please read the following " .
-    "guide on how to setup OAuth2 " .
-    "https://github.com/googleads/googleads-perl-lib/wiki/Using-OAuth-2.0";
+  "The library couldn't find any authorization mechanism set up to " .
+  "properly sign the requests against the API. Please read the following " .
+  "guide on how to setup OAuth2 " .
+  "https://github.com/googleads/googleads-perl-lib/wiki/Using-OAuth-2.0";
 
 1;

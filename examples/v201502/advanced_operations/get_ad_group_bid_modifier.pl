@@ -28,6 +28,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use Cwd qw(abs_path);
 
@@ -48,27 +49,20 @@ sub get_ad_group_bid_modifier {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get a page of bid modifiers.
-    $page = $client->AdGroupBidModifierService()->get({
-      selector => $selector
-    });
-
-    # Display bid modifiers.
-    if ($page->get_entries()) {
-      foreach my $modifier (@{$page->get_entries()}) {
-        my $modifier_value = $modifier->get_bidModifier() || "unset";
-        printf "Campaign ID %s, AdGroup ID %s, Criterion ID %s has ad group " .
-               "level modifier: %s\n", $modifier->get_campaignId(),
-               $modifier->get_adGroupId(), $modifier->get_criterion()->get_id(),
-               $modifier_value;
-      }
-    } else {
-      print "No ad group level bid overrides returned.\n";
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->AdGroupBidModifierService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($modifier) = @_;
+      my $modifier_value = $modifier->get_bidModifier() || "unset";
+      printf "Campaign ID %s, AdGroup ID %s, Criterion ID %s has ad group " .
+             "level modifier: %s\n", $modifier->get_campaignId(),
+             $modifier->get_adGroupId(), $modifier->get_criterion()->get_id(),
+             $modifier_value;
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

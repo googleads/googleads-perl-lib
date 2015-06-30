@@ -39,4 +39,4 @@ If you have questions about the client library or AdWords API, you can ask them 
 
 ## Maintainers
   - api.jradcliff@gmail.com (Josh Radcliff)
-
+  - api.ndsun@gmail.com (Nadine Sundquist)

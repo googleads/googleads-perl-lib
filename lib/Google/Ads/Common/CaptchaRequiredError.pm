@@ -29,12 +29,13 @@ my %token_of : ATTR(:name<token>);
 my %image_of : ATTR(:name<image>);
 my %url_of : ATTR(:name<url>);
 
-sub as_string :STRINGIFY {
+sub as_string : STRINGIFY {
   my $self = shift;
-  return sprintf("CaptchaRequiredError {\n  token: %s\n  image: %s\n" .
-                 "  url: %s\n  message: %s\n  code: %s\n  content: %s\n}",
-                 $self->get_token(), $self->get_image(), $self->get_url(),
-                 $self->get_message(), $self->get_code(), $self->get_content());
+  return sprintf(
+    "CaptchaRequiredError {\n  token: %s\n  image: %s\n" .
+      "  url: %s\n  message: %s\n  code: %s\n  content: %s\n}",
+    $self->get_token(),   $self->get_image(), $self->get_url(),
+    $self->get_message(), $self->get_code(),  $self->get_content());
 }
 
 1;

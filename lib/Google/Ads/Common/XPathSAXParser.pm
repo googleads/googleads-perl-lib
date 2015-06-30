@@ -45,8 +45,8 @@ my %current_of : ATTR(:name<current> :default<>);
 # Takes the XML to parse.
 sub parse {
   my $self = shift;
-  my $xml = shift;
-  my $xp = XML::XPath->new(xml => $xml);
+  my $xml  = shift;
+  my $xp   = XML::XPath->new(xml => $xml);
   my $node = $xp->find($self->get_xpath_expression())->get_node(0);
 
   if ($node) {
@@ -63,26 +63,27 @@ sub parse {
 
 # The parsing is done recursively through this method.
 sub __parse_node {
-  my $self = shift;
-  my $node = shift;
+  my $self      = shift;
+  my $node      = shift;
   my $node_type = $node->getNodeType();
-  my $parent = $node->getParentNode();
-  my %handlers = %{$self->get_handlers()};
+  my $parent    = $node->getParentNode();
+  my %handlers  = %{$self->get_handlers()};
 
   $self->set_current($node);
 
-  if ($node_type == XML::XPath::Node::ELEMENT_NODE &&
-      ($handlers{Start} || $handlers{End})) {
+  if ($node_type == XML::XPath::Node::ELEMENT_NODE
+    && ($handlers{Start} || $handlers{End}))
+  {
     # bundle up attributes
     my %attribs = ();
     foreach my $attr (@{$node->getAttributes()}) {
-      my $att_name = $self->get_namespaces() ?
-          $attr->getLocalName() : $attr->getName();
+      my $att_name =
+        $self->get_namespaces() ? $attr->getLocalName() : $attr->getName();
       $attribs{$att_name} = $attr->getNodeValue();
     }
 
-    my $name = $self->get_namespaces() ?
-        $node->getLocalName() : $node->getName();
+    my $name =
+      $self->get_namespaces() ? $node->getLocalName() : $node->getName();
     if ($handlers{Start}) {
       $handlers{Start}($self, $name, \%attribs, $node);
     }
@@ -96,12 +97,13 @@ sub __parse_node {
     $handlers{Char}($self, $node->getValue(), $node);
   } elsif ($node_type == XML::XPath::Node::COMMENT_NODE && $handlers{Comment}) {
     $handlers{Comment}($self, $node->getValue(), $node);
-  } elsif ($node_type == XML::XPath::Node::PROCESSING_INSTRUCTION_NODE &&
-      $handlers{Proc}) {
+  } elsif ($node_type == XML::XPath::Node::PROCESSING_INSTRUCTION_NODE
+    && $handlers{Proc})
+  {
     $handlers{Proc}($self, $node->getTarget(), $node->getData(), $node);
   } else {
     croak "Unknown node type: '", ref($node), "' type ", $node_type,
-        " or not handler found.\n";
+      " or not handler found.\n";
   }
 }
 

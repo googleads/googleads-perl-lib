@@ -36,10 +36,9 @@ sub generate_offline_credentials {
   my $auth_handler = $client->get_oauth_2_handler();
 
   print "Please enter your OAuth 2.0 Client ID and Client Secret.\n" .
-        "These values can be generated from the Google Developers Console, " .
-        "https://console.developers.google.com under the Projects tab.\n" .
-        "Use a Client ID for Installed applications.\n" .
-        "Enter Client ID: ";
+    "These values can be generated from the Google Developers Console, " .
+    "https://console.developers.google.com under the Projects tab.\n" .
+    "Use a Client ID for Installed applications.\n" . "Enter Client ID: ";
   my $client_id = <STDIN>;
   $client_id = trim($client_id);
 
@@ -53,9 +52,9 @@ sub generate_offline_credentials {
   # Open a browser and point it to the authorization URL, authorize the access
   # and then enter the generated verification code.
   print "Log in to your AdWords account and open the following URL:\n\n",
-        $auth_handler->get_authorization_url(), "\n\n";
+    $auth_handler->get_authorization_url(), "\n\n";
   print "Grant access to the applications and enter the authorization code " .
-        "display in the page then hit ENTER.\nEnter confirmation code: ";
+    "display in the page then hit ENTER.\nEnter confirmation code: ";
   my $code = <STDIN>;
   $code = trim($code);
 
@@ -74,18 +73,15 @@ sub generate_offline_credentials {
   # $client->get_oauth_2_handler()->set_access_token($access_token);
   # $client->get_oauth_2_handler()->set_refresh_token($refresh_token);
   printf "\nThe following are the keys you can replace in your " .
-         "adwords.properties configuration:\n\n" .
-         "oAuth2ClientId=%1\$s\n" .
-         "oAuth2ClientSecret=%2\$s\n" .
-         "oAuth2AccessToken=%3\$s\n" .
-         "oAuth2RefreshToken=%4\$s\n" .
-         "\nOr use at runtime, like:\n\n" .
-         "\$client->get_oauth_2_handler()->set_client_id('%1\$s');\n" .
-         "\$client->get_oauth_2_handler()->set_client_secret('%2\$s');\n" .
-         "\$client->get_oauth_2_handler()->set_access_token('%3\$s');\n" .
-         "\$client->get_oauth_2_handler()->set_refresh_token('%4\$s');\n",
-         $client_id, $client_secret, $auth_handler->get_access_token(),
-         $auth_handler->get_refresh_token();
+    "adwords.properties configuration:\n\n" . "oAuth2ClientId=%1\$s\n" .
+    "oAuth2ClientSecret=%2\$s\n" . "oAuth2AccessToken=%3\$s\n" .
+    "oAuth2RefreshToken=%4\$s\n" . "\nOr use at runtime, like:\n\n" .
+    "\$client->get_oauth_2_handler()->set_client_id('%1\$s');\n" .
+    "\$client->get_oauth_2_handler()->set_client_secret('%2\$s');\n" .
+    "\$client->get_oauth_2_handler()->set_access_token('%3\$s');\n" .
+    "\$client->get_oauth_2_handler()->set_refresh_token('%4\$s');\n",
+    $client_id, $client_secret, $auth_handler->get_access_token(),
+    $auth_handler->get_refresh_token();
 
   return 1;
 }

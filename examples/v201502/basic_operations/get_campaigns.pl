@@ -29,6 +29,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -53,20 +54,18 @@ sub get_campaigns {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get all campaigns.
-    $page = $client->CampaignService()->get({serviceSelector => $selector});
-
-    # Display campaigns.
-    if ($page->get_entries()) {
-      foreach my $campaign (@{$page->get_entries()}) {
-        printf "Campaign with name \"%s\" and id \"%d\" was found.\n",
-               $campaign->get_name(), $campaign->get_id();
-      }
+  # The contents of the subroutine will be executed for each campaign.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->CampaignService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($campaign) = @_;
+      printf "Campaign with name \"%s\" and id \"%d\" was found.\n",
+             $campaign->get_name(), $campaign->get_id();
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

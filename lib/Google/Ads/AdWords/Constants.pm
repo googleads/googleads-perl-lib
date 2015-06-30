@@ -25,8 +25,8 @@ use File::Spec::Functions;
 # Main version number that the rest of the modules pick up off of.
 our $VERSION = qv("3.4.0");
 
-use constant DEFAULT_PROPERTIES_FILE => catfile(File::HomeDir->my_home,
-    "adwords.properties");
+use constant DEFAULT_PROPERTIES_FILE =>
+  catfile(File::HomeDir->my_home, "adwords.properties");
 
 # In this format string, the first %s is the URL prefix, the second is the
 # version, and the third is service name.
@@ -52,52 +52,70 @@ use constant MAX_NUM_OF_REQUEST_STATS => 500;
 # Mapping of services to namespace group, required to figure out the service
 # url endpoints.
 our %SERVICE_TO_GROUP = (
-  AccountLabelService => "mcm",
-  AdCustomizerFeedService => "cm",
-  AdGroupAdService => "cm",
-  AdGroupBidModifierService => "cm",
-  AdGroupCriterionService => "cm",
-  AdGroupExtensionSettingService => "cm",
-  AdGroupFeedService => "cm",
-  AdGroupService => "cm",
-  AdParamService => "cm",
-  AdwordsUserListService => "rm",
-  AlertService => "mcm",
-  BiddingStrategyService => "cm",
-  BudgetOrderService => "billing",
-  BudgetService => "cm",
-  CampaignAdExtensionService => "cm",
-  CampaignCriterionService => "cm",
+  AccountLabelService             => "mcm",
+  AdCustomizerFeedService         => "cm",
+  AdGroupAdService                => "cm",
+  AdGroupBidModifierService       => "cm",
+  AdGroupCriterionService         => "cm",
+  AdGroupExtensionSettingService  => "cm",
+  AdGroupFeedService              => "cm",
+  AdGroupService                  => "cm",
+  AdParamService                  => "cm",
+  AdwordsUserListService          => "rm",
+  AlertService                    => "mcm",
+  BiddingStrategyService          => "cm",
+  BudgetOrderService              => "billing",
+  BudgetService                   => "cm",
+  CampaignAdExtensionService      => "cm",
+  CampaignCriterionService        => "cm",
   CampaignExtensionSettingService => "cm",
-  CampaignFeedService => "cm",
-  CampaignService => "cm",
-  CampaignSharedSetService => "cm",
-  ConstantDataService => "cm",
-  ConversionTrackerService => "cm",
-  CustomerService => "mcm",
+  CampaignFeedService             => "cm",
+  CampaignService                 => "cm",
+  CampaignSharedSetService        => "cm",
+  ConstantDataService             => "cm",
+  ConversionTrackerService        => "cm",
+  CustomerService                 => "mcm",
   CustomerExtensionSettingService => "cm",
-  CustomerFeedService => "cm",
-  CustomerSyncService => "ch",
-  DataService => "cm",
-  ExperimentService => "cm",
-  FeedItemService => "cm",
-  FeedMappingService => "cm",
-  FeedService => "cm",
-  GeoLocationService => "cm",
-  LabelService => "cm",
-  LocationCriterionService => "cm",
-  ManagedCustomerService => "mcm",
-  MediaService => "cm",
-  MutateJobService => "cm",
-  OfflineConversionFeedService => "cm",
-  ReportDefinitionService => "cm",
-  SharedCriterionService => "cm",
-  SharedSetService => "cm",
-  TargetingIdeaService => "o",
-  TrafficEstimatorService => "o",
+  CustomerFeedService             => "cm",
+  CustomerSyncService             => "ch",
+  DataService                     => "cm",
+  ExperimentService               => "cm",
+  FeedItemService                 => "cm",
+  FeedMappingService              => "cm",
+  FeedService                     => "cm",
+  GeoLocationService              => "cm",
+  LabelService                    => "cm",
+  LocationCriterionService        => "cm",
+  ManagedCustomerService          => "mcm",
+  MediaService                    => "cm",
+  MutateJobService                => "cm",
+  OfflineConversionFeedService    => "cm",
+  ReportDefinitionService         => "cm",
+  SharedCriterionService          => "cm",
+  SharedSetService                => "cm",
+  TargetingIdeaService            => "o",
+  TrafficEstimatorService         => "o",
 );
 
 # Useful constant to translate micros to dollars and viceversa.
 use constant MICROS_PER_DOLLAR => 1000000;
+
+########## Reporting Utilities ##########
+
+use constant ADHOC_REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload/%s";
+use constant LWP_DEFAULT_TIMEOUT => 300;    # 5 minutes.
+use constant REPORT_SCRUBBED_HEADERS => qw(DeveloperToken Authorization);
+
+########## Paging Utilities ##########
+
+# A default number of entries to be retrieved per page.
+use constant DEFAULT_PAGE_SIZE => 100;
+
+# Regular expression representing the LIMIT portion of an AWQL query.
+# Group 1 => The SELECT clause before LIMIT
+# Group 2 => Offset defined by LIMIT
+# Group 3 => Page Size defined by LIMIT
+# Example: LIMIT 1,3
+use constant QUERY_LIMIT_REGEX => qr/(.*)LIMIT\s+(\d+)\s*,\s*(\d+).*/;
 
 return 1;

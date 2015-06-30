@@ -34,12 +34,12 @@ use SOAP::WSDL::Factory::Serializer;
 use constant SCRUBBED_HEADERS => qw(developerToken);
 
 # Class attributes used to hook this class with the AdWords client.
-my %client_of :ATTR(:name<client> :default<>);
+my %client_of : ATTR(:name<client> :default<>);
 
 # Invoked by SOAP::WSDL to serialize outgoing SOAP requests.
 sub serialize {
-  my $self = shift;
-  my $client = $self->get_client();
+  my $self    = shift;
+  my $client  = $self->get_client();
   my $request = $self->SUPER::serialize(@_);
   utf8::is_utf8 $request and utf8::encode $request;
 
@@ -47,8 +47,8 @@ sub serialize {
 
   my $auth_handler = $client->_get_auth_handler();
 
-  Google::Ads::AdWords::Logging::get_soap_logger->info("Outgoing Request:\n" .
-      $sanitized_request);
+  Google::Ads::AdWords::Logging::get_soap_logger->info(
+    "Outgoing Request:\n" . $sanitized_request);
   $client->set_last_soap_request($sanitized_request);
 
   return $request;
@@ -57,9 +57,9 @@ sub serialize {
 # Invoked by SOAP::WSDL to serialize outgoing SOAP header, AdWords header
 # information is injected at this time.
 sub serialize_header {
-  my $self = shift;
-  my $client = $self->get_client();
-  my $client_header = $client->_get_header();
+  my $self           = shift;
+  my $client         = $self->get_client();
+  my $client_header  = $client->_get_header();
   my $adwords_header = $_[1];
 
   $adwords_header->set_clientCustomerId($client_header->{clientCustomerId});
@@ -74,8 +74,8 @@ sub serialize_header {
   my $header = $self->SUPER::serialize_header(@_);
 
   # Hack the header inner elements to correctly include the namespaces.
-  my $xmlns = "https://adwords.google.com/api/adwords/cm/" .
-      $client->get_version;
+  my $xmlns =
+    "https://adwords.google.com/api/adwords/cm/" . $client->get_version;
   $header =~ s/<developerToken>/<developerToken xmlns="$xmlns">/;
   $header =~ s/<userAgent>/<userAgent xmlns="$xmlns">/;
   $header =~ s/<validateOnly>/<validateOnly xmlns="$xmlns">/;
@@ -91,7 +91,7 @@ sub __scrub_request {
   my $scrubbed_request = $request;
   foreach my $header (SCRUBBED_HEADERS) {
     $scrubbed_request =~
-        s!<$header([^>]*)>.+?</$header>!<$header$1>REDACTED</$header>!;
+      s!<$header([^>]*)>.+?</$header>!<$header$1>REDACTED</$header>!;
   }
   return $scrubbed_request;
 }

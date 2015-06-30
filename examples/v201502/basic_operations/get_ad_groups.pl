@@ -30,6 +30,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -66,24 +67,18 @@ sub get_ad_groups {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get ad groups.
-    $page = $client->AdGroupService()->get({serviceSelector => $selector});
-
-    # Display ad groups.
-    if ($page->get_entries()) {
-      my @results = ref($page->get_entries()) eq "ARRAY" ?
-          @{$page->get_entries()} : ($page->get_entries());
-      foreach my $ad_group (@results) {
-        printf "Ad group with name \"%s\" and id \"%d\" was found.\n",
-               $ad_group->get_name(), $ad_group->get_id();
-      }
-    } else {
-      print "No ad groups were found.\n";
+  # The contents of the subroutine will be executed for each ad group.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->AdGroupService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($ad_group) = @_;
+      printf "Ad group with name \"%s\" and id \"%d\" was found.\n",
+             $ad_group->get_name(), $ad_group->get_id();
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

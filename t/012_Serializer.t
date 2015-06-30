@@ -28,7 +28,7 @@ use Test::MockObject;
 use Test::More (tests => 7);
 use TestClientUtils qw(get_test_client_no_auth);
 use TestUtils qw(read_test_properties read_client_properties
-                 replace_properties);
+  replace_properties);
 use XML::Simple;
 
 use_ok("Google::Ads::AdWords::Client");
@@ -37,38 +37,37 @@ use_ok("Google::Ads::AdWords::Serializer");
 my $client = get_test_client_no_auth();
 $client->get_oauth_2_handler()->set_access_token("test-auth-token");
 
-my $current_version = $client->get_version();
+my $current_version   = $client->get_version();
 my $client_properties = read_client_properties()->{properties};
-$client_properties->{version} = $current_version;
+$client_properties->{version}    = $current_version;
 $client_properties->{libVersion} = ${Google::Ads::AdWords::Client::VERSION};
 
 use_ok("Google::Ads::AdWords::${current_version}::Selector");
 use_ok("Google::Ads::AdWords::${current_version}::CampaignService::get");
 use_ok("Google::Ads::AdWords::${current_version}::CampaignService::" .
-       "RequestHeader");
+    "RequestHeader");
 
-my $serializer = Google::Ads::AdWords::Serializer->new({
-  client => $client
-});
+my $serializer = Google::Ads::AdWords::Serializer->new({client => $client});
 
 my $header =
-    "Google::Ads::AdWords::${current_version}::CampaignService::RequestHeader"
-    ->new();
+  "Google::Ads::AdWords::${current_version}::CampaignService::RequestHeader"
+  ->new();
 
-my $body = "Google::Ads::AdWords::${current_version}::CampaignService::get"
-    ->new({
-      serviceSelector =>
-          "Google::Ads::AdWords::${current_version}::Selector"->new()
-    });
+my $body =
+  "Google::Ads::AdWords::${current_version}::CampaignService::get"->new({
+    serviceSelector =>
+      "Google::Ads::AdWords::${current_version}::Selector"->new()});
 
 my $logger = Test::MockObject->new();
 my $logged_message;
 $client->set_always("_get_auth_handler",
-    Google::Ads::Common::OAuth2ApplicationsHandler->new());
+  Google::Ads::Common::OAuth2ApplicationsHandler->new());
 $logger->set_always('info', 1);
-$logger->mock('warn', sub {
-  $logged_message = $_[1];
-});
+$logger->mock(
+  'warn',
+  sub {
+    $logged_message = $_[1];
+  });
 no warnings 'redefine';
 *Google::Ads::AdWords::Logging::get_soap_logger = sub {
   return $logger;
@@ -77,26 +76,28 @@ no warnings 'redefine';
 my $envelope = $serializer->serialize({
     method => "get",
     header => $header,
-    body => $body
+    body   => $body
 });
 
-my $properties = read_test_properties();
+my $properties      = read_test_properties();
 my $expected_output = "";
 $expected_output = $properties->getProperty("serializer_expected_output_cid");
-my $user_agent = sprintf("%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, ".
-                         "libwww-perl/%s, perl/%s)",
-                         $client->get_user_agent() || $0,
-                         ${Google::Ads::AdWords::Constants::VERSION},
-                         ${Google::Ads::Common::Constants::VERSION},
-                         ${SOAP::WSDL::VERSION},
-                         ${LWP::UserAgent::VERSION},
-                         $]);
+my $user_agent = sprintf(
+  "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, " .
+    "libwww-perl/%s, perl/%s)",
+  $client->get_user_agent() || $0,
+  ${Google::Ads::AdWords::Constants::VERSION},
+  ${Google::Ads::Common::Constants::VERSION},
+  ${SOAP::WSDL::VERSION},
+  ${LWP::UserAgent::VERSION},
+  $]
+);
 $client_properties->{userAgent} = $user_agent;
 $expected_output = replace_properties($expected_output, $client_properties);
 
 # Convert actual and expected output to hashes and compare deeply.
 cmp_deeply(
-  XML::Simple->new()->XMLin($envelope, ForceContent => 1),
+  XML::Simple->new()->XMLin($envelope,        ForceContent => 1),
   XML::Simple->new()->XMLin($expected_output, ForceContent => 1),
   "check serializer output"
 );
@@ -104,8 +105,7 @@ cmp_deeply(
 # Test error propagation when invalid nested structure is given.
 # Issue #58, http://goo.gl/mZkw6z
 eval {
-  "Google::Ads::AdWords::${current_version}::CampaignService::get"->new({
-    serviceSelector => { invalid_field => 1 }
-  });
+  "Google::Ads::AdWords::${current_version}::CampaignService::get"
+    ->new({serviceSelector => {invalid_field => 1}});
 };
 isnt($@, "", "check error propagation on invalid nested objects contruction");

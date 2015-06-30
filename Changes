@@ -1,3 +1,13 @@
+3.5.0
+- Added examples and support for v201506.
+- Added a new paging utility for iterating over pages called PageProcessor.pm.
+- Introduced new ReportDownloadHandler type and corresponding method
+  ReportUtils->get_report_handler to allow for greater flexibility when
+  processing report responses. The ReportDownloadHandler provides subroutines
+  for downloading a report as a file, a string, or a stream.
+  ReportUtils->download_report is now deprecated.
+- Added support includeZeroImpressions in the HTTP headers of reports.
+
 3.4.0
 - Removed support for v201406.
 - Added support in the reporting utilities to skip column headers.

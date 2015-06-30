@@ -7,3 +7,4 @@ oAuth2RefreshToken=refresh-token
 reporting.skipHeader=1
 reporting.skipColumnHeader=1
 reporting.skipSummary=1
+reporting.includeZeroImpressions=1

@@ -33,43 +33,44 @@ my %client_of : ATTR(:name<client> :default<>);
 
 # Invoked by SOAP::WSDL to deserialize incoming SOAP responses.
 sub deserialize {
-  my $self = shift;
+  my $self           = shift;
   my ($response_xml) = @_;
-  my $client = $self->get_client();
+  my $client         = $self->get_client();
   utf8::is_utf8 $response_xml and utf8::encode $response_xml;
 
-  Google::Ads::AdWords::Logging::get_soap_logger->info("Incoming response:\n" .
-      $response_xml);
+  Google::Ads::AdWords::Logging::get_soap_logger->info(
+    "Incoming response:\n" . $response_xml);
   $client->set_last_soap_response($response_xml);
 
   my $response_header =
-      $self->__get_element_content($response_xml, "ResponseHeader");
+    $self->__get_element_content($response_xml, "ResponseHeader");
 
   my $request_stats;
   if ($response_header) {
-    my $request_id = $self->__get_element_content($response_header, "requestId");
+    my $request_id =
+      $self->__get_element_content($response_header, "requestId");
     my $service_name =
-        $self->__get_element_content($response_header, "serviceName");
+      $self->__get_element_content($response_header, "serviceName");
     my $method_name =
-        $self->__get_element_content($response_header, "methodName");
-    my $operations = $self->__get_element_content($response_header, "operations");
+      $self->__get_element_content($response_header, "methodName");
+    my $operations =
+      $self->__get_element_content($response_header, "operations");
     my $response_time =
-        $self->__get_element_content($response_header, "responseTime");
+      $self->__get_element_content($response_header, "responseTime");
     my $units = $self->__get_element_content($response_header, "units");
 
     my $auth_handler = $client->_get_auth_handler();
     $request_stats = Google::Ads::AdWords::RequestStats->new({
-      authentication =>
-        !$auth_handler ? "" :
-          $auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler") ?
-            "OAuth" : "Unknown",
-      client_id => $client->get_client_id(),
-      service_name => $service_name,
-      method_name => $method_name,
-      response_time => $response_time,
-      request_id => $request_id,
-      operations => $operations,
-      units => $units,
+          authentication => !$auth_handler ? ""
+        : $auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler") ? "OAuth"
+        : "Unknown",
+        client_id     => $client->get_client_id(),
+        service_name  => $service_name,
+        method_name   => $method_name,
+        response_time => $response_time,
+        request_id    => $request_id,
+        operations    => $operations,
+        units         => $units,
     });
   }
 
@@ -84,8 +85,9 @@ sub deserialize {
   }
 
   if ($is_fault && $self->get_client->get_die_on_faults) {
-    die(sprintf("A fault was returned by the server:\n%s\n",
-                $response[0]->get_faultstring()));
+    die(
+      sprintf("A fault was returned by the server:\n%s\n",
+        $response[0]->get_faultstring()));
   }
 
   # Unwrapping the response if contains an rval no value for the user to see the
@@ -100,20 +102,17 @@ sub deserialize {
 sub _deserialize {
   my ($self, $content) = @_;
 
-  my $parser = Google::Ads::SOAP::Deserializer::MessageParser->new({
-    strict => $self->get_strict()
-  });
+  my $parser = Google::Ads::SOAP::Deserializer::MessageParser->new(
+    {strict => $self->get_strict()});
   $parser->class_resolver($self->get_class_resolver());
-  eval {
-    $parser->parse_string($content)
-  };
+  eval { $parser->parse_string($content) };
   if ($@) {
-      return $self->generate_fault({
-          code => 'SOAP-ENV:Server',
-          role => 'urn:localhost',
-          message => "Error deserializing message: $@. \n" .
-              "Message was: \n$content"
-      });
+    return $self->generate_fault({
+        code    => 'SOAP-ENV:Server',
+        role    => 'urn:localhost',
+        message => "Error deserializing message: $@. \n" .
+          "Message was: \n$content"
+    });
   }
   return ($parser->get_data(), $parser->get_header());
 }
@@ -122,8 +121,9 @@ sub _deserialize {
 sub __get_element_content {
   my ($self, $xml, $element_name) = @_;
 
-  my $regex = "<(?:[^:>]+:)?${element_name}(?:\\s[^>]*)?>(.+?)" .
-      "</(?:[^:>]+:)?${element_name}(?:\\s[^>]*)?>";
+  my $regex =
+    "<(?:[^:>]+:)?${element_name}(?:\\s[^>]*)?>(.+?)" .
+    "</(?:[^:>]+:)?${element_name}(?:\\s[^>]*)?>";
 
   $xml =~ /$regex/ and my $content = $1;
 

@@ -32,9 +32,8 @@ use SOAP::WSDL qv("2.00.10");
 use constant OAUTH_2_APPLICATIONS_HANDLER => "OAUTH_2_APPLICATIONS_HANDLER";
 use constant OAUTH_2_SERVICE_ACCOUNTS_HANDLER =>
   "OAUTH_2_SERVICE_ACCOUNTS_HANDLER";
-use constant AUTH_HANDLERS_ORDER => (
-  OAUTH_2_APPLICATIONS_HANDLER, OAUTH_2_SERVICE_ACCOUNTS_HANDLER
-);
+use constant AUTH_HANDLERS_ORDER =>
+  (OAUTH_2_APPLICATIONS_HANDLER, OAUTH_2_SERVICE_ACCOUNTS_HANDLER);
 
 # Class::Std-style attributes. Most values read from adwords.properties file.
 # These need to go in the same line for older Perl interpreters to understand.
@@ -67,20 +66,20 @@ my %last_soap_response_of : ATTR(:name<last_soap_response> :default<>);
 # Automatically called by Class::Std after the values for all the attributes
 # have been populated but before the constuctor returns the new object.
 sub START {
-  my ( $self, $ident ) = @_;
+  my ($self, $ident) = @_;
 
   my $default_properties_file =
     Google::Ads::AdWords::Constants::DEFAULT_PROPERTIES_FILE;
-  if ( not $properties_file_of{$ident} and -e $default_properties_file ) {
+  if (not $properties_file_of{$ident} and -e $default_properties_file) {
     $properties_file_of{$ident} = $default_properties_file;
   }
 
   my %properties = ();
-  if ( $properties_file_of{$ident} ) {
+  if ($properties_file_of{$ident}) {
 
     # If there's a valid properties file to read from, parse it and use the
     # config values to fill in any missing attributes.
-    %properties = __parse_properties_file( $properties_file_of{$ident} );
+    %properties = __parse_properties_file($properties_file_of{$ident});
     $client_id_of{$ident} ||= $properties{clientId};
     $user_agent_of{$ident} ||= $properties{useragent} || $properties{userAgent};
     $developer_token_of{$ident} ||= $properties{developerToken};
@@ -91,14 +90,15 @@ sub START {
 
     # Construct the ReportingConfiguration.
     $reporting_config_of{$ident} ||=
-        Google::Ads::AdWords::Reports::ReportingConfiguration->new({
-            skip_header => $properties{"reporting.skipHeader"},
-            skip_column_header => $properties{"reporting.skipColumnHeader"},
-            skip_summary => $properties{"reporting.skipSummary"}
-        });
+      Google::Ads::AdWords::Reports::ReportingConfiguration->new({
+        skip_header        => $properties{"reporting.skipHeader"},
+        skip_column_header => $properties{"reporting.skipColumnHeader"},
+        skip_summary       => $properties{"reporting.skipSummary"},
+        include_zero_impressions =>
+          $properties{"reporting.includeZeroImpressions"}});
 
     # SSL Peer validation setup.
-    $self->__setup_SSL( $properties{CAPath}, $properties{CAFile} );
+    $self->__setup_SSL($properties{CAPath}, $properties{CAFile});
   }
 
   # We want to provide default values for these  attributes if they weren't
@@ -116,11 +116,11 @@ sub START {
   my %auth_handlers = ();
 
   my $auth_handler = Google::Ads::AdWords::OAuth2ApplicationsHandler->new();
-  $auth_handler->initialize( $self, \%properties );
+  $auth_handler->initialize($self, \%properties);
   $auth_handlers{OAUTH_2_APPLICATIONS_HANDLER} = $auth_handler;
 
   $auth_handler = Google::Ads::AdWords::OAuth2ServiceAccountsHandler->new();
-  $auth_handler->initialize( $self, \%properties );
+  $auth_handler->initialize($self, \%properties);
   $auth_handlers{OAUTH_2_SERVICE_ACCOUNTS_HANDLER} = $auth_handler;
 
   $auth_handlers_of{$ident} = \%auth_handlers;
@@ -135,13 +135,13 @@ sub START {
 # each Google::Ads::AdWords::Client instance) of all the SOAP services. The
 # names of the services may change and shouldn't be hardcoded.
 sub AUTOMETHOD {
-  my ( $self, $ident ) = @_;
+  my ($self, $ident) = @_;
   my $method_name = $_;
 
   # All SOAP services should end in "Service"; fail early if the requested
   # method doesn't.
-  if ( $method_name =~ /^\w+Service$/ ) {
-    if ( $self->get_services()->{$method_name} ) {
+  if ($method_name =~ /^\w+Service$/) {
+    if ($self->get_services()->{$method_name}) {
 
       # To emulate a singleton, return the existing instance of the service if
       # we already have it. The return value of AUTOMETHOD must be a sub
@@ -149,64 +149,59 @@ sub AUTOMETHOD {
       return sub {
         return $self->get_services()->{$method_name};
       };
-    }
-    else {
+    } else {
       my $version = $self->get_version();
 
       # Check to see if there is a module with that name under
       # Google::Ads::AdWords::$version if not we warn and return nothing.
-      my $module_name = "Google::Ads::AdWords::${version}::${method_name}"
-        . "::${method_name}InterfacePort";
+      my $module_name =
+        "Google::Ads::AdWords::${version}::${method_name}" .
+        "::${method_name}InterfacePort";
       eval("require $module_name");
       if ($@) {
         warn("Module $module_name was not found.");
         return;
-      }
-      else {
+      } else {
 
         # Generating the service endpoint url of the form
         # https://{server_url}/{group_name(cm/job/info/o)}/{version}/{service}.
         my $server_url =
           $self->get_alternate_url() =~ /\/$/
-          ? substr( $self->get_alternate_url(), 0, -1 )
+          ? substr($self->get_alternate_url(), 0, -1)
           : $self->get_alternate_url();
         my $service_to_group_name =
           $Google::Ads::AdWords::Constants::SERVICE_TO_GROUP{$method_name};
-        if ( !$service_to_group_name ) {
-          die(
-            "Service " . $method_name . " is not configured in the library." );
+        if (!$service_to_group_name) {
+          die("Service " . $method_name . " is not configured in the library.");
         }
         my $endpoint_url =
-          sprintf( Google::Ads::AdWords::Constants::PROXY_FORMAT_STRING,
+          sprintf(Google::Ads::AdWords::Constants::PROXY_FORMAT_STRING,
           $server_url, $service_to_group_name, $self->get_version(),
-          $method_name );
+          $method_name);
 
         # If a suitable module is found, instantiate it and store it in
         # instance-specific storage to emulate a singleton.
-        my $service_port = $module_name->new(
-          {
+        my $service_port = $module_name->new({
 
             # Setting the server endpoint of the service.
             proxy => [$endpoint_url],
 
             # Associating our custom serializer.
             serializer =>
-              Google::Ads::AdWords::Serializer->new( { client => $self } ),
+              Google::Ads::AdWords::Serializer->new({client => $self}),
 
             # Associating our custom deserializer.
             deserializer =>
-              Google::Ads::AdWords::Deserializer->new( { client => $self } )
-          }
-        );
+              Google::Ads::AdWords::Deserializer->new({client => $self})});
 
         # Injecting our own transport.
-        $service_port->set_transport( $self->get_transport() );
+        $service_port->set_transport($self->get_transport());
 
-        if ( $ENV{HTTP_PROXY} ) {
-          $service_port->get_transport()->proxy( ['http'], $ENV{HTTP_PROXY} );
+        if ($ENV{HTTP_PROXY}) {
+          $service_port->get_transport()->proxy(['http'], $ENV{HTTP_PROXY});
         }
-        if ( $ENV{HTTPS_PROXY} ) {
-          $service_port->get_transport()->proxy( ['https'], $ENV{HTTPS_PROXY} );
+        if ($ENV{HTTPS_PROXY}) {
+          $service_port->get_transport()->proxy(['https'], $ENV{HTTPS_PROXY});
         }
 
         $self->get_services()->{$method_name} = $service_port;
@@ -223,15 +218,15 @@ sub _get_auth_handler {
   my $self = shift;
 
   # Check if we have cached the enabled auth_handler.
-  if ( $self->get___enabled_auth_handler() ) {
+  if ($self->get___enabled_auth_handler()) {
     return $self->get___enabled_auth_handler();
   }
 
   my $auth_handlers = $self->get_auth_handlers();
 
   foreach my $handler_id (AUTH_HANDLERS_ORDER) {
-    if ( $auth_handlers->{$handler_id}->is_auth_enabled() ) {
-      $self->set___enabled_auth_handler( $auth_handlers->{$handler_id} );
+    if ($auth_handlers->{$handler_id}->is_auth_enabled()) {
+      $self->set___enabled_auth_handler($auth_handlers->{$handler_id});
       last;
     }
   }
@@ -242,8 +237,8 @@ sub _get_auth_handler {
 # Private method to setup IO::Socket::SSL and Crypt::SSLeay variables
 # for certificate and hostname validation.
 sub __setup_SSL {
-  my ( $self, $ca_path, $ca_file ) = @_;
-  if ( $ca_path || $ca_file ) {
+  my ($self, $ca_path, $ca_file) = @_;
+  if ($ca_path || $ca_file) {
     $ENV{HTTPS_CA_DIR}  = $ca_path;
     $ENV{HTTPS_CA_FILE} = $ca_file;
     eval {
@@ -267,22 +262,21 @@ sub __parse_properties_file {
   # glob() to expand any metacharacters.
   ($properties_file) = glob($properties_file);
 
-  if ( open( PROP_FILE, $properties_file ) ) {
+  if (open(PROP_FILE, $properties_file)) {
 
     # The data in the file should be in the following format:
     #   key1=value1
     #   key2=value2
-    while ( my $line = <PROP_FILE> ) {
+    while (my $line = <PROP_FILE>) {
       chomp($line);
 
       # Skip comments.
-      next if ( $line =~ /^#/ || $line =~ /^\s*$/ );
-      my ( $key, $value ) = split( /=/, $line, 2 );
+      next if ($line =~ /^#/ || $line =~ /^\s*$/);
+      my ($key, $value) = split(/=/, $line, 2);
       $properties{$key} = $value;
     }
     close(PROP_FILE);
-  }
-  else {
+  } else {
     die("Couldn't open properties file $properties_file for reading: $!\n");
   }
   return %properties;
@@ -294,8 +288,8 @@ sub _get_header {
 
   # Always prepend the module identifier to the user agent.
   my $user_agent = sprintf(
-    "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, "
-      . "libwww-perl/%s, perl/%s)",
+    "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, " .
+      "libwww-perl/%s, perl/%s)",
     $self->get_user_agent() || $0,
     ${Google::Ads::AdWords::Constants::VERSION},
     ${Google::Ads::Common::Constants::VERSION},
@@ -308,8 +302,7 @@ sub _get_header {
     userAgent      => $user_agent,
     developerToken => $self->get_developer_token(),
     validateOnly   => $self->get_validate_only(),
-    partialFailure => $self->get_partial_failure()
-  };
+    partialFailure => $self->get_partial_failure()};
   my $clientId = $self->get_client_id();
 
   # $clientId may not be set, in which case we're operating on the account
@@ -343,15 +336,15 @@ sub get_oauth_2_service_accounts_handler {
 # stats. It also checks against the MAX_NUM_OF_REQUEST_STATS constant to
 # not make the array of lastest stats grow infinitely.
 sub _push_new_request_stats {
-  my ( $self, $request_stats ) = @_;
+  my ($self, $request_stats) = @_;
 
   $self->set_last_request_stats($request_stats);
-  $self->set_requests_count( $self->get_requests_count() + 1 );
+  $self->set_requests_count($self->get_requests_count() + 1);
   $request_stats->get_is_fault()
     and
-    $self->set_failed_requests_count( $self->get_failed_requests_count() + 1 );
+    $self->set_failed_requests_count($self->get_failed_requests_count() + 1);
   $self->set_operations_count(
-    $self->get_operations_count() + $request_stats->get_operations() );
+    $self->get_operations_count() + $request_stats->get_operations());
 }
 
 1;

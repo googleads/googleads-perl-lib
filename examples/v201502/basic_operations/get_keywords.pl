@@ -30,6 +30,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use Cwd qw(abs_path);
 
@@ -69,30 +70,26 @@ sub get_keywords {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get all ad group keywords.
-    $page = $client->AdGroupCriterionService()->get({
-      serviceSelector => $selector
-    });
-
-    # Display a page of keywords.
-    if ($page->get_entries()) {
-      foreach my $ad_group_criterion (@{$page->get_entries()}) {
-        my $prefix = "Keyword";
-        if ($ad_group_criterion->isa(
-            "Google::Ads::AdWords::v201502::NegativeAdGroupCriterion")) {
-          my $prefix = "Negative keyword";
-        }
-        printf "$prefix with ad group id \"%d\", keyword id \"%d\"," .
-               " and text \"%s\" was found.\n",
-               $ad_group_criterion->get_adGroupId(),
-               $ad_group_criterion->get_criterion()->get_id(),
-               $ad_group_criterion->get_criterion()->get_text();
+  # The contents of the subroutine will be executed for each criterion.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->AdGroupCriterionService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($ad_group_criterion) = @_;
+      my $prefix = "Keyword";
+      if ($ad_group_criterion->isa(
+          "Google::Ads::AdWords::v201502::NegativeAdGroupCriterion")) {
+        my $prefix = "Negative keyword";
       }
+      printf "$prefix with ad group id \"%d\", keyword id \"%d\"," .
+             " and text \"%s\" was found.\n",
+             $ad_group_criterion->get_adGroupId(),
+             $ad_group_criterion->get_criterion()->get_id(),
+             $ad_group_criterion->get_criterion()->get_text();
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

@@ -40,6 +40,7 @@ use Google::Ads::AdWords::v201502::FeedItem;
 use Google::Ads::AdWords::v201502::FeedItemOperation;
 use Google::Ads::AdWords::v201502::SitelinkFeedItem;
 use Google::Ads::AdWords::v201502::UrlList;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -116,22 +117,15 @@ sub get_feeds() {
   my $query = "SELECT Id, Name, Attributes WHERE Origin = 'USER' AND " .
               "FeedStatus = 'ENABLED'";
 
-  # Paginate through results.
-  my $feeds = [];
-  my $page;
-  my $offset = 0;
-  do {
-    my $page_query = "${query} LIMIT ${offset}," . PAGE_SIZE;
+  # Paginate through results automatically, and retrieve the feeds.
+  my @feeds = Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->FeedService(),
+    query => $query,
+    page_size => PAGE_SIZE
+  })->get_entries();
 
-    $page = $client->FeedService()->query({query => $page_query});
-
-    if ($page->get_entries()) {
-      push $feeds, @{$page->get_entries()};
-    }
-    $offset += PAGE_SIZE;
-  } while ($offset < $page->get_totalNumEntries());
-
-  return $feeds;
+  return \@feeds;
 }
 
 # Returns a dictionary of feed item ID to a list where each element is a
@@ -196,31 +190,31 @@ sub get_feed_mapping_attributes() {
                       $feed->get_id(), $placeholder_type;
 
   # Paginate through results.
+  # The contents of the subroutine will be executed for each feed mapping.
+  # The attribute mappings hash is being passed as an argument to the
+  # subroutine in order to populate it.
   my %attribute_mappings;
-  my $page;
-  my $offset = 0;
-  do {
-    my $page_query = "${query} LIMIT ${offset}," . PAGE_SIZE;
-
-    $page = $client->FeedMappingService()->query({query => $page_query});
-
-    if ($page->get_entries()) {
-      # Normally, a feed attribute is mapped only to one field. However, you may
-      # map it to more than one field if needed.
-      foreach my $feed_mapping (@{$page->get_entries()}) {
-        my @attributes = @{$feed_mapping->get_attributeFieldMappings()};
-        foreach my $attribute_mapping (@attributes) {
-          my $attribute_id = $attribute_mapping->get_feedAttributeId();
-          if (!$attribute_mappings{$attribute_id}) {
-            $attribute_mappings{$attribute_id} = [];
-          }
-          push $attribute_mappings{$attribute_id},
-               $attribute_mapping->get_fieldId();
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->FeedMappingService(),
+    query => $query,
+    page_size => PAGE_SIZE
+  })->process_entries(
+    # Normally, a feed attribute is mapped only to one field. However, you may
+    # map it to more than one field if needed.
+    sub {
+      my ($feed_mapping) = @_;
+      my @attributes = @{$feed_mapping->get_attributeFieldMappings()};
+      foreach my $attribute_mapping (@attributes) {
+        my $attribute_id = $attribute_mapping->get_feedAttributeId();
+        if (!$attribute_mappings{$attribute_id}) {
+          $attribute_mappings{$attribute_id} = [];
         }
+        push $attribute_mappings{$attribute_id},
+             $attribute_mapping->get_fieldId();
       }
-    }
-    $offset += PAGE_SIZE;
-  } while ($offset < $page->get_totalNumEntries());
+    },
+  );
 
   return \%attribute_mappings;
 }
@@ -233,20 +227,13 @@ sub get_feed_items() {
                       "WHERE Status = 'ENABLED' AND FeedId = %d",
                       $feed->get_id();
 
-  # Paginate through results.
-  my @feed_items = ();
-  my $page;
-  my $offset = 0;
-  do {
-    my $page_query = "${query} LIMIT ${offset}," . PAGE_SIZE;
-
-    $page = $client->FeedItemService()->query({query => $page_query});
-
-    if ($page->get_entries()) {
-      push @feed_items, @{$page->get_entries()};
-    }
-    $offset += PAGE_SIZE;
-  } while ($offset < $page->get_totalNumEntries());
+  # Paginate through results automatically, and retrieve the feed items.
+  my @feed_items = Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->FeedItemService(),
+    query => $query,
+    page_size => PAGE_SIZE
+  })->get_entries();
 
   return \@feed_items;
 }
@@ -261,20 +248,13 @@ sub get_campaign_feeds() {
                       "PlaceholderTypes CONTAINS_ANY [%d]",
                       $feed->get_id(), $placeholder_type;
 
-  # Paginate through results.
-  my @campaign_feeds = ();
-  my $page;
-  my $offset = 0;
-  do {
-    my $page_query = "${query} LIMIT ${offset}," . PAGE_SIZE;
-
-    $page = $client->CampaignFeedService()->query({query => $page_query});
-
-    if ($page->get_entries()) {
-      push @campaign_feeds, @{$page->get_entries()};
-    }
-    $offset += PAGE_SIZE;
-  } while ($offset < $page->get_totalNumEntries());
+  # Paginate through results automatically, and retrieve the campaign feeds.
+  my @campaign_feeds = Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->CampaignFeedService(),
+    query => $query,
+    page_size => PAGE_SIZE
+  })->get_entries();
 
   return \@campaign_feeds;
 }

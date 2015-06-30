@@ -33,42 +33,43 @@ use constant OAUTH2_BASE_URL => "https://accounts.google.com/o/oauth2";
 # Class::Std-style attributes. Need to be kept in the same line.
 # These need to go in the same line for older Perl interpreters to understand.
 my %email_address_of : ATTR(:name<email_address> :default<>);
-my %delegated_email_address_of : ATTR(:name<delegated_email_address> :default<>);
+my %delegated_email_address_of :
+  ATTR(:name<delegated_email_address> :default<>);
 my %pem_file_of : ATTR(:name<pem_file> :default<>);
 my %__crypt_module_of : ATTR(:name<__crypt_module> :default<>);
 
 # Constructor
 sub START {
-    my ($self, $ident) = @_;
+  my ($self, $ident) = @_;
 
   $__crypt_module_of{$ident} ||= "Crypt::OpenSSL::RSA";
 }
 
-sub initialize :CUMULATIVE(BASE FIRST) {
+sub initialize : CUMULATIVE(BASE FIRST) {
   my ($self, $api_client, $properties) = @_;
   my $ident = ident $self;
 
-  $email_address_of{$ident} = $properties->{oAuth2ServiceAccountEmailAddress} ||
-      $email_address_of{$ident};
+  $email_address_of{$ident} = $properties->{oAuth2ServiceAccountEmailAddress}
+    || $email_address_of{$ident};
   $delegated_email_address_of{$ident} =
-      $properties->{oAuth2ServiceAccountDelegateEmailAddress} ||
-      $delegated_email_address_of{$ident};
-  $pem_file_of{$ident} = $properties->{oAuth2ServiceAccountPEMFile} ||
-      $pem_file_of{$ident};
+       $properties->{oAuth2ServiceAccountDelegateEmailAddress}
+    || $delegated_email_address_of{$ident};
+  $pem_file_of{$ident} = $properties->{oAuth2ServiceAccountPEMFile}
+    || $pem_file_of{$ident};
 }
 
 sub _refresh_access_token {
   my $self = shift;
 
-  my $iat = time;
-  my $exp = $iat + 3600;
-  my $iss = $self->get_email_address();
+  my $iat                     = time;
+  my $exp                     = $iat + 3600;
+  my $iss                     = $self->get_email_address();
   my $delegated_email_address = $self->get_delegated_email_address();
-  my $scope = $self->_scope();
+  my $scope                   = $self->_scope();
 
   my $file = $self->__read_certificate_file() || return 0;
 
-  my $header= '{"alg":"RS256","typ":"JWT"}';
+  my $header = '{"alg":"RS256","typ":"JWT"}';
   my $claims = "{
     \"iss\":\"${iss}\",
     \"prn\":\"${delegated_email_address}\",
@@ -84,16 +85,17 @@ sub _refresh_access_token {
   $key->use_pkcs1_padding();
   $key->use_sha256_hash();
 
-  my $signature = $key->sign("${encoded_header}.${encoded_claims}");
-  my $encoded_signature =  __encode_base64_url($signature);
+  my $signature         = $key->sign("${encoded_header}.${encoded_claims}");
+  my $encoded_signature = __encode_base64_url($signature);
   my $assertion = "${encoded_header}.${encoded_claims}.${encoded_signature}";
-  my $body = "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" .
-      "&assertion=" . $assertion;
+  my $body =
+    "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" .
+    "&assertion=" . $assertion;
   push my @headers, "Content-Type" => "application/x-www-form-urlencoded";
-  my $request = HTTP::Request->new("POST", OAUTH2_BASE_URL . "/token",
-                                   \@headers, $body);
+  my $request =
+    HTTP::Request->new("POST", OAUTH2_BASE_URL . "/token", \@headers, $body);
   my $user_agent = $self->get___user_agent();
-  my $res = $user_agent->request($request);
+  my $res        = $user_agent->request($request);
 
   if (!$res->is_success()) {
     warn($res->decoded_content());
@@ -111,9 +113,9 @@ sub __read_certificate_file {
   my $file_str;
 
   $self->get_pem_file() || return 0;
-  open (MYFILE, $self->get_pem_file()) || return 0;
+  open(MYFILE, $self->get_pem_file()) || return 0;
   while (<MYFILE>) {
-   $file_str .= $_;
+    $file_str .= $_;
   }
   close(MYFILE);
 

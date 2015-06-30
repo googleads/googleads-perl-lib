@@ -27,8 +27,8 @@ use URI::Escape;
 use MIME::Base64;
 
 sub get_base64_data_from_url (%) {
-  my $url = shift;
-  my $request = HTTP::Request->new(GET => $url);
+  my $url       = shift;
+  my $request   = HTTP::Request->new(GET => $url);
   my $userAgent = LWP::UserAgent->new();
   $userAgent->agent(sprintf("%s: %s", __PACKAGE__, $0));
   my $response = $userAgent->request($request);

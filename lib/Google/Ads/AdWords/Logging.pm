@@ -27,10 +27,10 @@ use Log::Log4perl qw(get_logger :levels);
 
 # Module initialization.
 # This the log4perl configration format.
-my $logs_folder =  File::Spec->catfile(File::HomeDir->my_home, "logs");
-my $awapi_log_file =  File::Spec->catfile($logs_folder, "aw_api_lib.log");
-my $soap_log_file =  File::Spec->catfile($logs_folder, "soap_xml.log");
-my $default_conf = <<TEXT;
+my $logs_folder = File::Spec->catfile(File::HomeDir->my_home, "logs");
+my $awapi_log_file = File::Spec->catfile($logs_folder, "aw_api_lib.log");
+my $soap_log_file  = File::Spec->catfile($logs_folder, "soap_xml.log");
+my $default_conf   = <<TEXT;
   log4perl.category.Google.Ads.AdWords.AWAPI = INFO, LogAWfile
   log4perl.appender.LogAWfile = Log::Log4perl::Appender::File
   log4perl.appender.LogAWfile.filename = ${awapi_log_file}
@@ -56,7 +56,7 @@ sub initialize_logging {
     # Trying to read from the log4perl.conf file if not configuring the
     # defaults.
     my $log4perl_conf =
-        File::Spec->catfile(File::HomeDir->my_home, "log4perl.conf");
+      File::Spec->catfile(File::HomeDir->my_home, "log4perl.conf");
     if (-r $log4perl_conf) {
       Log::Log4perl->init($log4perl_conf);
     } else {

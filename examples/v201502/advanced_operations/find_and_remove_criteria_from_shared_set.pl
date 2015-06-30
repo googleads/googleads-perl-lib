@@ -39,6 +39,7 @@ use Google::Ads::AdWords::v201502::SharedCriterion;
 use Google::Ads::AdWords::v201502::SharedCriterionOperation;
 use Google::Ads::AdWords::v201502::SharedSet;
 use Google::Ads::AdWords::v201502::SharedSetOperation;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -70,27 +71,23 @@ sub find_and_remove_criteria_from_shared_set {
     paging => $paging
   });
 
-  my @shared_set_ids = ();
-
   # Paginate through results and collect the shared set IDs.
-  my $page;
-  do {
-    $page = $client->CampaignSharedSetService()->get({selector => $selector});
-
-    # Display the shared sets associated with the campaign.
-    if ($page->get_entries()) {
-      foreach my $campaign_shared_set (@{$page->get_entries()}) {
-        push @shared_set_ids,
-             $campaign_shared_set->get_sharedSetId()->get_value();
-        printf "Campaign shared set ID %d and name '%s' found for " .
-               " campaign ID %d.\n",
-               $campaign_shared_set->get_sharedSetId(),
-               $campaign_shared_set->get_sharedSetName(),
-               $campaign_shared_set->get_campaignId();
-      }
+  # The subroutine will be executed for each shared set.
+  my @shared_set_ids = Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->CampaignSharedSetService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($campaign_shared_set) = @_;
+      printf "Campaign shared set ID %d and name '%s' found for " .
+             " campaign ID %d.\n",
+             $campaign_shared_set->get_sharedSetId(),
+             $campaign_shared_set->get_sharedSetName(),
+             $campaign_shared_set->get_campaignId();
+      return $campaign_shared_set->get_sharedSetId()->get_value();
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   if (!@shared_set_ids) {
     printf "No shared sets found for campaign ID %d.\n", $campaign_id;
@@ -98,8 +95,6 @@ sub find_and_remove_criteria_from_shared_set {
   }
 
   # Next, retrieve criterion IDs for all found shared sets.
-  my @remove_criterion_operations = ();
-
   $paging = Google::Ads::AdWords::v201502::Paging->new({
     startIndex => 0,
     numberResults => PAGE_SIZE
@@ -118,12 +113,14 @@ sub find_and_remove_criteria_from_shared_set {
     paging => $paging
   });
 
-  do {
-    $page = $client->SharedCriterionService()->get({selector => $selector});
-
-    # Display the shared sets associated with the campaign.
-    if ($page->get_entries()) {
-      foreach my $shared_criterion (@{$page->get_entries()}) {
+  my @remove_criterion_operations =
+    Google::Ads::AdWords::Utilities::PageProcessor->new({
+      client => $client,
+      service => $client->SharedCriterionService(),
+      selector => $selector
+    })->process_entries(
+      sub {
+        my ($shared_criterion) = @_;
         my $criterion = $shared_criterion->get_criterion();
         if ($criterion->isa("Google::Ads::AdWords::v201502::Keyword")) {
           printf "Shared negative keyword with ID %d and text '%s' was " .
@@ -151,11 +148,9 @@ sub find_and_remove_criteria_from_shared_set {
               sharedSetId => $shared_criterion->get_sharedSetId()
             })
           });
-        push @remove_criterion_operations, $shared_criterion_operation;
+        return $shared_criterion_operation;
       }
-    }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+    );
 
   # Finally, remove the criteria.
   if (@remove_criterion_operations) {

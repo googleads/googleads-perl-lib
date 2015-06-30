@@ -27,18 +27,17 @@ use File::Spec;
 use Test::MockObject::Extends;
 use TestUtils qw(read_client_properties);
 
-@ISA = qw(Exporter);
+@ISA       = qw(Exporter);
 @EXPORT_OK = qw(get_test_client get_test_mcc_client get_test_client_no_auth);
 
 sub get_test_client {
   my $api_version = shift;
 
   my $properties_file =
-      File::Spec->catdir(dirname($0), qw(testdata client.properties));
+    File::Spec->catdir(dirname($0), qw(testdata client.properties));
 
-  my $client = Google::Ads::AdWords::Client->new({
-    properties_file => $properties_file
-  });
+  my $client =
+    Google::Ads::AdWords::Client->new({properties_file => $properties_file});
 
   Google::Ads::AdWords::Logging::enable_all_logging();
   if ($api_version) {
@@ -66,11 +65,10 @@ sub get_test_mcc_client {
 
 sub get_test_client_no_auth {
   my $properties_file =
-      File::Spec->catdir(dirname($0), qw(testdata client.properties));
+    File::Spec->catdir(dirname($0), qw(testdata client.properties));
 
-  my $client = Google::Ads::AdWords::Client->new({
-    properties_file => $properties_file
-  });
+  my $client =
+    Google::Ads::AdWords::Client->new({properties_file => $properties_file});
 
   $client = Test::MockObject::Extends->new($client);
   $client->mock("_get_auth_handler", sub { return undef; });

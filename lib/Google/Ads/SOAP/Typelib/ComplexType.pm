@@ -40,9 +40,9 @@ use SOAP::WSDL::Expat::MessageParser;
 use SOAP::WSDL::XSD::Typelib::ComplexType;
 
 # Silencing annoying third-party library warnings.
-$SIG{__WARN__}= sub {
-  warn @_ unless
-    $_[0] =~ /Tie::Hash::FIELDS|Cache::RemovalStrategy|XPath\/
+$SIG{__WARN__} = sub {
+  warn @_
+    unless $_[0] =~ /Tie::Hash::FIELDS|Cache::RemovalStrategy|XPath\/
         Node\/Element|XMLSchemaSOAP1_2::as_dateTime/;
 };
 
@@ -63,12 +63,11 @@ sub serialize_attr {
 
   if ($args->{xsitypens}) {
     $result = $result . " xmlns:$args->{xsitypens}->{name}=\"" .
-        "$args->{xsitypens}->{value}\" ";
+      "$args->{xsitypens}->{value}\" ";
   }
 
   return $result;
 }
-
 
 # Redefining complex type factory method to allow subclasses to be passed to
 # attribute setters, so for example a
@@ -78,59 +77,67 @@ sub _factory {
 
   $ELEMENTS_FROM->{$class} = shift;
   $ATTRIBUTES_OF->{$class} = shift;
-  $CLASSES_OF->{$class} = shift;
-  $NAMES_OF->{$class} = shift;
+  $CLASSES_OF->{$class}    = shift;
+  $NAMES_OF->{$class}      = shift;
 
   while (my ($name, $attribute_ref) = each %{$ATTRIBUTES_OF->{$class}}) {
-    my $type = $CLASSES_OF->{$class}->{$name} or
-        croak "No class given for $name";
+    my $type = $CLASSES_OF->{$class}->{$name}
+      or croak "No class given for $name";
     $type->isa('UNIVERSAL') or eval "require $type" or croak $@;
-    my $is_list = $type->isa('SOAP::WSDL::XSD::Typelib::Builtin::list');
+    my $is_list     = $type->isa('SOAP::WSDL::XSD::Typelib::Builtin::list');
     my $method_name = $name;
-    $method_name =~s{[\.\-]}{_}xmsg;
+    $method_name =~ s{[\.\-]}{_}xmsg;
     *{"$class\::set_$method_name"} = sub {
       if (not $#_) {
         delete $attribute_ref->{${$_[0]}};
         return;
-      };
+      }
       my $is_ref = ref $_[1];
-      $attribute_ref->{${$_[0]}} = ($is_ref)?
-          ($is_ref eq 'ARRAY')?
-              $is_list?
-                  $type->new({value => $_[1]}):
-                  [map {
-                         ref $_?
-                             ref $_ eq 'HASH'?
-                                 # PATCH Call custom hash to object subroutine
-                                 # that correctly handles xsi_type.
-                                 _hash_to_object($type, $_):
-                                 # An isa type comparison is needed to check
-                                 # for the right type.
-                                 $_->isa($type)?
-                                 # END OF PATCH
-                                     $_ : croak "cannot use " . ref($_) .
-                                              " reference as value for" .
-                                              " $name - $type required"
-                             : $type->new({value => $_})
-                       } @{$_[1]}]:
-              $is_ref eq 'HASH'?
-                  # PATCH Call custom hash to object subroutine that correctly
-                  # handles xsi_type.
-                  do {
-                    _hash_to_object($type, $_[1]);
-                  }:
-                  # END OF PATCH
-                  blessed $_[1] && $_[1]->isa($type)?
-                      $_[1]:
-                      die croak "cannot use $is_ref reference as value for " .
-                                "$name - $type required":
-          defined $_[1] ? $type->new({value => $_[1]}) : ();
+      $attribute_ref->{${$_[0]}} =
+          ($is_ref)
+        ? ($is_ref eq 'ARRAY')
+          ? $is_list
+            ? $type->new({value => $_[1]})
+            : [
+                map {
+                      ref $_
+                    ? ref $_ eq 'HASH'
+                      ?
+                    # PATCH Call custom hash to object subroutine
+                    # that correctly handles xsi_type.
+                    _hash_to_object($type, $_)
+                      :
+                      # An isa type comparison is needed to check
+                      # for the right type.
+                      $_->isa($type)
+                    ?
+                      # END OF PATCH
+                      $_
+                    : croak "cannot use " .
+                      ref($_) . " reference as value for" .
+                      " $name - $type required"
+                    : $type->new({value => $_})
+                } @{$_[1]}]
+          : $is_ref eq 'HASH' ?
+          # PATCH Call custom hash to object subroutine that correctly
+          # handles xsi_type.
+          do {
+            _hash_to_object($type, $_[1]);
+          }
+        :
+          # END OF PATCH
+          blessed $_[1] && $_[1]->isa($type)
+        ? $_[1]
+        : die croak "cannot use $is_ref reference as value for " .
+          "$name - $type required"
+        : defined $_[1] ? $type->new({value => $_[1]})
+        :                 ();
       return;
     };
 
     *{"$class\::add_$method_name"} = sub {
       warn "attempting to add empty value to " . ref $_[0]
-          if not defined $_[1];
+        if not defined $_[1];
 
       if (not exists $attribute_ref->{${$_[0]}}) {
         $attribute_ref->{${$_[0]}} = $_[1];
@@ -155,32 +162,35 @@ sub _factory {
     }
 
     # Iterate over keys of arguments and call set appropriate field in class
-    map {($ATTRIBUTES_OF->{$class}->{$_})?
-        do {
-          my $method = "set_$_";
-          $method =~s{[\.\-]}{_}xmsg;
-          $self->$method($_[1]->{$_});
-        }:
+    map {
+      ($ATTRIBUTES_OF->{$class}->{$_})
+        ? do {
+        my $method = "set_$_";
+        $method =~ s{[\.\-]}{_}xmsg;
+        $self->$method($_[1]->{$_});
+        }
+        :
         # PATCH Ignoring xsi_type as a regular attribute of a given HASH since
         # is treated specially later.
         $_ =~ m{ \A
                   xmlns|xsi_type
-               }xms?():
-              do {
-                croak "Unknown field $_ in $class.\nValid fields are:\n" .
-                      join(', ', @{$ELEMENTS_FROM->{$class}}) . "\n" .
-                      "Structure given:\n" . Dumper ($_[1])
-              };
-        # END PATCH
+               }xms
+        ? ()
+        : do {
+        croak "Unknown field $_ in $class.\nValid fields are:\n" .
+          join(', ', @{$ELEMENTS_FROM->{$class}}) . "\n" .
+          "Structure given:\n" . Dumper($_[1]);
+        };
+      # END PATCH
     } keys %{$_[1]};
     return $self;
   };
 
   *{"$class\::_serialize"} = sub {
-    my $ident = ${$_[0]};
+    my $ident      = ${$_[0]};
     my $option_ref = $_[1];
 
-    return \join q{} , map {
+    return \join q{}, map {
       my $element = $ATTRIBUTES_OF->{$class}->{$_}->{$ident};
 
       if (defined $element) {
@@ -188,58 +198,63 @@ sub _factory {
         my $name = $NAMES_OF->{$class}->{$_} || $_;
         my $target_namespace = $_[0]->get_xmlns();
         map {
-          if ($_->isa('SOAP::WSDL::XSD::Typelib::Element')) {
-            ($target_namespace ne $_->get_xmlns())?
-                $_->serialize({name => $name, qualified => 1}):
-                $_->serialize({name => $name});
+          if ($_->isa('SOAP::WSDL::XSD::Typelib::Element'))
+          {
+            ($target_namespace ne $_->get_xmlns())
+              ? $_->serialize({name => $name, qualified => 1})
+              : $_->serialize({name => $name});
           } else {
-            if (!defined $ELEMENT_FORM_QUALIFIED_OF->{$class} or
-                $ELEMENT_FORM_QUALIFIED_OF->{$class}) {
-              if (exists $option_ref->{xmlns_stack} &&
-                  (scalar @{$option_ref->{xmlns_stack}} >= 2) &&
-                  ($option_ref->{xmlns_stack}->[-1] ne
-                      $option_ref->{xmlns_stack}->[-2])) {
-                join q{}, $_->start_tag({
-                            name => $name,
-                            xmlns => $option_ref->{xmlns_stack}->[-1],
-                            %{$option_ref}
-                          }),
-                     $_->serialize($option_ref),
-                     $_->end_tag({name => $name , %{$option_ref}});
+            if (!defined $ELEMENT_FORM_QUALIFIED_OF->{$class}
+              or $ELEMENT_FORM_QUALIFIED_OF->{$class})
+            {
+              if (
+                   exists $option_ref->{xmlns_stack}
+                && (scalar @{$option_ref->{xmlns_stack}} >= 2)
+                && ($option_ref->{xmlns_stack}->[-1] ne
+                  $option_ref->{xmlns_stack}->[-2]))
+              {
+                join q{},
+                  $_->start_tag({
+                    name  => $name,
+                    xmlns => $option_ref->{xmlns_stack}->[-1],
+                    %{$option_ref}}
+                  ),
+                  $_->serialize($option_ref),
+                  $_->end_tag({name => $name, %{$option_ref}});
               } else {
                 # PATCH Determine if xsi:type is required.
-                my $refname = ref($_);
+                my $refname   = ref($_);
                 my $classname = $CLASSES_OF->{$class}->{$name};
                 if ($classname && $classname ne ref($_)) {
                   my $xsitypens = {};
-                  if ($option_ref->{xmlns_stack}->[-1] ne $_->get_xmlns()){
-                    $xsitypens->{name} = "xns";
-                    $xsitypens->{value} = $_->get_xmlns();
+                  if ($option_ref->{xmlns_stack}->[-1] ne $_->get_xmlns()) {
+                    $xsitypens->{name}       = "xns";
+                    $xsitypens->{value}      = $_->get_xmlns();
                     $option_ref->{xsitypens} = $xsitypens;
                   }
                   my $package_name = ref($_);
                   $package_name =~ /^.*::(.*)$/;
                   my $xsi_type = $1;
                   $option_ref->{xsitype} =
-                      ($xsitypens->{name}?$xsitypens->{name} . ":" : "") .
-                      "$xsi_type";
+                    ($xsitypens->{name} ? $xsitypens->{name} . ":" : "") .
+                    "$xsi_type";
                 } else {
                   delete $option_ref->{xsitype};
                 }
 
                 # Checks to see if namespace is required because it is an
                 # inherited attribute on a different namespace.
-                my $class_isa = $class . "::ISA";
-                my @class_parents = @$class_isa;
+                my $class_isa          = $class . "::ISA";
+                my @class_parents      = @$class_isa;
                 my $requires_namespace = 0;
                 foreach my $parent (@class_parents) {
                   my %parent_elements =
-                      map { $_ => 1 } @{$ELEMENTS_FROM->{$parent}};
+                    map { $_ => 1 } @{$ELEMENTS_FROM->{$parent}};
                   my $parent_has_element = exists($parent_elements{$name});
 
                   if ($parent_has_element) {
                     my $parent_xns;
-                    eval "\$parent_xns = " . $parent. "::get_xmlns()";
+                    eval "\$parent_xns = " . $parent . "::get_xmlns()";
                     if ($parent_xns ne $option_ref->{xmlns_stack}->[-1]) {
                       $requires_namespace = 1;
                     }
@@ -247,15 +262,18 @@ sub _factory {
                 }
 
                 if ($requires_namespace) {
-                  join q{}, $_->start_tag({name => $name,
-                                           xmlns => $_->get_xmlns(),
-                                           %{$option_ref}}),
-                       $_->serialize($option_ref),
-                       $_->end_tag({name => $name , %{$option_ref}});
+                  join q{},
+                    $_->start_tag({
+                      name  => $name,
+                      xmlns => $_->get_xmlns(),
+                      %{$option_ref}}
+                    ),
+                    $_->serialize($option_ref),
+                    $_->end_tag({name => $name, %{$option_ref}});
                 } else {
                   join q{}, $_->start_tag({name => $name, %{$option_ref}}),
-                       $_->serialize($option_ref),
-                       $_->end_tag({name => $name , %{$option_ref}});
+                    $_->serialize($option_ref),
+                    $_->end_tag({name => $name, %{$option_ref}});
                 }
                 # END PATCH
               }
@@ -263,16 +281,16 @@ sub _factory {
               my $set_xmlns = delete $option_ref->{xmlns};
 
               join q{},
-                   $_->start_tag({
-                     name => $name,
-                     %{$option_ref},
-                     (!defined $set_xmlns)?(xmlns => ""):()
-                   }),
-                   $_->serialize({%{$option_ref}, xmlns => ""}),
-                   $_->end_tag({name => $name , %{$option_ref}});
+                $_->start_tag({
+                  name => $name,
+                  %{$option_ref},
+                  (!defined $set_xmlns) ? (xmlns => "") : ()}
+                ),
+                $_->serialize({%{$option_ref}, xmlns => ""}),
+                $_->end_tag({name => $name, %{$option_ref}});
             }
           }
-        } @{$element}
+        } @{$element};
       } else {
         q{};
       }
@@ -281,8 +299,8 @@ sub _factory {
 
   if (!$class->isa('SOAP::WSDL::XSD::Typelib::AttributeSet')) {
     *{"$class\::serialize"} =
-        \&SOAP::WSDL::XSD::Typelib::ComplexType::__serialize_complex;
-  };
+      \&SOAP::WSDL::XSD::Typelib::ComplexType::__serialize_complex;
+  }
 }
 
 # Added to support hash to object serialization.
@@ -294,13 +312,13 @@ sub _hash_to_object {
 
   if ($hash->{"xsi_type"}) {
     my $base_type = $type;
-    my $xsi_type = $hash->{"xsi_type"};
+    my $xsi_type  = $hash->{"xsi_type"};
     $type = substr($type, 0, rindex($type, "::") + 2) . $xsi_type;
     eval("require $type");
     die croak "xsi_type $xsi_type not found" if $@;
     my $instance = $type->new($hash);
     die croak "xsi_type $xsi_type must inherit from " . "$type"
-        if not $instance->isa($base_type);
+      if not $instance->isa($base_type);
     return $instance;
   } else {
     return $type->new($hash);
@@ -311,7 +329,7 @@ sub _hash_to_object {
 # Redefining as_hash_ref method to correctly map all object properties to a
 # hash structure.
 sub as_hash_ref {
-  my $self = $_[0];
+  my $self           = $_[0];
   my $attributes_ref = $self->__get_object_attributes($self);
 
   my $hash_of_ref = {};
@@ -324,22 +342,23 @@ sub as_hash_ref {
       # PATCH normalizing the attribute name
       $attribute =~ s/__/./g;
       # END PATCH
-      $hash_of_ref->{$attribute} = blessed $value
-          ? $value->isa('SOAP::WSDL::XSD::Typelib::Builtin::anySimpleType')
-              ? $value->get_value()
-              # PATCH returning the value no need to recurse
-              : $value
-              # END PATCH
-          : ref $value eq 'ARRAY'
-              ? [map {
-                  $_->isa('SOAP::WSDL::XSD::Typelib::Builtin::anySimpleType')
-                      ? $_->get_value()
-                      # PATCH returning the object no need to recurse
-                      : $_
-                      # END PATCH
-                } @{$value}]
-              : die "Neither blessed obj nor list ref";
-    };
+      $hash_of_ref->{$attribute} =
+          blessed $value
+        ? $value->isa('SOAP::WSDL::XSD::Typelib::Builtin::anySimpleType')
+          ? $value->get_value()
+          # PATCH returning the value no need to recurse
+          : $value
+          # END PATCH
+        : ref $value eq 'ARRAY' ? [
+        map {
+              $_->isa('SOAP::WSDL::XSD::Typelib::Builtin::anySimpleType')
+            ? $_->get_value()
+            # PATCH returning the object no need to recurse
+            : $_
+            # END PATCH
+        } @{$value}]
+        : die "Neither blessed obj nor list ref";
+    }
   }
 
   no warnings "once";
@@ -354,9 +373,9 @@ sub as_hash_ref {
 
 # PATCH To retrieve object attributes mapping including inherited.
 sub __get_object_attributes {
-  my $self = shift;
+  my $self   = shift;
   my $object = shift;
-  my @types = (ref $object);
+  my @types  = (ref $object);
   my %attributes;
 
   while (my $type = pop(@types)) {
@@ -378,7 +397,7 @@ sub __get_object_attributes {
 # PATCH To retrieve attributes xml names including inherited.
 sub __get_object_names {
   my $object = $_[1];
-  my @types = (ref $object);
+  my @types  = (ref $object);
   my %names;
 
   while (my $type = pop(@types)) {
@@ -403,14 +422,14 @@ sub find {
   my ($self, $xpath_expr) = @_;
 
   my $parser_node =
-      Google::Ads::Common::XPathSAXParser::get_node_from_object($self);
+    Google::Ads::Common::XPathSAXParser::get_node_from_object($self);
 
   my @return_list = ();
   if (defined $parser_node) {
     my $node_set = $parser_node->find($xpath_expr);
     foreach my $node ($node_set->get_nodelist()) {
       my $soap_object =
-          Google::Ads::Common::XPathSAXParser::get_object_from_node($node);
+        Google::Ads::Common::XPathSAXParser::get_object_from_node($node);
       if (defined $soap_object) {
         push @return_list, $soap_object;
       }
@@ -425,13 +444,13 @@ sub find {
 # the old version of the client library.
 no warnings "once";
 *Google::Ads::SOAP::ComplexType::valueof =
-    \&Google::Ads::SOAP::ComplexType::find;
+  \&Google::Ads::SOAP::ComplexType::find;
 # END PATCH
 
 # PATCH Overloading hash casting routine for ComplexType, so all complex types
 # can behave as hashes.
 use overload (
-  '%{}' => 'as_hash_ref',
+  '%{}'    => 'as_hash_ref',
   fallback => 1,
 );
 # END PATCH

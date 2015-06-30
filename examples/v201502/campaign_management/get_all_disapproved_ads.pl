@@ -30,6 +30,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use Cwd qw(abs_path);
 
@@ -73,27 +74,23 @@ sub get_all_disapproved_ads {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get a page of dissaproved ads.
-    $page = $client->AdGroupAdService()->get({serviceSelector => $selector});
-
-    # Display ad parameters.
-    if ($page->get_entries()) {
-      foreach my $ad_group_ad (@{$page->get_entries()}) {
-        printf "Ad with id \"%s\" and type \"%s\" was disapproved for the " .
-               "following reasons:\n", $ad_group_ad->get_ad()->get_id(),
-               $ad_group_ad->get_ad()->get_Ad__Type();
-        foreach my $reason
-            (@{$ad_group_ad->get_ad()->get_disapprovalReasons()}) {
-          printf "  \"%s\"\n", $reason;
-        }
+  # The contents of the subroutine will be executed for each disapproved ad.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->AdGroupAdService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($ad_group_ad) = @_;
+      printf "Ad with id \"%s\" and type \"%s\" was disapproved for the " .
+             "following reasons:\n", $ad_group_ad->get_ad()->get_id(),
+             $ad_group_ad->get_ad()->get_Ad__Type();
+      foreach my $reason
+          (@{$ad_group_ad->get_ad()->get_disapprovalReasons()}) {
+        printf "  \"%s\"\n", $reason;
       }
-    } else {
-      print "No disapproved ads were found.\n";
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

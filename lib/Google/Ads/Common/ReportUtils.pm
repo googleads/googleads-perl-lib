@@ -27,6 +27,7 @@ use Google::Ads::AdWords::RequestStats;
 use Google::Ads::Common::Constants; our $VERSION = ${Google::Ads::Common::Constants::VERSION};
 
 use Google::Ads::Common::ReportDownloadError;
+use Google::Ads::Common::ReportDownloadHandler;
 
 use File::stat;
 use HTTP::Request;
@@ -39,20 +40,67 @@ use Time::HiRes qw(gettimeofday tv_interval);
 use URI::Escape;
 use XML::Simple;
 
-use constant ADHOC_REPORT_DOWNLOAD_URL => "%s/api/adwords/reportdownload/%s";
-use constant LWP_DEFAULT_TIMEOUT => 300; # 5 minutes.
-use constant SCRUBBED_HEADERS => qw(DeveloperToken Authorization);
+# Prepares and returns a Google::Ads::Common::ReportDownloadHandler.
+sub get_report_handler {
+  my ($report_definition, $client, $server, $timeout) = @_;
 
+  my $prepared_data =
+    __prepare_request($report_definition, $client, $server, $timeout);
+
+  return Google::Ads::Common::ReportDownloadHandler->new({
+      client          => $client,
+      __user_agent    => $prepared_data->{lwp},
+      __http_request  => $prepared_data->{request},
+      download_format => $prepared_data->{format},
+  });
+}
+
+# Deprecated - Prepares a Google::Ads::Common::ReportDownloadHandler and then
+# either saves the report's contents to a file (if passed an output file)
+# or returns them as a string.
 sub download_report {
+  warnings::warnif("deprecated",
+    "download_report is deprecated, use get_report_handler instead");
   my ($report_definition, $client, $file_path, $server,
-      $return_money_in_micros, $timeout) = @_;
+    $return_money_in_micros, $timeout)
+    = @_;
 
-  # Build report downlad url.
+  # Perform parameter validation.
+  if (defined $return_money_in_micros) {
+    if ($client->get_die_on_faults()) {
+      die("Version " . $client->get_version() .
+          " does not support returnMoneyInMicros.");
+    } else {
+      warn("Version " . $client->get_version() .
+          " does not support returnMoneyInMicros.");
+    }
+  }
+
+  my $download_response =
+    get_report_handler($report_definition, $client, $server, $timeout);
+
+  my $result;
+  if ($file_path) {
+    $result = $download_response->save($file_path);
+  } else {
+    $result = $download_response->get_as_string();
+  }
+  return $result;
+}
+
+# Creates and properly configures an LWP::UserAgent and HTTP::Request
+# for the specified parameters. Returns a hash with the keys: lwp,
+# request, format.
+sub __prepare_request {
+  my ($report_definition, $client, $server, $timeout) = @_;
+
+  # Build report download url.
   $server = $server ? $server : $client->get_alternate_url();
   $server = $server =~ /\/$/ ? substr($server, 0, -1) : $server;
   my $url;
 
-  $url = sprintf(ADHOC_REPORT_DOWNLOAD_URL, $server, $client->get_version());
+  $url = sprintf(Google::Ads::AdWords::Constants::ADHOC_REPORT_DOWNLOAD_URL,
+    $server, $client->get_version());
 
   my $lwp = LWP::UserAgent->new();
 
@@ -60,10 +108,13 @@ sub download_report {
   my $can_accept = HTTP::Message::decodable;
   my $gzip_support = $can_accept =~ /gzip/i;
   $lwp->default_header("Accept-Encoding" => scalar $can_accept);
-  $lwp->agent($client->get_user_agent() . ($gzip_support ? " gzip" : ""));
 
   # Set agent timeout.
-  $lwp->timeout($timeout ? $timeout : LWP_DEFAULT_TIMEOUT);
+  $lwp->timeout(
+      $timeout
+    ? $timeout
+    : Google::Ads::AdWords::Constants::LWP_DEFAULT_TIMEOUT
+  );
 
   # Set the authorization headers.
   my @headers = ();
@@ -72,8 +123,8 @@ sub download_report {
 
   if ($auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler")) {
     # In this case we use the client OAuth2
-    push @headers, "Authorization" => "Bearer " .
-        $auth_handler->get_access_token();
+    push @headers,
+      "Authorization" => "Bearer " . $auth_handler->get_access_token();
   } else {
     my $handler_warning = "The authorization handler is not supported.";
     if ($client->get_die_on_faults()) {
@@ -89,36 +140,36 @@ sub download_report {
     push @headers, "clientCustomerId" => $client->get_client_id();
   }
 
-  # Set other headers.
-  if (defined $return_money_in_micros) {
-    if ($client->get_die_on_faults()) {
-      die("Version " . $client->get_version() .
-          " does not support returnMoneyInMicros.");
-    } else {
-      warn("Version " . $client->get_version() .
-           " does not support returnMoneyInMicros.");
-    }
-  }
-
   # Set reporting configuration headers.
   my $reporting_config = $client->get_reporting_config();
-  if ($reporting_config and (defined $reporting_config->get_skip_header() or
-        defined $reporting_config->get_skip_column_header() or
-        defined $reporting_config->get_skip_summary())) {
+  if (
+    $reporting_config
+    and (defined $reporting_config->get_skip_header()
+      or defined $reporting_config->get_skip_column_header()
+      or defined $reporting_config->get_skip_summary()
+      or defined $reporting_config->get_include_zero_impressions()))
+  {
     if (defined $reporting_config->get_skip_header()) {
-        push @headers, "skipReportHeader" =>
-            $reporting_config->get_skip_header() ?
-                "true" : "false";
+      push @headers,
+        "skipReportHeader" => $reporting_config->get_skip_header()
+        ? "true"
+        : "false";
     }
     if (defined $reporting_config->get_skip_column_header()) {
-        push @headers, "skipColumnHeader" =>
-            $reporting_config->get_skip_column_header() ?
-                "true" : "false";
+      push @headers,
+        "skipColumnHeader" => $reporting_config->get_skip_column_header()
+        ? "true"
+        : "false";
     }
     if (defined $reporting_config->get_skip_summary()) {
-        push @headers, "skipReportSummary" =>
-            $reporting_config->get_skip_summary() ?
-                "true" : "false";
+      push @headers,
+        "skipReportSummary" => $reporting_config->get_skip_summary()
+        ? "true"
+        : "false";
+    }
+    if (defined $reporting_config->get_include_zero_impressions()) {
+      push @headers, "includeZeroImpressions" =>
+        $reporting_config->get_include_zero_impressions() ? "true" : "false";
     }
   }
   push @headers, "developerToken" => $client->get_developer_token();
@@ -126,159 +177,46 @@ sub download_report {
   # Read proxy configuration for the enviroment.
   $lwp->env_proxy();
 
-  # Request the report.
+  # Prepare the request.
   my $request;
   my $format;
   if (ref($report_definition) eq "HASH") {
     push @headers, "Content-Type" => "application/x-www-form-urlencoded";
-    $request = HTTP::Request->new("POST", $url, \@headers, "__rdquery=" .
-        uri_escape_utf8($report_definition->{query}) . "&__fmt=" .
+    $request = HTTP::Request->new("POST", $url, \@headers,
+      "__rdquery=" . uri_escape_utf8($report_definition->{query}) . "&__fmt=" .
         uri_escape_utf8($report_definition->{format}));
     $format = $report_definition->{format};
   } else {
     push @headers, "Content-Type" => "application/x-www-form-urlencoded";
-    $request = HTTP::Request->new("POST", $url, \@headers, "__rdxml=" .
-        uri_escape_utf8("<reportDefinition>" . $report_definition .
-                        "</reportDefinition>"));
+    $request = HTTP::Request->new(
+      "POST", $url,
+      \@headers,
+      "__rdxml=" .
+        uri_escape_utf8(
+        "<reportDefinition>" . $report_definition . "</reportDefinition>"
+        ));
     $format = $report_definition->get_downloadFormat() . "";
   }
 
-  my $start_time = [gettimeofday()];
-  my $response;
-  if ($file_path) {
-    ($file_path) = glob($file_path);
-    if (!$gzip_support) {
-      # If not gzip support then we can stream directly to a file.
-      $response = $lwp->request($request, $file_path);
-    } else {
-      my $mode = ">:utf8";
-      if ($format =~ /^GZIPPED|PDF/) {
-        # Binary format can't dump as UTF8.
-        $mode = ">";
-      }
-      open(FH, $mode, $file_path) or warn "Can't write to '$file_path': $!";
-      $response = $lwp->request($request);
-      # Need to decode in a file.
-      print FH $response->decoded_content();
-      close FH;
-    }
-  } else {
-    $response = $lwp->request($request);
-  }
-  my $is_successful = 0;
-  my $error_message;
-  my $return_val;
-  if ($response->code == HTTP_OK) {
-    $is_successful = 1;
-    if ($file_path) {
-      open(FILE, "<", $file_path) or return undef;
-      my $result = <FILE>;
-      close(FILE);
-      $return_val = stat($file_path)->size;
-    } else {
-      $return_val = $response->decoded_content();
-    }
-  } elsif ($response->code == HTTP_BAD_REQUEST) {
-    my $result = $response->decoded_content();
-    $return_val = __extract_xml_error($result);
-    $error_message = $return_val;
-  } else {
-    $return_val = undef;
-  }
-
-  # Log request and response information before returning the result.
-  __log_report_request_response(
-    $client,
-    $request,
-    $response,
-    $is_successful,
-    $error_message,
-    tv_interval($start_time)
-  );
-
-  return $return_val;
+  return {
+    lwp     => $lwp,
+    request => $request,
+    format  => $format
+  };
 }
 
 sub __extract_xml_error {
   my $ref = XML::Simple->new()->XMLin(shift, ForceContent => 1);
 
   return Google::Ads::Common::ReportDownloadError->new({
-    type => $ref->{ApiError}->{type}->{content},
-    field_path => $ref->{ApiError}->{fieldPath}->{content} ?
-        $ref->{ApiError}->{fieldPath}->{content} : "",
-    trigger => $ref->{ApiError}->{trigger}->{content} ?
-        $ref->{ApiError}->{trigger}->{content} : ""
-  });
-}
-
-sub __log_report_request_response {
-  my ($client, $request, $response, $is_successful, $error_message,
-    $elapsed_seconds) = @_;
-
-  # Always log the request stats to the AdWordsAPI logger.
-  my $auth_handler = $client->_get_auth_handler();
-
-  my $request_stats = Google::Ads::AdWords::RequestStats->new({
-    authentication =>
-      !$auth_handler ? "" :
-        $auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler") ?
-          "OAuth" : "Unknown",
-    client_id => $client->get_client_id(),
-    service_name => $request->uri,
-    method_name => $request->method,
-    is_fault => !$is_successful,
-    response_time => int(($elapsed_seconds * 1000) + 0.5),
-  });
-  $client->_push_new_request_stats($request_stats);
-  Google::Ads::AdWords::Logging::get_awapi_logger->info($request_stats);
-
-  # Log the request.
-  if ($request) {
-    # Log the full request:
-    #  To WARN if the request failed OR
-    #  To INFO if the request succeeded
-    my $request_string = $request->as_string("\n");
-    # Remove sensitive information from the log message.
-    foreach my $header (SCRUBBED_HEADERS) {
-      $request_string =~
-        s!(\n$header):(.*)\n!$1: REDACTED\n!;
-    }
-    my $log_message = sprintf("Outgoing %s report request:\n%s",
-      $is_successful ? 'successful' : 'failed',
-      $request_string
-    );
-    Google::Ads::AdWords::Logging::get_soap_logger->log(
-      $is_successful ? $INFO : $WARN,
-      $log_message
-    );
-  }
-
-  # Log the response.
-  if ($response) {
-    # Log:
-    #  To WARN if the request failed OR
-    #  To INFO (status and message only)
-    my $log_message = sprintf(
-      "Incoming %s report response with status code %s and message '%s'",
-      $is_successful ? 'successful' : 'failed',
-      $response->code,
-      $response->message
-    );
-
-    if ($is_successful) {
-      Google::Ads::AdWords::Logging::get_soap_logger->info($log_message);
-    } else {
-      if (ref $error_message eq "Google::Ads::Common::ReportDownloadError") {
-        $log_message = $log_message . sprintf(
-          ": An error has occurred of type '%s', triggered by '%s'",
-          $error_message->get_type(), $error_message->get_trigger()
-        );
-      } elsif ($error_message) {
-        $log_message = $log_message . ': ' . $error_message;
-      }
-      Google::Ads::AdWords::Logging::get_soap_logger->logwarn($log_message);
-    }
-  }
+      type       => $ref->{ApiError}->{type}->{content},
+      field_path => $ref->{ApiError}->{fieldPath}->{content}
+      ? $ref->{ApiError}->{fieldPath}->{content}
+      : "",
+      trigger => $ref->{ApiError}->{trigger}->{content}
+      ? $ref->{ApiError}->{trigger}->{content}
+      : ""
+    });
 }
 
 return 1;
@@ -293,8 +231,14 @@ Google::Ads::Common::ReportUtils
 
  use Google::Ads::Common::ReportUtils;
 
- Google::Ads::Common::ReportUtils::download_report($report_definition,
-                                                   $client, $path);
+ my $response =
+     Google::Ads::Common::ReportUtils::get_report_handler($report_definition,
+                                                           $client);
+ my $result = $response->save($outputfile);
+ if (!$result) {
+     printf("An error has occurred of type '%s', triggered by '%s'.\n",
+            $result->get_type(), $result->get_trigger());
+ }
 
 =head1 DESCRIPTION
 
@@ -303,11 +247,13 @@ with reports.
 
 =head1 SUBROUTINES
 
-=head2 download_report
+=head2 get_report_handler
 
-Downloads a new instance of an existing report definition. If the file_path
-parameter is specified it will be downloaded to the file at that path, otherwise
-it will be downloaded to memory and be returned as a string.
+Prepares a new instance of L<Google::Ads::Common::ReportDownloadHandler> using
+the specified parameters. The actual download of report contents will not be
+invoked by this procedure, but instead will occur when you call one of the
+procedures on the returned handler to save the report to a file, get its
+contents as a string, etc.
 
 =head3 Parameters
 
@@ -316,14 +262,73 @@ it will be downloaded to memory and be returned as a string.
 =item *
 
 The report_definition parameter is either:
-  - the id of a pre-defined report to download
-  - a C<ReportDefinition> object to be defined and download on the fly
-  - a hash with an AWQL query and format. i.e. { query => 'query',
+
+=over
+
+=item *
+
+A C<ReportDefinition> object to be defined and downloaded on the fly OR
+
+=item *
+
+A hash with an AWQL query and format. i.e.
+
+  { query => 'query',
     format => 'format' }
 
-In the case of a plain id then the regular download endpoint will be used to
-download a pre-stored definition, otherwise the versioned download url endpoint
-(based on the version of the given C<Client> object) will be used.
+=back
+
+=item *
+
+The client parameter is an instance of a valid L<Google::AdWords::Client>.
+
+=item *
+
+The server is an optional parameter that can be set to alter the URL from where
+the report will be requested.
+
+=item *
+
+The timeout is an optional parameter that can be set to alter the default
+time that the http client waits to get a response from the server. If not set,
+the default timeout used is
+L<Google::Ads::Common::ReportUtils::LWP_DEFAULT_TIMEOUT>.
+
+=back
+
+=head3 Returns
+
+A new L<Google::Ads::Common::ReportDownloadHandler>. See the methods of
+L<Google::Ads::Common::ReportDownloadHandler> that support different use
+cases for processing the response's contents.
+
+=head2 download_report (Deprecated)
+
+Downloads a new instance of an existing report definition. If the file_path
+parameter is specified it will be downloaded to the file at that path, otherwise
+it will be downloaded to memory and returned as a string.
+
+=head3 Parameters
+
+=over
+
+=item *
+
+A C<ReportDefinition> object to be defined and downloaded on the fly OR
+
+=item *
+
+A hash with an AWQL query and format. i.e.
+
+  { query => 'query',
+    format => 'format' }
+
+=back
+
+=item *
+
+The versioned download url endpoint (based on the version of the given
+C<Client> object) will be used to download the report.
 
 =item *
 
@@ -349,7 +354,7 @@ longer supported.
 The timeout is an optional parameter that can be set to alter the default
 time that the http client waits to get a response from the server. If not set,
 the default timeout used is
-L<Google::Ads::Common::ReportUtils::LWP_DEFAULT_TIMEOUT>.
+L<Google::Ads::AdWords::Constants::LWP_DEFAULT_TIMEOUT>.
 
 =back
 
@@ -360,12 +365,10 @@ returned, if not the report data itself is returned.
 
 =head3 Exceptions
 
-Starting with v201209 of the API a L<Google::Ads::Common::ReportDownloadError>
-object will be returned in case of a download error. If not passing a
-C<file_path> to dump the report then you must check if the return
-isa("Google::Ads::Common::ReportDownloadError").
-
-Prior to v201209 a warn() will be issued if a report download error occurs.
+A L<Google::Ads::Common::ReportDownloadError>
+object will be returned in case of a download error. Check for failures by
+evaluating the return value in a boolean context, where a
+L<Google::Ads::Common::ReportDownloadError> will always evaluate to false.
 
 =head1 LICENSE AND COPYRIGHT
 

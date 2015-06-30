@@ -197,7 +197,7 @@ How do I enable logging?
 ------------------------
 
 The client library uses a custom class for all logging purposes and is exposed
-through the Google::Ads:AdWords::Logging module. This classs relies in the
+through the Google::Ads:AdWords::Logging module. This class relies in the
 Log::Log4perl module for all its logging tasks and provides a default
 configuration within the module which can be overriden by proving a
 log4perl.conf file in your home directory.
@@ -295,4 +295,5 @@ Authors:
     david.t@google.com (David Torres)
 
 Maintainers:
+    api.ndsun@gmail.com (Nadine Sundquist)
     api.jradcliff@gmail.com (Josh Radcliff)

@@ -31,36 +31,35 @@ use_ok("Google::Ads::Common::XPathSAXParser");
 my $properties = read_test_properties();
 
 my $parser = Google::Ads::Common::XPathSAXParser->new({
-  xpath_expression => "//soap:Body/*",
-  handlers => {
-    Start => sub {
-      my $parser = shift;
-      my $name = shift;
-      my $attribs = shift;
-      my $node = shift;
-      is($attribs->{"att1"}, "att1value", "checking element attributes");
-      is($name, "element", "check element tag start");
-    },
-    End => sub {
-      my $parser = shift;
-      my $name = shift;
-      my $attribs = shift;
-      my $node = shift;
-      is($name, "element", "check element tag end");
-    },
-    Char => sub {
-      my $parser = shift;
-      my $value = shift;
-      my $node = shift;
-      is($value, "char data", "check text tag");
-    },
-    Comment => sub {
-      my $parser = shift;
-      my $value = shift;
-      my $node = shift;
-      is($value, " comment ", "check comment tag");
-    }
-  }
-});
+    xpath_expression => "//soap:Body/*",
+    handlers         => {
+      Start => sub {
+        my $parser  = shift;
+        my $name    = shift;
+        my $attribs = shift;
+        my $node    = shift;
+        is($attribs->{"att1"}, "att1value", "checking element attributes");
+        is($name,              "element",   "check element tag start");
+      },
+      End => sub {
+        my $parser  = shift;
+        my $name    = shift;
+        my $attribs = shift;
+        my $node    = shift;
+        is($name, "element", "check element tag end");
+      },
+      Char => sub {
+        my $parser = shift;
+        my $value  = shift;
+        my $node   = shift;
+        is($value, "char data", "check text tag");
+      },
+      Comment => sub {
+        my $parser = shift;
+        my $value  = shift;
+        my $node   = shift;
+        is($value, " comment ", "check comment tag");
+        }
+    }});
 
 $parser->parse($properties->getProperty("sax_parser_input"));

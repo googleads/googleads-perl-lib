@@ -29,6 +29,7 @@ use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;
 use Google::Ads::AdWords::v201502::Selector;
 use Google::Ads::AdWords::v201502::Paging;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use Cwd qw(abs_path);
 
@@ -61,31 +62,26 @@ sub get_campaign_targeting_criteria {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get all campaign targets.
-    $page = $client->CampaignCriterionService()->get({
-      serviceSelector => $selector
-    });
-    # Display campaign targets.
-    if ($page->get_entries()) {
-      foreach my $campaign_criterion (@{$page->get_entries()}) {
-        my $negative =
-            $campaign_criterion->isa(
-                "Google::Ads::AdWords::v201502::NegativeCampaignCriterion")
-            ? "Negative "
-            : "";
-        printf $negative . "Campaign criterion with id \"%d\" and type " .
-                   "\"%s\" was found for campaign id \"%s\".\n",
-               $campaign_criterion->get_criterion()->get_id(),
-               $campaign_criterion->get_criterion()->get_Criterion__Type(),
-               $campaign_criterion->get_campaignId();
-      }
-    } else {
-      print "No campaign criteria were found.\n";
+  # The contents of the subroutine will be executed for each campaign criterion.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->CampaignCriterionService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($campaign_criterion) = @_;
+      my $negative =
+          $campaign_criterion->isa(
+              "Google::Ads::AdWords::v201502::NegativeCampaignCriterion")
+          ? "Negative "
+          : "";
+      printf $negative . "Campaign criterion with id \"%d\" and type " .
+                 "\"%s\" was found for campaign id \"%s\".\n",
+             $campaign_criterion->get_criterion()->get_id(),
+             $campaign_criterion->get_criterion()->get_Criterion__Type(),
+             $campaign_criterion->get_campaignId();
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

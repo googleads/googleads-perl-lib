@@ -29,6 +29,7 @@ use Google::Ads::AdWords::v201502::OrderBy;
 use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use constant PAGE_SIZE => 500;
 
@@ -68,23 +69,21 @@ sub get_campaigns_by_label {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get campaigns.
-    $page = $client->CampaignService()->get({serviceSelector => $selector});
-
-    # Display campaigns.
-    if ($page->get_entries()) {
-      foreach my $campaign (@{$page->get_entries()}) {
-        my @label_strings = map { $_->get_id() . '/' . $_->get_name() }
-                                @{$campaign->get_labels()};
-        printf "Campaign found with name \"%s\" and ID %d and labels: %s.\n",
-               $campaign->get_name(), $campaign->get_id(),
-               join(', ', @label_strings);
-      }
+  # The contents of the subroutine will be executed for each campaign.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->CampaignService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($campaign) = @_;
+      my @label_strings = map { $_->get_id() . '/' . $_->get_name() }
+                              @{$campaign->get_labels()};
+      printf "Campaign found with name \"%s\" and ID %d and labels: %s.\n",
+             $campaign->get_name(), $campaign->get_id(),
+             join(', ', @label_strings);
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

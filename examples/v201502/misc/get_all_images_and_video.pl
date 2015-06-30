@@ -32,6 +32,7 @@ use Google::Ads::AdWords::v201502::Paging;
 use Google::Ads::AdWords::v201502::Predicate;
 use Google::Ads::AdWords::v201502::Selector;
 use Google::Ads::Common::MapUtils;
+use Google::Ads::AdWords::Utilities::PageProcessor;
 
 use Cwd qw(abs_path);
 
@@ -64,29 +65,27 @@ sub get_all_images_and_video {
   });
 
   # Paginate through results.
-  my $page;
-  do {
-    # Get all images.
-    $page = $client->MediaService()->get({serviceSelector => $selector});
-
-    # Display images.
-    if ($page->get_entries()) {
-      foreach my $media (@{$page->get_entries()}) {
-        if ($media->isa("Google::Ads::AdWords::v201502::Image")) {
-          my $dimensions =
-              Google::Ads::Common::MapUtils::get_map($media->get_dimensions());
-          printf "Image with id \"%s\", dimensions \"%dx%d\", and MIME type " .
-                 "\"%s\" was found.\n", $media->get_mediaId(),
-                 $dimensions->{"FULL"}->get_width(),
-                 $dimensions->{"FULL"}->get_height(), $media->get_mimeType();
-        } else {
-           printf "Video with id \"%s\" and name \"%s\" was found.\n",
-                  $media->get_mediaId(), $media->get_name();
-        }
+  # The contents of the subroutine will be executed for each image/video.
+  Google::Ads::AdWords::Utilities::PageProcessor->new({
+    client => $client,
+    service => $client->MediaService(),
+    selector => $selector
+  })->process_entries(
+    sub {
+      my ($media) = @_;
+      if ($media->isa("Google::Ads::AdWords::v201502::Image")) {
+        my $dimensions =
+            Google::Ads::Common::MapUtils::get_map($media->get_dimensions());
+        printf "Image with id \"%s\", dimensions \"%dx%d\", and MIME type " .
+               "\"%s\" was found.\n", $media->get_mediaId(),
+               $dimensions->{"FULL"}->get_width(),
+               $dimensions->{"FULL"}->get_height(), $media->get_mimeType();
+      } else {
+         printf "Video with id \"%s\" and name \"%s\" was found.\n",
+                $media->get_mediaId(), $media->get_name();
       }
     }
-    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
-  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+  );
 
   return 1;
 }

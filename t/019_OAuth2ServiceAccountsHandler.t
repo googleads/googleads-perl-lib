@@ -29,77 +29,87 @@ use TestClientUtils qw(get_test_client_no_auth);
 
 use_ok("Google::Ads::AdWords::OAuth2ServiceAccountsHandler");
 
-my $user_agent_mock = Test::MockObject->new();
+my $user_agent_mock   = Test::MockObject->new();
 my $crypt_module_mock = Test::MockObject->new();
 
 my $handler = Google::Ads::AdWords::OAuth2ServiceAccountsHandler->new({
-  __user_agent => $user_agent_mock,
-  __crypt_module => $crypt_module_mock
+    __user_agent   => $user_agent_mock,
+    __crypt_module => $crypt_module_mock
 });
 
-my $client = get_test_client_no_auth();
+my $client          = get_test_client_no_auth();
 my $current_version = $client->get_version();
 
 # Test defaults.
 is($handler->_scope(), "https://www.googleapis.com/auth/adwords");
 
-$handler->initialize($client, {
-  oAuth2ClientId => "client-id",
-  oAuth2AccessToken => "access-token",
-  oAuth2ServiceAccountEmailAddress => "email",
-  oAuth2ServiceAccountDelegateEmailAddress => "delegated-email",
-  oAuth2ServiceAccountPEMFile => "t/testdata/test-cert.pem"
-});
+$handler->initialize(
+  $client,
+  {
+    oAuth2ClientId                           => "client-id",
+    oAuth2AccessToken                        => "access-token",
+    oAuth2ServiceAccountEmailAddress         => "email",
+    oAuth2ServiceAccountDelegateEmailAddress => "delegated-email",
+    oAuth2ServiceAccountPEMFile              => "t/testdata/test-cert.pem"
+  });
 
 # Test initialization.
-is($handler->get_client_id(), "client-id");
-is($handler->get_email_address(), "email");
+is($handler->get_client_id(),               "client-id");
+is($handler->get_email_address(),           "email");
 is($handler->get_delegated_email_address(), "delegated-email");
 
 # Test preset access token.
 my $exp = (time + 1000);
-$user_agent_mock->mock(request => sub {
-  my $response = HTTP::Response->new(200, "");
-  $response->content("{\n\"scope\":\"https://www.googleapis.com/auth/adwords" .
-                     "\"\n\"expires_in\":" . $exp . "\n}");
-  return $response;
-});
+$user_agent_mock->mock(
+  request => sub {
+    my $response = HTTP::Response->new(200, "");
+    $response->content(
+      "{\n\"scope\":\"https://www.googleapis.com/auth/adwords" .
+        "\"\n\"expires_in\":" . $exp . "\n}");
+    return $response;
+  });
 
 ok($handler->is_auth_enabled());
 is($handler->get_access_token(), "access-token");
 ok($handler->get_access_token_expires());
 
 # Test access token generation.
-$crypt_module_mock->mock(new_private_key => sub {
-  my ($self, $file) = @_;
+$crypt_module_mock->mock(
+  new_private_key => sub {
+    my ($self, $file) = @_;
 
-  my $key = Test::MockObject->new();
-  $key->mock(use_pkcs1_padding => sub { 1 });
-  $key->mock(use_sha256_hash => sub { 1 });
-  $key->mock(sign => sub {
-    return "signed-claims"
+    my $key = Test::MockObject->new();
+    $key->mock(use_pkcs1_padding => sub { 1 });
+    $key->mock(use_sha256_hash   => sub { 1 });
+    $key->mock(
+      sign => sub {
+        return "signed-claims";
+      });
+
+    return $key;
   });
 
-  return $key;
-});
+$user_agent_mock->mock(
+  request => sub {
+    my ($self, $request) = @_;
 
-$user_agent_mock->mock(request => sub {
-  my ($self, $request) = @_;
+    ok(
+      $request->content =~
+/^grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=[A-Za-z0-9]+\.[A-Za-z0-9]+\.[A-Za-z0-9]+$/,
+      "test valid JWT request content"
+    );
+    is($request->method, "POST");
+    is($request->url,    "https://accounts.google.com/o/oauth2/token");
 
-  ok($request->content =~
-     /^grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=[A-Za-z0-9]+\.[A-Za-z0-9]+\.[A-Za-z0-9]+$/,
-     "test valid JWT request content");
-  is($request->method, "POST");
-  is($request->url, "https://accounts.google.com/o/oauth2/token");
+    my $response = Test::MockObject->new();
+    $response->mock(is_success => sub { 1 });
+    $response->mock(
+      decoded_content => sub {
+        return "{\n\"access_token\":\"123\"\n\"expires_in\":3920\n}";
+      });
 
-  my $response = Test::MockObject->new();
-  $response->mock(is_success => sub { 1 });
-  $response->mock(decoded_content => sub {
-    return "{\n\"access_token\":\"123\"\n\"expires_in\":3920\n}"
+    return $response;
   });
-
-  return $response;
-});
 
 $handler->set_access_token(undef);
 ok($handler->is_auth_enabled());

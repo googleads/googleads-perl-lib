@@ -31,6 +31,15 @@ my %trigger_of : ATTR(:name<trigger> :default<"">);
 # ONGL path to the field cause of the error.
 my %field_path_of : ATTR(:name<field_path> :default<"">);
 
+my %response_code_of : ATTR(:name<response_code> :default<"">);
+
+my %response_message_of : ATTR(:name<response_message> :default<"">);
+
+# Always return false in boolean context.
+sub as_bool : BOOLIFY {
+  return;
+}
+
 return 1;
 
 =pod

@@ -22,8 +22,9 @@
 use strict;
 use lib qw(lib t t/util);
 
+use File::Temp qw(tempfile);
 use Test::MockObject::Extends;
-use Test::More (tests => 16);
+use Test::More (tests => 20);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
 
 use_ok("Google::Ads::AdWords::Reports::ReportingConfiguration");
@@ -31,45 +32,53 @@ use_ok("Google::Ads::AdWords::Reports::ReportingConfiguration");
 my $client = get_test_client_no_auth();
 ok($client->get_reporting_config(), "reporting configuration present");
 
-is($client->get_reporting_config()->get_skip_header(), undef,
-    "skip_header should be undef");
-is($client->get_reporting_config()->get_skip_column_header(), undef,
-    "skip_column_header should be undef");
-is($client->get_reporting_config()->get_skip_summary(), undef,
-    "skip_summary should be undef");
+is($client->get_reporting_config()->get_skip_header(),
+  undef, "skip_header should be undef");
+is($client->get_reporting_config()->get_skip_column_header(),
+  undef, "skip_column_header should be undef");
+is($client->get_reporting_config()->get_skip_summary(),
+  undef, "skip_summary should be undef");
+is($client->get_reporting_config()->get_include_zero_impressions(),
+  undef, "include_zero_impressions should be undef");
 
 # Construct a new reporting config.
 my $reporting_config =
-    Google::Ads::AdWords::Reports::ReportingConfiguration->new({
-        skip_header => 1,
-        skip_column_header => 0,
-        skip_summary => 0
-    });
+  Google::Ads::AdWords::Reports::ReportingConfiguration->new({
+    skip_header              => 1,
+    skip_column_header       => 0,
+    skip_summary             => 0,
+    include_zero_impressions => 0
+  });
 
 $client->set_reporting_config($reporting_config);
 
-is($client->get_reporting_config()->get_skip_header(), 1,
-    "skip_header should be set by constructor");
-is($client->get_reporting_config()->get_skip_column_header(), 0,
-    "skip_column_header should be set by constructor");
-is($client->get_reporting_config()->get_skip_summary(), 0,
-    "skip_summary should be set by constructor");
+is($client->get_reporting_config()->get_skip_header(),
+  1, "skip_header should be set by constructor");
+is($client->get_reporting_config()->get_skip_column_header(),
+  0, "skip_column_header should be set by constructor");
+is($client->get_reporting_config()->get_skip_summary(),
+  0, "skip_summary should be set by constructor");
+is($client->get_reporting_config()->get_include_zero_impressions(),
+  0, "include_zero_impressions should be set by constructor");
 
 # Mutate the reporting config
 $client->get_reporting_config->set_skip_header(0);
-is($client->get_reporting_config()->get_skip_header(), 0,
-    "skip_header should be set to false");
+is($client->get_reporting_config()->get_skip_header(),
+  0, "skip_header should be set to false");
 
 $client->get_reporting_config->set_skip_column_header(1);
-is($client->get_reporting_config()->get_skip_column_header(), 1,
-    "skip_column_header should be set to true");
+is($client->get_reporting_config()->get_skip_column_header(),
+  1, "skip_column_header should be set to true");
 
 $client->get_reporting_config->set_skip_summary(1);
-is($client->get_reporting_config()->get_skip_summary(), 1,
-    "skip_summary should be set to true");
+is($client->get_reporting_config()->get_skip_summary(),
+  1, "skip_summary should be set to true");
 
-ok($client->get_reporting_config()->as_string(),
-    "as_string");
+$client->get_reporting_config->set_include_zero_impressions(1);
+is($client->get_reporting_config()->get_include_zero_impressions(),
+  1, "include_zero_impressions should be set to true");
+
+ok($client->get_reporting_config()->as_string(), "as_string");
 
 # Clear the reporting config and confirm that ReportUtils
 # does not fail. Added to test the fix for issue #7:
@@ -91,17 +100,16 @@ use_ok("Google::Ads::Common::ReportDownloadError");
 # The download will not actually download anything due to the missing
 # report definition and test credentials, but the call should at least
 # complete without a runtime error.
-my $report_result = Google::Ads::Common::ReportUtils::download_report(
-  {
-    query =>
-        "SELECT CampaignId, Impressions " .
-        "FROM CAMPAIGN_PERFORMANCE_REPORT " .
-        "DURING THIS_MONTH",
+my $report_handler = Google::Ads::Common::ReportUtils::get_report_handler({
+    query => "SELECT CampaignId, Impressions " .
+      "FROM CAMPAIGN_PERFORMANCE_REPORT " . "DURING THIS_MONTH",
     format => "CSV"
   },
   $client
 );
-ok($report_result, "report result");
+ok($report_handler, "report handler");
+my $report_result = $report_handler->get_as_string();
+ok(!$report_result, "report error should evaluate to false in boolean context");
 # A ReportDownloadError indicates that the request was sent.
 ok($report_result->isa("Google::Ads::Common::ReportDownloadError"),
-    "check report result return type");
+  "check report result return type");

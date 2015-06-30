@@ -29,23 +29,19 @@ my %operations_of : ATTR(:name<operations> :default<0>);
 my %is_fault_of : ATTR(:name<is_fault> :default<0>);
 
 sub as_str : STRINGIFY {
-  my $self = shift;
-  my $auth = $self->get_authentication() || "";
-  my $client_id = $self->get_client_id() || "";
-  my $service = $self->get_service_name() || "";
-  my $method = $self->get_method_name() || "";
+  my $self          = shift;
+  my $auth          = $self->get_authentication() || "";
+  my $client_id     = $self->get_client_id() || "";
+  my $service       = $self->get_service_name() || "";
+  my $method        = $self->get_method_name() || "";
   my $response_time = $self->get_response_time() || "";
-  my $request_id = $self->get_request_id() || "";
-  my $operations = $self->get_operations() || "";
-  my $is_fault = $self->get_is_fault() ? "yes" : "no";
-  return "auth=${auth}" .
-      " client_id=${client_id}" .
-      " service=${service}" .
-      " method=${method}" .
-      " response_time=${response_time}" .
-      " request_id=${request_id}" .
-      " operations=${operations}" .
-      " is_fault=${is_fault}";
+  my $request_id    = $self->get_request_id() || "";
+  my $operations    = $self->get_operations() || "";
+  my $is_fault      = $self->get_is_fault() ? "yes" : "no";
+  return "auth=${auth}" . " client_id=${client_id}" .
+    " service=${service}" . " method=${method}" .
+    " response_time=${response_time}" . " request_id=${request_id}" .
+    " operations=${operations}" . " is_fault=${is_fault}";
 }
 
 return 1;
