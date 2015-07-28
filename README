@@ -57,7 +57,7 @@ AdWords API web services plus more. It includes:
 How do I start?
 ---------------
 
-1) Make sure you have Perl 5.8 or later installed. More information on Perl can
+1) Make sure you have Perl 5.14 or later installed. More information on Perl can
    be found at http://www.perl.org/. If you are installing in Windows read the
    important notes in the next section.
 
@@ -291,9 +291,9 @@ External Dependencies:
 Full dependency list is maintained in Build.PL.
 
 Authors:
-    api.jeffy@gmail.com (Jeff Posnick)
-    david.t@google.com (David Torres)
+    Jeff Posnick
+    David Torres
 
 Maintainers:
-    api.ndsun@gmail.com (Nadine Sundquist)
-    api.jradcliff@gmail.com (Josh Radcliff)
+    Nadine Sundquist
+    Josh Radcliff

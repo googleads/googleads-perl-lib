@@ -12,7 +12,7 @@ programmatically access [AdWords](https://adwords.google.com/select/Login) accou
 ## Features
  - Fully featured object oriented client library (all classes come generated from
  - the WSDLs)
- - Perl 5.8.0+ and based on SOAP::WSDL module
+ - Perl 5.14.0+ and based on SOAP::WSDL module
  - Outgoing and incoming SOAP message are monitored and logged on demand
  - Support for API calls to production system or sandbox
  - OAuth2 Support
@@ -34,9 +34,9 @@ Please report issues at <https://github.com/googleads/googleads-perl-lib/issues>
 If you have questions about the client library or AdWords API, you can ask them at the [AdWords API Forum](https://groups.google.com/group/adwords-api?pli=1).
 
 ## Authors
-  - api.jeffy@gmail.com (Jeff Posnick)
-  - david.t@google.com (David Torres)
+  - Jeff Posnick
+  - David Torres
 
 ## Maintainers
-  - api.jradcliff@gmail.com (Josh Radcliff)
-  - api.ndsun@gmail.com (Nadine Sundquist)
+  - Josh Radcliff
+  - Nadine Sundquist

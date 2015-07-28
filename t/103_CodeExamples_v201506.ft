@@ -17,7 +17,7 @@
 # Functional test for all code examples. Make sure the example runs with no
 # exceptions.
 #
-# Author: Nadine Sundquist <api.ndsun@gmail.com>
+# Author: Nadine Sundquist
 
 use strict;
 use lib qw(t/util);

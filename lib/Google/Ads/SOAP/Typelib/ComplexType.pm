@@ -83,7 +83,8 @@ sub _factory {
   while (my ($name, $attribute_ref) = each %{$ATTRIBUTES_OF->{$class}}) {
     my $type = $CLASSES_OF->{$class}->{$name}
       or croak "No class given for $name";
-    $type->isa('UNIVERSAL') or eval "require $type" or croak $@;
+    Class::Load::is_class_loaded($type)
+      or eval { Class::Load::load_class $type } or croak $@;
     my $is_list     = $type->isa('SOAP::WSDL::XSD::Typelib::Builtin::list');
     my $method_name = $name;
     $method_name =~ s{[\.\-]}{_}xmsg;

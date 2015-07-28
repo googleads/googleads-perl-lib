@@ -58,10 +58,10 @@ sub get_keywords {
       numberResults => PAGE_SIZE
   });
   my $selector = Google::Ads::AdWords::v201506::Selector->new({
-      fields => ["Id", "AdGroupId", "KeywordText"],
+      fields => ["Id", "CriteriaType", "KeywordMatchType", "KeywordText"],
       predicates => [$ad_group_id_predicate, $criteria_type_predicate],
       ordering => Google::Ads::AdWords::v201506::OrderBy->new({
-          field     => "AdGroupId",
+          field     => "KeywordText",
           sortOrder => "ASCENDING"
         }
       ),
@@ -85,11 +85,12 @@ sub get_keywords {
       {
         my $prefix = "Negative keyword";
       }
-      printf "$prefix with ad group id \"%d\", keyword id \"%d\"," .
-        " and text \"%s\" was found.\n",
-        $ad_group_criterion->get_adGroupId(),
-        $ad_group_criterion->get_criterion()->get_id(),
-        $ad_group_criterion->get_criterion()->get_text();
+      printf "$prefix with text '%s', match type '%s', criteria type '%s', "
+        . "and ID %d was found.\n",
+        $ad_group_criterion->get_criterion()->get_text(),
+        $ad_group_criterion->get_criterion()->get_matchType(),
+        $ad_group_criterion->get_criterion()->get_type(),
+        $ad_group_criterion->get_criterion()->get_id();
     });
 
   return 1;

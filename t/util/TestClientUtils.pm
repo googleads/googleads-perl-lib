@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 package TestClientUtils;
 
@@ -56,9 +56,7 @@ sub get_test_mcc_client {
 
   my $mcc_client_id = $client_properties->getProperty('mccClientId');
 
-  if ($api_version ge "v201409") {
-    die "No MCC client ID found" unless $mcc_client_id;
-  }
+  die "No MCC client ID found" unless $mcc_client_id;
 
   $client->set_client_id($mcc_client_id);
 }

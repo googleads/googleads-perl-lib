@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 package TestUtils;
 

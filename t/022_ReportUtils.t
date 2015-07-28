@@ -17,7 +17,7 @@
 # Unit tests for the Google::Ads::AdWords::Reports::ReportingConfiguration
 # module.
 #
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
+# Author: Josh Radcliff
 
 use strict;
 use lib qw(lib t t/util);

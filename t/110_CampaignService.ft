@@ -16,7 +16,7 @@
 #
 # Functional test for the CampaignService.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 use strict;
 use lib qw(t/util);

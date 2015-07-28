@@ -18,7 +18,7 @@
 # Functional tests of the various AdWords API services will be performed in a
 # separate test.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 use strict;
 

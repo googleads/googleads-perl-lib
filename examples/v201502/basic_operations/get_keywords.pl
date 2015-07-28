@@ -60,14 +60,15 @@ sub get_keywords {
     numberResults => PAGE_SIZE
   });
   my $selector = Google::Ads::AdWords::v201502::Selector->new({
-    fields => ["Id", "AdGroupId", "KeywordText"],
-    predicates => [$ad_group_id_predicate,$criteria_type_predicate],
-    ordering => Google::Ads::AdWords::v201502::OrderBy->new({
-      field => "AdGroupId",
-      sortOrder => "ASCENDING"
-    }),
-    paging => $paging
-  });
+      fields => ["Id", "CriteriaType", "KeywordMatchType", "KeywordText"],
+      predicates => [$ad_group_id_predicate, $criteria_type_predicate],
+      ordering => Google::Ads::AdWords::v201502::OrderBy->new({
+          field     => "KeywordText",
+          sortOrder => "ASCENDING"
+        }
+      ),
+      paging => $paging
+    });
 
   # Paginate through results.
   # The contents of the subroutine will be executed for each criterion.
@@ -83,11 +84,12 @@ sub get_keywords {
           "Google::Ads::AdWords::v201502::NegativeAdGroupCriterion")) {
         my $prefix = "Negative keyword";
       }
-      printf "$prefix with ad group id \"%d\", keyword id \"%d\"," .
-             " and text \"%s\" was found.\n",
-             $ad_group_criterion->get_adGroupId(),
-             $ad_group_criterion->get_criterion()->get_id(),
-             $ad_group_criterion->get_criterion()->get_text();
+      printf "$prefix with text '%s', match type '%s', criteria type '%s', "
+        . "and ID %d was found.\n",
+        $ad_group_criterion->get_criterion()->get_text(),
+        $ad_group_criterion->get_criterion()->get_matchType(),
+        $ad_group_criterion->get_criterion()->get_type(),
+        $ad_group_criterion->get_criterion()->get_id();
     }
   );
 

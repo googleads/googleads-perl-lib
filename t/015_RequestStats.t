@@ -17,7 +17,7 @@
 # Unit tests for the Google::Ads::AdWords::RequestStats module and stats
 # aggregation at the Google::Ads::AdWords::Client.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 use strict;
 use lib qw(t/util lib);

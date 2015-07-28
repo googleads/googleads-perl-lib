@@ -16,7 +16,7 @@
 #
 # Unit test to ensure that all modules in "../lib" compile properly.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 use strict;
 

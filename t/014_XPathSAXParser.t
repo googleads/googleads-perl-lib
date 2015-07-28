@@ -16,7 +16,7 @@
 #
 # Unit tests for the Google::Ads::AdWords::Deserializer module.
 #
-# Author: David Torres <api.davidtorres@gmail.com>
+# Author: David Torres
 
 use strict;
 use lib qw(t/util);

@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 # Description: This is a utility that provides automatic paging of results.
-# Author: Nadine Sundquist <api.ndsun@gmail.com>
+# Author: Nadine Sundquist
 
 package Google::Ads::AdWords::Utilities::PageProcessor;
 

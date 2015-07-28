@@ -1,3 +1,9 @@
+4.0.0
+- This library now supports a minimum of Perl version 5.14. The version of
+  Perl needed to be updated to stay current with newer versions of the
+  SOAP library and newer versions of Perl.
+- Removed support for v201409.
+
 3.5.0
 - Added examples and support for v201506.
 - Added a new paging utility for iterating over pages called PageProcessor.pm.

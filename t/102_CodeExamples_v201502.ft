@@ -17,7 +17,7 @@
 # Functional test for all code examples. Make sure the example runs with no
 # exceptions.
 #
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
+# Author: Josh Radcliff
 
 use strict;
 use lib qw(t/util);
