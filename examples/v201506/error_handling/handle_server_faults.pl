@@ -16,8 +16,6 @@
 #
 # This example shows how to handle server faults, and how to access the server
 # fault information.
-#
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

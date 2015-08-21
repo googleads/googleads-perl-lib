@@ -16,9 +16,6 @@
 #
 # This example adds multiple keywords to an ad group. To get ad groups run
 # basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupCriterionService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

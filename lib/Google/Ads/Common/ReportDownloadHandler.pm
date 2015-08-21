@@ -391,9 +391,5 @@ L<Google::Ads::Common::ReportDownloadError> will always evaluate to false.
 Returns a L<Google::Ads::Common::ReportDownloadError> if the report request
 fails.
 
-=head1 AUTHOR
-
-Josh Radcliff E<lt>api.jradcliff at gmail.comE<gt>
-
 =cut
 

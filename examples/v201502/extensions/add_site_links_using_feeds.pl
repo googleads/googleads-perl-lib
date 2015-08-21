@@ -17,10 +17,6 @@
 # This example adds a sitelinks feed and associates it with a campaign. To
 # create a campaign, run add_campaigns.pl. To add sitelinks using the simpler
 # ExtensionSetting services, see add_site_links.pl.
-#
-# Tags: CampaignFeedService.mutate, FeedItemService.mutate, FeedMappingService.mutate
-# Tags: FeedService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

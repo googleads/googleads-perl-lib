@@ -17,9 +17,6 @@
 # This example promotes an experiment, which permanently applies all the
 # experiment changes made to its related ad groups, criteria and ads. To add an
 # experiment, run campaign_management/add_experiment.pl.
-#
-# Tags: ExperimentService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

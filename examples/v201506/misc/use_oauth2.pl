@@ -16,8 +16,6 @@
 #
 # This example demonstrates how to authenticate using OAuth.  This example
 # is meant to be run from the command line and requires user input.
-#
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

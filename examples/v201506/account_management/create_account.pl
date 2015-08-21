@@ -16,9 +16,6 @@
 #
 # This example illustrates how to create an account. By default, this account
 # will only be visible via the parent MCC.
-#
-# Tags: ManagedCustomerService.mutate
-# Author: David Torres <david.t@google.com>
 
 use strict;
 

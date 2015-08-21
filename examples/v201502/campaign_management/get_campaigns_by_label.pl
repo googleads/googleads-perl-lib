@@ -16,9 +16,6 @@
 #
 # This example gets all campaigns with a specific label. To add a label to
 # campaigns, run add_campaign_labels.pl.
-#
-# Tags: CampaignService.get
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

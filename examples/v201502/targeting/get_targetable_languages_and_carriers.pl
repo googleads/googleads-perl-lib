@@ -16,10 +16,6 @@
 #
 # This example illustrates how to retrieve all languages and carriers available
 # for targeting.
-#
-# Tags: ConstantDataService.getCarrierCriterion
-# Tags: ConstantDataService.getLanguageCriterion
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

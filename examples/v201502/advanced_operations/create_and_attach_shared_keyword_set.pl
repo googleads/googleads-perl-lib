@@ -16,10 +16,6 @@
 #
 # This example creates a shared list of negative broad match keywords, then
 # attaches them to a campaign.
-#
-# Tags: SharedSetService.mutate, SharedSetCriterionService.mutate
-# Tags: CampaignSharedSetService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

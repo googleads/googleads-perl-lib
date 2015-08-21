@@ -19,8 +19,6 @@
 # to configure the client library, refer to the OAuth2 section of the
 # adwords.properties file. This example is meant to be run from the command line
 # and requires user input.
-#
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../lib";
@@ -35,19 +33,15 @@ sub generate_offline_credentials {
 
   my $auth_handler = $client->get_oauth_2_handler();
 
-  print "Please enter your OAuth 2.0 Client ID and Client Secret.\n" .
-    "These values can be generated from the Google Developers Console, " .
-    "https://console.developers.google.com under the Projects tab.\n" .
-    "Use a Client ID for Installed applications.\n" . "Enter Client ID: ";
-  my $client_id = <STDIN>;
-  $client_id = trim($client_id);
-
-  print "Enter Client secret: ";
-  my $client_secret = <STDIN>;
-  $client_secret = trim($client_secret);
-
-  $auth_handler->set_client_id($client_id);
-  $auth_handler->set_client_secret($client_secret);
+  my $client_id     = $auth_handler->get_client_id();
+  my $client_secret = $auth_handler->get_client_secret();
+  if (!$client_id || !$client_secret) {
+    die("ERROR: Missing input values for oAuth2ClientId or " .
+      "oAuth2ClientSecret in your adwords.properties file. " .
+      "These values can be generated from " .
+      "the Google Developers Console https://console.developers.google.com " .
+      "under the Projects tab.");
+  }
 
   # Open a browser and point it to the authorization URL, authorize the access
   # and then enter the generated verification code.

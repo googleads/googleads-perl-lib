@@ -17,9 +17,6 @@
 # This example adds two rule-based remarketing user lists: one with no site
 # visit date restrictions, and another that will only include users who visit
 # your site in the next six months.
-#
-# Tags: AdwordsUserListService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

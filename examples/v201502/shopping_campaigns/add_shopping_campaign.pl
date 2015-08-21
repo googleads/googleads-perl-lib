@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example adds a Shopping campaign.
-#
-# Tags: CampaignService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

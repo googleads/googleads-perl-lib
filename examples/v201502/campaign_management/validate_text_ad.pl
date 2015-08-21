@@ -16,9 +16,6 @@
 #
 # This example shows how to use the validate only header to check for errors.
 # No objects will be created, but exceptions will still be returned.
-#
-# Tags: AdGroupAdService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

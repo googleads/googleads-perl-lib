@@ -13,7 +13,6 @@
 # limitations under the License.
 #
 # Description: This is a utility that provides automatic paging of results.
-# Author: Nadine Sundquist
 
 package Google::Ads::AdWords::Utilities::PageProcessor;
 
@@ -211,9 +210,5 @@ Returns all the entries from all the pages in an array.
 =head3 Returns
 
 An array of entries from all the pages.
-
-=head1 AUTHOR
-
-Nadine Sundquist E<lt>api.ndsun at gmail.comE<gt>
 
 =cut

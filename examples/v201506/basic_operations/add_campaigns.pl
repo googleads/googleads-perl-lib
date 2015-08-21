@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example adds campaigns.
-#
-# Tags: CampaignService.mutate, BudgetService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

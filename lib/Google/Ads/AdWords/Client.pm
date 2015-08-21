@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.0.0");
+our $VERSION = qv("4.0.1");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -723,12 +723,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-=head1 AUTHOR
-
-Jeffrey Posnick E<lt>api.jeffy at gmail.comE<gt>
-
-David Torres E<lt>david.t at google.comE<gt>
 
 =head1 REPOSITORY INFORMATION
 

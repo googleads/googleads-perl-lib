@@ -16,10 +16,6 @@
 #
 # This example illustrates how to perform asynchronous requests using the
 # MutateJobService.
-#
-# Tags: MutateJobService.mutate, MutateJobService.get,
-#       MutateJobService.getResult
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

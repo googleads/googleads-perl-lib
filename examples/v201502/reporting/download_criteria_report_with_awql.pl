@@ -16,8 +16,6 @@
 #
 # This code example gets and downloads a criteria report using an AWQL query.
 # Currently, there is only production support for reports download.
-#
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

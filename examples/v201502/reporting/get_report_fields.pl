@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example gets report fields of a CRITERIA_PERFORMANCE_REPORT.
-#
-# Tags: ReportDefinitionService.getReportFields
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

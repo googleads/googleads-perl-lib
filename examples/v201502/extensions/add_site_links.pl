@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example adds a sitelinks feed and associates it with a campaign.
-#
-# Tags: CampaignExtensionSettingService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -17,9 +17,6 @@
 # This example gets all ad groups in a campaign. To add ad groups, run
 # basic_operations/add_ad_group.pl. To get campaigns, run
 # basic_operations/get_campaigns.pl.
-#
-# Tags: AdGroupService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

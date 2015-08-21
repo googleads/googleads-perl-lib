@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This code example upgrades an ad to use upgraded URLs.
-#
-# Tags: AdGroupAdService.get, AdGroupAdService.upgradeUrl
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

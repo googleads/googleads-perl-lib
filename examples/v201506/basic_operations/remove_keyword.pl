@@ -16,9 +16,6 @@
 #
 # This example removes a keyword using the 'REMOVE' operator. To get keywords,
 # run basic_operations/get_keywords.pl.
-#
-# Tags: AdGroupCriterionService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

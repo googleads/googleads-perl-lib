@@ -16,9 +16,6 @@
 #
 # This example gets text ads in an ad group. To add text ads, run
 # add_text_ads.pl. To get ad groups, run basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupAdService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

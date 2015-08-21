@@ -1,3 +1,7 @@
+4.0.1
+- Updated documentation in the comments.
+- Updated generating offline credentials to take input from adwords.properties.
+
 4.0.0
 - This library now supports a minimum of Perl version 5.14. The version of
   Perl needed to be updated to stay current with newer versions of the

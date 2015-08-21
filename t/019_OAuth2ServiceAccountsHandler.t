@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 # Unit tests for the Google::Ads::AdWords::OAuth2ServiceAccountsHandler module.
-#
-# Author: David Torres <david.t@google.com>
 
 use strict;
 use lib qw(lib t t/util);

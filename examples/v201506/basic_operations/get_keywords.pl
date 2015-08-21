@@ -17,9 +17,6 @@
 # This example gets keywords in an ad group. To add keywords, run
 # basic_operations/add_keywords.pl. To get ad groups, run
 # basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupCriterionService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 # Unit tests for the Google::Ads::AdWords::Serializer module.
-#
-# Author: David Torres
 
 use strict;
 use lib qw(t/util);

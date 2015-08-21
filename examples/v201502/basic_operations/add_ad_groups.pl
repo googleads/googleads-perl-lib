@@ -16,9 +16,6 @@
 #
 # This example adds ad groups to a campaign. To get campaigns, run
 # get_all_campaigns.pl.
-#
-# Tags: AdGroupService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

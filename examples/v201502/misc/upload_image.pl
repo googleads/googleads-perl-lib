@@ -16,9 +16,6 @@
 #
 # This example uploads an image. To get images, run
 # misc/get_all_images_and_video.pl.
-#
-# Tags: MediaService.upload
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -99,11 +99,5 @@ Constructor. The following data structure may be passed to new():
    include_zero_impressions => $some_value, # boolean
  },
 
-
-
-=head1 AUTHOR
-
-Josh Radcliff E<lt>api.jradcliff at gmail.comE<gt>
-
 =cut
 

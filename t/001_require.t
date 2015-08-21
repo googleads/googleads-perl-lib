@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 # Unit test to ensure that all modules in "../lib" compile properly.
-#
-# Author: David Torres
 
 use strict;
 

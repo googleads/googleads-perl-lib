@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example adds a label to multiple campaigns.
-#
-# Tags: CampaignService.mutateLabel
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

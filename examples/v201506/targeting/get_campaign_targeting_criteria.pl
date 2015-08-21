@@ -18,9 +18,6 @@
 # To add campaign targeting criteria, run
 # targeting/add_campaign_targeting_criteria.pl. To get campaigns, run
 # basic_operations/get_campaigns.pl.
-#
-# Tags: CampaignCriterionService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

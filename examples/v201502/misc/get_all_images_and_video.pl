@@ -18,9 +18,6 @@
 # To upload video, see
 # http://adwords.google.com/support/aw/bin/answer.py?hl=en&amp;answer=39454.
 # To upload an image, run misc/upload_image.pl.
-#
-# Tags: MediaService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

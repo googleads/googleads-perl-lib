@@ -16,9 +16,6 @@
 #
 # This example adds a remarketing user list (a.k.a. Audience) and shows its
 # associated conversion tracker code snippet.
-#
-# Tags: UserListService.mutate ConversionTrackerService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

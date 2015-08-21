@@ -20,9 +20,6 @@
 # and ad groups. To get campaigns, run get_all_campaigns.pl. To get ad groups,
 # run basic_operations/get_ad_groups.pl. To get keywords, run
 # basic_operations/get_keywords.pl.
-#
-# Tags: ExperimentService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -16,9 +16,6 @@
 #
 # This example gets all account changes that happened within the last 24 hours,
 # for all your campaigns.
-#
-# Tags: CustomerSyncService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

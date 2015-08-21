@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # Retrieves all the ad group level bid modifiers of the account.
-#
-# Tags: AdGroupAdService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

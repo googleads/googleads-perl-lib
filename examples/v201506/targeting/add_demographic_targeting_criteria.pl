@@ -16,9 +16,6 @@
 #
 # This example adds various types of targeting criteria to a campaign. To get
 # campaigns, run basic_operations/get_campaigns.pl.
-#
-# Tags: CampaignCriterionService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

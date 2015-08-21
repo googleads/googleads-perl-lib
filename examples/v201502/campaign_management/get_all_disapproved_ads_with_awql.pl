@@ -17,9 +17,6 @@
 # This example gets all disapproved ads in an ad group using AWQL.
 # To add ads, run basic_operations/add_text_ads.pl. To get ad groups, run
 # basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupAdService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

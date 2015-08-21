@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example gets keyword traffic estimates.
-#
-# Tags: TrafficEstimatorService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 

@@ -16,9 +16,6 @@
 #
 # This example sets ad parameters for a keyword in an ad group. To get keywords,
 # run basic_operations/get_keywords.pl.
-#
-# Tags: AdParamService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

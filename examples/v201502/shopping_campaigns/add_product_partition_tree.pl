@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example creates a ProductPartition tree.
-#
-# Tags: AdGroupCriterionService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

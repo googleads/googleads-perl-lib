@@ -16,10 +16,6 @@
 #
 # This example demonstrates how to find and remove shared sets and shared set
 # criteria.
-#
-# Tags: SharedSetService.mutate, SharedSetCriterionService.mutate
-# Tags: CampaignSharedSetService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

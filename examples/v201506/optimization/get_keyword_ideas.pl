@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example gets keywords related to a seed keyword.
-#
-# Tags: TargetingIdeaService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

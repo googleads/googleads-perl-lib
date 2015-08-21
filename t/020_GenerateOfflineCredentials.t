@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 # Unit tests for the examples/OAuth/generate_offline_credentials.pl script.
-#
-# Author: David Torres <david.t@google.com>
 
 use strict;
 use lib qw(lib t t/util);
@@ -38,22 +36,16 @@ my $client_id;
 my $client_secret;
 my $access_token;
 my $refresh_token;
+$oauth2_handler_mock->set_always("get_client_id",         "client_id");
+$oauth2_handler_mock->set_always("get_client_secret",     "client_secret");
 $oauth2_handler_mock->set_false("issue_access_token");
 $oauth2_handler_mock->set_always("get_access_token",      "access_token");
 $oauth2_handler_mock->set_always("get_refresh_token",     "refresh_token");
 $oauth2_handler_mock->set_always("get_authorization_url", "auth_url");
-$oauth2_handler_mock->mock(
-  set_client_id => sub {
-    $client_id = $_[1];
-  });
-$oauth2_handler_mock->mock(
-  set_client_secret => sub {
-    $client_secret = $_[1];
-  });
 
 # Faking STDOUT and IN
 close STDIN;
-open(STDIN, "<", \" client_id \n client_secret \n confirmation_code \n");
+open(STDIN, "<", \" confirmation_code \n");
 close STDOUT;
 my $stdout;
 open(STDOUT, ">", \$stdout);
@@ -63,8 +55,8 @@ require qw(examples/oauth/generate_offline_credentials.pl);
 ok(generate_offline_credentials($client));
 
 # Checking the auth mock was correctly called
-is($client_id,     "client_id");
-is($client_secret, "client_secret");
+$oauth2_handler_mock->called_ok("get_client_id");
+$oauth2_handler_mock->called_ok("get_client_secret");
 $oauth2_handler_mock->called_ok("issue_access_token");
 is($oauth2_handler_mock->call_args_pos(4, 2), "confirmation_code");
 $oauth2_handler_mock->called_ok("get_access_token");

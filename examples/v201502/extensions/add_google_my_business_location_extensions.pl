@@ -16,9 +16,6 @@
 #
 # This example adds a feed that syncs feed items from a Google
 # My Business (GMB) account and associates the feed with a customer.
-#
-# Tags: CustomerFeedService.mutate, FeedService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -17,9 +17,6 @@
 # This example shows the use of an XPath expression to gather all campaign
 # budget objects from an API response. In general any object returned from a
 # service call is able to accept XPath queries.
-#
-# Tags: CampaignService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

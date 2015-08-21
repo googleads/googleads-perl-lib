@@ -16,9 +16,6 @@
 #
 # This example restricts the products that will be included in the campaign by
 # setting a ProductScope.
-#
-# Tags: CampaignCriterionService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

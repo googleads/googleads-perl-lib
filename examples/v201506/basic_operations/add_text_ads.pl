@@ -16,9 +16,6 @@
 #
 # This code example adds text ads to a given ad group. To get ad groups,
 # run basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupAdService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

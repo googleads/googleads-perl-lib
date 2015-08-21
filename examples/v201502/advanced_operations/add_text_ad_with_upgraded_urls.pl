@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example adds a text ad that uses advanced features of upgraded URLs.
-#
-# Tags: AdGroupAdService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

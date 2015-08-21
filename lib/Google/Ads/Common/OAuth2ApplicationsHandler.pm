@@ -274,10 +274,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-=head1 AUTHOR
-
-David Torres E<lt>david.t at google.comE<gt>
-
 =head1 REPOSITORY INFORMATION
 
  $Rev: $

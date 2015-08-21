@@ -17,8 +17,6 @@
 # Unit (not functional) tests for the Google::Ads::AdWords::Client module.
 # Functional tests of the various AdWords API services will be performed in a
 # separate test.
-#
-# Author: David Torres
 
 use strict;
 

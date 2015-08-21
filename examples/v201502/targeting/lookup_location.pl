@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example gets location criteria by name.
-#
-# Tags: LocationCriterionSerivce.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

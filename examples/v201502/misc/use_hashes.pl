@@ -17,9 +17,6 @@
 # This example demonstrates how to use hashes instead of objects to do a request
 # to the API. In general hashes can be used to call and read data from any
 # of the API services.
-#
-# Tags: CampaignService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

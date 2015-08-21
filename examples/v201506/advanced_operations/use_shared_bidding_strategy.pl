@@ -16,10 +16,6 @@
 #
 # This example adds a Shared Bidding Strategy and uses it to
 # construct a campaign.
-#
-# Tags: BiddingStrategyService.mutate
-# Tags: BudgetService.mutate, CampaignService.mutate
-# Author: Paul Matthews <api.pmatthews@gmail.com>
 
 use strict;
 use lib "../../../lib";

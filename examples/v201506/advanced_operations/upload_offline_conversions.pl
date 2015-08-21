@@ -17,9 +17,6 @@
 # This code example imports offline conversion values for specific clicks to
 # your account. To get Google Click ID for a click, run
 # CLICK_PERFORMANCE_REPORT.
-#
-# Tags: ConversionTrackerService.mutate, OfflineConversionFeedService.mutate
-# Author: Paul Matthews <api.pmatthews@gmail.com>
 
 use strict;
 use lib "../../../lib";

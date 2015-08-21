@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example fetches the set of valid ProductBiddingCategories.
-#
-# Tags: ConstantDataService.getProductBiddingCategoryData
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

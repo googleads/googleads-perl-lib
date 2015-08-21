@@ -15,8 +15,6 @@
 # limitations under the License.
 #
 # Functional tests for the AdGroupCriterionService.
-#
-# Author: David Torres
 
 use strict;
 use lib qw(t/util);

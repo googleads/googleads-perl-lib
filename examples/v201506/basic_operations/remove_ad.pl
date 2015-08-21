@@ -16,9 +16,6 @@
 #
 # This example removes an ad using the 'REMOVE' operator. To get ads, run
 # basic_operations/get_text_ads.pl.
-#
-# Tags: AdGroupAdService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

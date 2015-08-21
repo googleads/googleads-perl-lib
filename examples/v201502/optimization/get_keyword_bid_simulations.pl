@@ -16,9 +16,6 @@
 #
 # This example gets bid landscapes for a keywords. To get keywords, run
 # basic_operations/get_keywords.pl.
-#
-# Tags: DataService.getCriterionBidLandscape
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

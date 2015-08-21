@@ -20,11 +20,6 @@
 # https://developers.google.com/adwords/api/docs/guides/extension-settings.
 # To learn more about migrating Feed based extensions to extension settings, see
 # https://developers.google.com/adwords/api/docs/guides/migrate-to-extension-settings.
-#
-# Tags: FeedService.query, FeedMappingService.query, FeedItemService.query
-# Tags: CampaignExtensionSettingService.mutate, CampaignFeedService.query
-# Tags: CampaignFeedService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";

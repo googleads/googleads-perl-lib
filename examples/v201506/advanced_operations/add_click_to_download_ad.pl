@@ -16,9 +16,6 @@
 #
 # This code example adds a click to download ad to a given ad group.
 # To get ad groups, run basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupAdService.mutate
-# Author: Paul Matthews <api.pmatthews@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -16,9 +16,6 @@
 #
 # This example removes an ad group by setting the status to 'REMOVED'.
 # To get ad groups, run basic_operations/get_ad_groups.pl.
-#
-# Tags: AdGroupService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

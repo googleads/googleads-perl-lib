@@ -16,9 +16,6 @@
 #
 # This example updates a campaign by setting its status to PAUSED.
 # To get campaigns, run basic_operations/get_campaigns.pl.
-#
-# Tags: CampaignService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

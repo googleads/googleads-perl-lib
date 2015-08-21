@@ -16,9 +16,6 @@
 #
 # This example gets all campaigns using AWQL. To add a campaign, run
 # basic_operations/add_campaign.pl.
-#
-# Tags: CampaignService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

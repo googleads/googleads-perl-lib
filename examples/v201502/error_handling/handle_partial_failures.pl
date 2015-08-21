@@ -15,9 +15,6 @@
 # limitations under the License.
 #
 # This example demonstrates how to handle partial failures.
-#
-# Tags: AdGroupCriterionService.mutate
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

@@ -19,9 +19,6 @@
 # Note: This example won't work if your token is not approved and you are only
 # targeting test accounts. See
 # https://developers.google.com/adwords/api/docs/test-accounts
-#
-# Tags: ServicedAccountService.get
-# Author: David Torres <api.davidtorres@gmail.com>
 
 use strict;
 use lib "../../../lib";

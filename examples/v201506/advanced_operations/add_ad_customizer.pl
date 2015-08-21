@@ -16,10 +16,6 @@
 #
 # This example adds an ad customizer feed, and then adds an ad in two different
 # ad groups that uses the feed to populate dynamic data.
-#
-# Tags: AdCustomizerFeedService.mutate, FeedItemService.mutate
-# Tags: AdGroupAdService.mutate
-# Author: Josh Radcliff <api.jradcliff@gmail.com>
 
 use strict;
 use lib "../../../lib";
