@@ -1,3 +1,15 @@
+4.1.0
+- Added examples and support for v201509.
+- The default version is now v201509.
+- Added a new utility called BatchJobHandler for uploading multiple
+operations at the same time. This utility is used in conjunction with
+BatchJobService. For example, campaigns, ad groups, and criterion can all
+be added in one batch job.
+- Added a new property to adwords.properties (oAuth2AdditionalScopes) providing
+the ability to configure additional OAuth 2.0 scopes.
+- Fixed issue on GitHub. See
+https://github.com/googleads/googleads-perl-lib/issues/12
+
 4.0.1
 - Updated documentation in the comments.
 - Updated generating offline credentials to take input from adwords.properties.

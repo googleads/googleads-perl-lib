@@ -47,8 +47,9 @@ my $location_feed_id = "INSERT_LOCATION_FEED_ID_HERE";
 
 # Example main subroutine.
 sub add_campaign_targeting_criteria {
-  my $client      = shift;
-  my $campaign_id = shift;
+  my $client           = shift;
+  my $campaign_id      = shift;
+  my $location_feed_id = shift;
 
   my @criteria = ();
 
@@ -167,4 +168,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201506"});
 $client->set_die_on_faults(1);
 
 # Call the example
-add_campaign_targeting_criteria($client, $campaign_id);
+add_campaign_targeting_criteria($client, $campaign_id, $location_feed_id);

@@ -24,9 +24,24 @@ use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Cons
 
 use Class::Std::Fast;
 
-# Retrieves the OAuth scope required for AdWords API.
+# Retrieve the OAuth2 scopes as an array.
 sub _scope {
-  return Google::Ads::AdWords::Constants::DEFAULT_OAUTH_SCOPE;
+  my $self              = shift;
+  my @parsed_scopes     = ();
+  my $additional_scopes = $self->get_additional_scopes();
+  if ($additional_scopes) {
+    @parsed_scopes = split(/\s*,\s*/, $additional_scopes);
+  }
+  push @parsed_scopes, Google::Ads::AdWords::Constants::DEFAULT_OAUTH_SCOPE;
+  return @parsed_scopes;
+}
+
+# Retrieves the OAuth2 scopes defined in _scope as a comma-separated list
+# This is the format expected when sending the OAuth request.
+sub _formatted_scopes {
+  my $self          = shift;
+  my @parsed_scopes = $self->_scope();
+  return join(',', @parsed_scopes);
 }
 
 1;
@@ -61,6 +76,11 @@ for retrieving or setting them dynamically.
 
 Method defined by L<Google::Ads::AdWords::AuthTokenHandler> and implemented
 in this class as a requirement for the OAuth2 protocol.
+
+=head2 _formatted_scopes
+
+Method defined by L<Google::Ads::Common::OAuth2ApplicationsHandler> and
+implemented in this class as a requirement for the OAuth2 protocol.
 
 =head3 Returns
 

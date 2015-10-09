@@ -40,6 +40,7 @@ my %approval_prompt_of : ATTR(:name<approval_prompt> :default<auto>);
 my %refresh_token_of : ATTR(:name<refresh_token> :default<>);
 my %redirect_uri_of :
   ATTR(:name<redirect_uri> :default<urn:ietf:wg:oauth:2.0:oob>);
+my %additional_scopes_of : ATTR(:name<additional_scopes> :default<>);
 
 # Methods from Google::Ads::Common::AuthHandlerInterface
 sub initialize : CUMULATIVE(BASE FIRST) {
@@ -56,6 +57,8 @@ sub initialize : CUMULATIVE(BASE FIRST) {
     || $refresh_token_of{$ident};
   $redirect_uri_of{$ident} = $properties->{oAuth2RedirectUri}
     || $redirect_uri_of{$ident};
+  $additional_scopes_of{$ident} = $properties->{oAuth2AdditionalScopes}
+    || $additional_scopes_of{$ident};
 }
 
 # Methods from Google::Ads::Common::OAuthHandlerInterface
@@ -69,7 +72,7 @@ sub get_authorization_url {
 
   return OAUTH2_BASE_URL . "/auth?response_type=code" . "&client_id=" .
     uri_escape($client_id) . "&redirect_uri=" . $redirect_uri . "&scope=" .
-    uri_escape($self->_scope()) . "&access_type=" . $access_type .
+    $self->_formatted_scopes() . "&access_type=" . $access_type .
     "&approval_prompt=" . $approval_prompt . "&state=" . uri_escape($state);
 }
 
@@ -137,6 +140,11 @@ sub _refresh_access_token {
   return 1;
 }
 
+sub _formatted_scopes {
+  my $self = shift;
+  die "Need to be implemented by subclass";
+}
+
 1;
 
 =pod
@@ -150,7 +158,8 @@ Google::Ads::Common::OAuth2ApplicationsHandler
 A generic abstract implementation of L<Google::Ads::Common::OAuth2BaseHandler>
 that supports OAuth2 for Web/Install Applications semantics.
 
-It is meant to be specialized and its L<_scope> method be properly implemented.
+It is meant to be specialized and its L<_scope> and L<_formatted_scopes> methods
+be properly implemented.
 
 =head1 ATTRIBUTES
 
@@ -201,6 +210,12 @@ a request.
 Stores an OAuth2 refresh token in case of an offline L<access_type> is
 requested. It is automatically used by the handler to request new access tokens
 i.e. when they expire or found invalid.
+
+=head2 additional_scopes
+
+Stores additional OAuth2 scopes as a comma-separated string.
+The scope defines which services the tokens
+are allowed to access e.g. https://www.googleapis.com/auth/analytics
 
 =head1 METHODS
 

@@ -47,6 +47,7 @@ sub get_api_package {
 
 sub create_campaign {
   my $client           = shift;
+  my $advertising_type = shift;
   my $bidding_strategy = shift;
   if (!$bidding_strategy) {
     $bidding_strategy =
@@ -77,7 +78,7 @@ sub create_campaign {
       budget                       => $budget,
   });
 
-  $campaign->set_advertisingChannelType("SEARCH");
+  $campaign->set_advertisingChannelType($advertising_type);
 
   my $operation = get_api_package($client, "CampaignOperation", 1)->new({
       operand  => $campaign,
@@ -210,7 +211,7 @@ sub create_text_ad {
       description1 => "Visit the Red Planet in style.",
       description2 => "Low-gravity fun for everyone!",
       displayUrl   => "www.example.com",
-      url          => "http://www.example.com"
+      finalUrls    => ["http://www.example.com"]
   });
   my $ad_group_ad = get_api_package($client, "AdGroupAd", 1)->new({
       adGroupId => $ad_group_id,
@@ -279,17 +280,6 @@ sub delete_experiment {
 sub get_test_image {
   return Google::Ads::Common::MediaUtils::get_base64_data_from_url(
     "http://goo.gl/HJM3L");
-}
-
-sub get_location_for_address {
-  my $client  = shift;
-  my $address = shift;
-
-  my $selector =
-    get_api_package($client, "GeoLocationSelector", 1)
-    ->new({addresses => [$address]});
-
-  return $client->GeoLocationService()->get({selector => [$selector]})->[0];
 }
 
 sub get_any_child_client_email {

@@ -35,6 +35,7 @@ use constant OAUTH2_BASE_URL => "https://accounts.google.com/o/oauth2";
 my %email_address_of : ATTR(:name<email_address> :default<>);
 my %delegated_email_address_of :
   ATTR(:name<delegated_email_address> :default<>);
+my %additional_scopes_of : ATTR(:name<additional_scopes> :default<>);
 my %pem_file_of : ATTR(:name<pem_file> :default<>);
 my %__crypt_module_of : ATTR(:name<__crypt_module> :default<>);
 
@@ -56,6 +57,8 @@ sub initialize : CUMULATIVE(BASE FIRST) {
     || $delegated_email_address_of{$ident};
   $pem_file_of{$ident} = $properties->{oAuth2ServiceAccountPEMFile}
     || $pem_file_of{$ident};
+  $additional_scopes_of{$ident} = $properties->{oAuth2AdditionalScopes}
+    || $additional_scopes_of{$ident};
 }
 
 sub _refresh_access_token {
@@ -65,7 +68,7 @@ sub _refresh_access_token {
   my $exp                     = $iat + 3600;
   my $iss                     = $self->get_email_address();
   my $delegated_email_address = $self->get_delegated_email_address();
-  my $scope                   = $self->_scope();
+  my $scope                   = $self->_formatted_scopes();
 
   my $file = $self->__read_certificate_file() || return 0;
 
@@ -136,6 +139,11 @@ sub _scope {
   die "Need to be implemented by subclass";
 }
 
+sub _formatted_scopes {
+  my $self = shift;
+  die "Need to be implemented by subclass";
+}
+
 sub _throw_error {
   my ($self, $err_msg) = @_;
 
@@ -155,7 +163,8 @@ Google::Ads::Common::OAuth2ServiceAccountsHandler
 A generic abstract implementation of L<Google::Ads::Common::OAuth2BaseHandler>
 that supports OAuth2 for Service Accounts semantics.
 
-It is meant to be specialized and its L<_scope> method be properly implemented.
+It is meant to be specialized and its L<_scope> and L<_formatted_scopes> methods
+be properly implemented.
 
 =head1 ATTRIBUTES
 
@@ -193,6 +202,12 @@ Stores an OAuth2 access token after the authorization flow is followed or for
 you to manually set it in case you had it previously stored.
 If this is manually set this handler will verify its validity before preparing
 a request.
+
+=head2 additional_scopes
+
+Stores additional OAuth2 scopes as a comma-separated string.
+The scope defines which services the tokens
+are allowed to access e.g. https://www.googleapis.com/auth/analytics
 
 =head1 METHODS
 

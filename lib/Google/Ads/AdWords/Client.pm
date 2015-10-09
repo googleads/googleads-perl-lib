@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.0.1");
+our $VERSION = qv("4.1.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -364,7 +364,7 @@ Google::Ads::AdWords::Client
   my $adGroupId = "12345678";
 
   my $adgroupad_selector =
-      Google::Ads::AdWords::v201502::Types::AdGroupAdSelector->new({
+      Google::Ads::AdWords::v201509::Types::AdGroupAdSelector->new({
         adGroupIds => [$adGroupId]
       });
 
@@ -410,7 +410,8 @@ specified, the name of your script (i.e. $0) will be used instead.
 
 =head2 developer_token
 
-A string used to tie usage of the AdWords API to a specific MCC account.
+A string used to tie usage of the AdWords API to a specific AdWords manager
+account.
 
 The value should be a character string assigned to you by Google. You can
 apply for a Developer Token by following the instructions at
@@ -419,7 +420,7 @@ https://developers.google.com/adwords/api/docs/signingup
 
 =head2 version
 
-The version of the AdWords API to use. Currently C<v201502> is the default
+The version of the AdWords API to use. Currently C<v201509> is the default
 version.
 
 =head2 alternate_url
@@ -620,8 +621,8 @@ instance is set to die() on SOAP faults.
 The client object contains a method for every service provided by the API.
 So for example it can invoked as $client->AdGroupService() and it will return
 an object of type
-L<Google::Ads::AdWords::v201502::AdGroupService::AdGroupServiceInterfacePort>
-when using version v201502 of the API.
+L<Google::Ads::AdWords::v201509::AdGroupService::AdGroupServiceInterfacePort>
+when using version v201509 of the API.
 For a list of all available services please refer to
 http://developers.google.com/adwords/api/docs and for examples on
 how to invoke the services please refer to scripts in the examples folder.

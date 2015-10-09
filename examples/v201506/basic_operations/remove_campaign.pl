@@ -54,8 +54,7 @@ sub remove_campaign {
   # Display campaign.
   if ($result->get_value()) {
     my $campaign = $result->get_value()->[0];
-    printf "The campaign with id \"%d\" was renamed to \"%s\" and removed.\n",
-      $campaign->get_id(), $campaign->get_name();
+    printf "The campaign with id %d was removed.\n", $campaign->get_id();
   } else {
     print "No campaign was removed.\n";
   }

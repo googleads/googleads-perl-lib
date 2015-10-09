@@ -23,7 +23,7 @@ use lib qw(lib);
 
 use File::Temp qw(tempfile);
 use Test::More (tests => 51);
-use TestClientUtils qw(get_test_client get_test_mcc_client);
+use TestClientUtils qw(get_test_client get_test_manager_account_client);
 use TestAPIUtils;
 
 # Getting API client for functional tests.
@@ -34,17 +34,17 @@ if (!$client) {
       "tests.";
 }
 
-my $mcc_client = get_test_mcc_client("v201502");
-if (!$mcc_client) {
-  plan skip_all => "Can't create test MCC client, make sure your " .
+my $manager_account_client = get_test_manager_account_client("v201502");
+if (!$manager_account_client) {
+  plan skip_all => "Can't create test manager account client, make sure your " .
       "t/testdata/client.properties is properly set. Skipping functional " .
       "tests.";
 }
 
 # Test dependencies
-my $campaign = TestAPIUtils::create_campaign($client);
+my $campaign = TestAPIUtils::create_campaign($client, "SEARCH");
 my $campaign_id = $campaign->get_id()->get_value();
-my $campaign_2 = TestAPIUtils::create_campaign($client);
+my $campaign_2 = TestAPIUtils::create_campaign($client, "SEARCH");
 my $campaign_2_id = $campaign_2->get_id()->get_value();
 my $ad_group = TestAPIUtils::create_ad_group($client, $campaign_id);
 my $ad_group_id = $ad_group->get_id()->get_value();
@@ -60,9 +60,10 @@ my $experiment_id = $experiment->get_id()->get_value();
 require qw(examples/v201502/account_management/get_account_changes.pl);
 ok(get_account_changes($client), "Test of get_account_changes example");
 require qw(examples/v201502/account_management/create_account.pl);
-ok(create_account($mcc_client), "Test of create_account example");
+ok(create_account($manager_account_client), "Test of create_account example");
 require qw(examples/v201502/account_management/get_account_hierarchy.pl);
-ok(get_account_hierarchy($mcc_client), "Test of get_account_hierarchy example");
+ok(get_account_hierarchy($manager_account_client),
+  "Test of get_account_hierarchy example");
 $client = get_test_client("v201502");
 
 # Basic Operations examples but deletes (deletes at end of the tests).

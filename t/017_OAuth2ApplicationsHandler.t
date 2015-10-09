@@ -21,7 +21,7 @@ use lib qw(lib t t/util);
 
 use File::Basename;
 use File::Spec;
-use Test::More (tests => 26);
+use Test::More (tests => 31);
 use Test::MockObject;
 use TestClientUtils qw(get_test_client_no_auth);
 
@@ -38,29 +38,34 @@ my $current_version = $client->get_version();
 ok(!$handler->is_auth_enabled());
 
 # Test defaults.
-is($handler->get_access_type(),     "offline");
-is($handler->get_approval_prompt(), "auto");
-is($handler->get_redirect_uri(),    "urn:ietf:wg:oauth:2.0:oob");
-is($handler->_scope(),              "https://www.googleapis.com/auth/adwords");
+is($handler->get_access_type(),       "offline");
+is($handler->get_approval_prompt(),   "auto");
+is($handler->get_redirect_uri(),      "urn:ietf:wg:oauth:2.0:oob");
+is($handler->get_additional_scopes(), undef);
+is_deeply($handler->_scope(), qw(https://www.googleapis.com/auth/adwords));
+is($handler->_formatted_scopes(),
+  "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadwords");
 
 $handler->initialize(
   $client,
   {
-    oAuth2ClientId       => "client-id",
-    oAuth2ClientSecret   => "client-secret",
-    oAuth2AccessType     => "access-type",
-    oAuth2ApprovalPrompt => "approval-prompt",
-    oAuth2AccessToken    => "access-token",
-    oAuth2RefreshToken   => "refresh-token",
-    oAuth2RedirectUri    => "uri"
+    oAuth2ClientId         => "client-id",
+    oAuth2ClientSecret     => "client-secret",
+    oAuth2AccessType       => "access-type",
+    oAuth2ApprovalPrompt   => "approval-prompt",
+    oAuth2AccessToken      => "access-token",
+    oAuth2RefreshToken     => "refresh-token",
+    oAuth2RedirectUri      => "uri",
+    oAuth2AdditionalScopes => "https://www.googleapis.com/auth/analytics"
   });
 
 $user_agent_mock->mock(
   request => sub {
     my $response = HTTP::Response->new(200, "");
     $response->content(
-      "{\n\"scope\":\"https://www.googleapis.com/auth/adwords" .
-        "\"\n\"expires_in\":" . (time + 1000) . "\n}");
+      "{\n\"scope\":\"https://www.googleapis.com/auth/analytics " .
+        "https://www.googleapis.com/auth/adwords\"\n\"expires_in\":" .
+        (time + 1000) . "\n}");
 
     return $response;
   });
@@ -74,14 +79,24 @@ is($handler->get_approval_prompt(), "approval-prompt");
 is($handler->get_access_token(),    "access-token");
 is($handler->get_refresh_token(),   "refresh-token");
 is($handler->get_redirect_uri(),    "uri");
+is($handler->get_additional_scopes(),
+  "https://www.googleapis.com/auth/analytics");
+my @current_scope  = $handler->_scope();
+my @expected_scope = qw(https://www.googleapis.com/auth/analytics
+  https://www.googleapis.com/auth/adwords);
+ok(eq_array(\@current_scope, \@expected_scope));
+is($handler->_formatted_scopes(),
+  "https%3A%2F%2Fwww.googleapis.com%2F" .
+    "auth%2Fanalytics+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadwords");
+
 ok($handler->get_access_token_expires());
 
 # Test OAuth2 Flow methods
 is($handler->get_authorization_url("state"),
   "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" .
-    "client-id&redirect_uri=uri&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth" .
-    "%2Fadwords&access_type=access-type&approval_prompt=approval-prompt&" .
-    "state=state");
+    "client-id&redirect_uri=uri&scope=https%3A%2F%2Fwww.googleapis.com%2F" .
+    "auth%2Fanalytics+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadwords" .
+    "&access_type=access-type&approval_prompt=approval-prompt&state=state");
 
 $user_agent_mock->mock(
   request => sub {

@@ -23,10 +23,38 @@ use base qw(Google::Ads::Common::OAuth2ApplicationsHandler);
 use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Constants::VERSION};
 
 use Class::Std::Fast;
+use URI::Escape;
 
-# Retrieves the OAuth scope required for AdWords API.
+# Retrieve the OAuth2 scopes as an array.
 sub _scope {
-  return Google::Ads::AdWords::Constants::DEFAULT_OAUTH_SCOPE;
+  my $self              = shift;
+  my @parsed_scopes     = ();
+  my $additional_scopes = $self->get_additional_scopes();
+  if ($additional_scopes) {
+    @parsed_scopes = split(/\s*,\s*/, $additional_scopes);
+  }
+  push @parsed_scopes, Google::Ads::AdWords::Constants::DEFAULT_OAUTH_SCOPE;
+  return @parsed_scopes;
+}
+
+# Retrieves the OAuth2 scopes defined in _scope as a list of encoded URLs
+# separated by pluses.
+# This is the format expected when sending the OAuth request in a URL.
+sub _formatted_scopes {
+  my $self          = shift;
+  my @parsed_scopes = $self->_scope();
+  # Remove spaces and replace commas with pluses. Encode the URI.
+  # Don't encode the plus!
+  # Example:
+  # https://www.googleapis.com/auth/adwords,https://
+  # www.googleapis.com/auth/analytics
+  # changes to
+  # https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadwords+https%3A%2F%2F
+  # www.googleapis.com%2Fauth%2Fanalytics
+  for my $single_scope (@parsed_scopes) {
+    $single_scope = uri_escape($single_scope);
+  }
+  return join('+', @parsed_scopes);
 }
 
 1;
@@ -61,6 +89,11 @@ for retrieving or setting them dynamically.
 
 Method defined by L<Google::Ads::AdWords::AuthTokenHandler> and implemented
 in this class as a requirement for the OAuth2 protocol.
+
+=head2 _formatted_scopes
+
+Method defined by L<Google::Ads::Common::OAuth2ApplicationsHandler> and
+implemented in this class as a requirement for the OAuth2 protocol.
 
 =head3 Returns
 

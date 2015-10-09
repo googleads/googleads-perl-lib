@@ -41,7 +41,7 @@ use_ok(get_api_package($client, "NegativeCampaignCriterion"));
 use_ok(get_api_package($client, "Selector"));
 
 # API dependencies for this test.
-my $campaign = create_campaign($client);
+my $campaign = create_campaign($client, "SEARCH");
 
 # Test add a campaign negative criterion.
 my $keyword =

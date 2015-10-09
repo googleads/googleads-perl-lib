@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 # This example illustrates how to create an account. By default, this account
-# will only be visible via the parent MCC.
+# will only be visible via the parent AdWords manager account.
 
 use strict;
 

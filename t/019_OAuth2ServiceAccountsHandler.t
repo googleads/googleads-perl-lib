@@ -21,7 +21,7 @@ use lib qw(lib t t/util);
 
 use File::Basename;
 use File::Spec;
-use Test::More (tests => 13);
+use Test::More (tests => 17);
 use Test::MockObject;
 use TestClientUtils qw(get_test_client_no_auth);
 
@@ -39,7 +39,8 @@ my $client          = get_test_client_no_auth();
 my $current_version = $client->get_version();
 
 # Test defaults.
-is($handler->_scope(), "https://www.googleapis.com/auth/adwords");
+is_deeply($handler->_scope(), qw(https://www.googleapis.com/auth/adwords));
+is($handler->_formatted_scopes(), "https://www.googleapis.com/auth/adwords");
 
 $handler->initialize(
   $client,
@@ -48,22 +49,32 @@ $handler->initialize(
     oAuth2AccessToken                        => "access-token",
     oAuth2ServiceAccountEmailAddress         => "email",
     oAuth2ServiceAccountDelegateEmailAddress => "delegated-email",
-    oAuth2ServiceAccountPEMFile              => "t/testdata/test-cert.pem"
+    oAuth2ServiceAccountPEMFile              => "t/testdata/test-cert.pem",
+    oAuth2AdditionalScopes => "https://www.googleapis.com/auth/analytics"
   });
 
 # Test initialization.
 is($handler->get_client_id(),               "client-id");
 is($handler->get_email_address(),           "email");
 is($handler->get_delegated_email_address(), "delegated-email");
+is($handler->get_additional_scopes(),
+  "https://www.googleapis.com/auth/analytics");
+my @current_scope  = $handler->_scope();
+my @expected_scope = qw(https://www.googleapis.com/auth/analytics
+  https://www.googleapis.com/auth/adwords);
+ok(eq_array(\@current_scope, \@expected_scope));
+is($handler->_formatted_scopes(),
+  "https://www.googleapis.com/auth/analytics," .
+    "https://www.googleapis.com/auth/adwords");
 
 # Test preset access token.
-my $exp = (time + 1000);
 $user_agent_mock->mock(
   request => sub {
     my $response = HTTP::Response->new(200, "");
     $response->content(
-      "{\n\"scope\":\"https://www.googleapis.com/auth/adwords" .
-        "\"\n\"expires_in\":" . $exp . "\n}");
+      "{\n\"scope\":\"https://www.googleapis.com/auth/analytics " .
+        "https://www.googleapis.com/auth/adwords\"\n\"expires_in\":" .
+        (time + 1000) . "\n}");
     return $response;
   });
 
@@ -91,9 +102,11 @@ $user_agent_mock->mock(
   request => sub {
     my ($self, $request) = @_;
 
+    my $content_pattern =
+      '^grant_type=urn:ietf:params:oauth:grant-type:jwt' .
+      '-bearer&assertion=[A-Za-z0-9]+\.[A-Za-z0-9]+\.[A-Za-z0-9]+$';
     ok(
-      $request->content =~
-/^grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=[A-Za-z0-9]+\.[A-Za-z0-9]+\.[A-Za-z0-9]+$/,
+      $request->content =~ /$content_pattern/,
       "test valid JWT request content"
     );
     is($request->method, "POST");

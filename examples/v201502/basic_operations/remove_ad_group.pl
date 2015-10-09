@@ -56,8 +56,7 @@ sub remove_ad_group {
   # Display ad groups.
   if ($result->get_value()) {
     my $ad_group = $result->get_value()->[0];
-    printf "The ad group with id \"%d\" was renamed to \"%s\" and removed.\n",
-           $ad_group->get_id(), $ad_group->get_name();
+    printf "The ad group with id %d was removed.\n", $ad_group->get_id();
   } else {
     print "No ad group was removed.\n";
   }

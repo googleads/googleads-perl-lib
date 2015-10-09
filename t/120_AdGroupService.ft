@@ -42,11 +42,11 @@ use_ok(get_api_package($client, "ManualCpcBiddingScheme"));
 use_ok(get_api_package($client, "Money"));
 
 # API dependencies for this test.
-my $campaign_cpc = create_campaign($client,
+my $campaign_cpc = create_campaign($client, "SEARCH",
     get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
       biddingStrategyType => "MANUAL_CPC"
     }));
-my $campaign_cpm = create_campaign($client,
+my $campaign_cpm = create_campaign($client, "SEARCH",
     get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
       biddingStrategyType => "MANUAL_CPM"
     }));

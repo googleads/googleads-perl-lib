@@ -71,7 +71,7 @@ sub add_campaigns {
         # Bidding strategy (required).
         biddingStrategyConfiguration =>
           Google::Ads::AdWords::v201506::BiddingStrategyConfiguration->new({
-            biddingStrategyType => "CONVERSION_OPTIMIZER",
+            biddingStrategyType => "MANUAL_CPC",
             # You can optionally provide a bidding scheme in place of the type.
           }
           ),

@@ -42,7 +42,7 @@ use_ok(get_api_package($client, "Placement"));
 use_ok(get_api_package($client, "Selector"));
 
 # API dependencies for this test.
-my $campaign = create_campaign($client);
+my $campaign = create_campaign($client, "SEARCH");
 my $ad_group_keyword = create_ad_group($client, $campaign->get_id());
 my $ad_group_placement = create_ad_group($client, $campaign->get_id());
 

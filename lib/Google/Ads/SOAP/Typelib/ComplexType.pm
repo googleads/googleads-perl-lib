@@ -33,6 +33,7 @@ use version;
 use Google::Ads::Common::XPathSAXParser;
 
 use Carp;
+use Class::Load;
 use Data::Dumper;
 use Scalar::Util qw(blessed);
 use SOAP::WSDL::Expat::Base;
