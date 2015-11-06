@@ -1,3 +1,7 @@
+4.2.0
+- Removed support for v201502.
+- Added an example for streaming reports.
+
 4.1.0
 - Added examples and support for v201509.
 - The default version is now v201509.

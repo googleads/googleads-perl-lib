@@ -51,10 +51,12 @@ my %download_format_of : ATTR(:name<download_format> :default<>);
 # a ReportDownloadError.
 sub get_as_string {
   my ($self) = @_;
+  my $user_agent = $self->get___user_agent();
+
   $self->__set_gzip_header();
   my $start_time = [gettimeofday()];
-  my $response =
-    $self->get___user_agent()->request($self->get___http_request());
+
+  my $response = $user_agent->request($self->get___http_request());
   $response = $self->__check_response($response, $start_time);
   if (ref $response eq "Google::Ads::Common::ReportDownloadError") {
     return $response;
@@ -70,11 +72,11 @@ sub save {
     warn 'No file path provided';
     return undef;
   }
-  my $gzip_support = $self->__set_gzip_header();
 
-  my $request    = $self->get___http_request();
-  my $format     = $self->get_download_format();
-  my $start_time = [gettimeofday()];
+  my $gzip_support = $self->__set_gzip_header();
+  my $request      = $self->get___http_request();
+  my $format       = $self->get_download_format();
+  my $start_time   = [gettimeofday()];
   my $response;
   ($file_path) = glob($file_path);
   if (!$gzip_support) {
@@ -149,16 +151,20 @@ sub __check_response {
   return $return_val;
 }
 
-# Sets the header for gzip support if the environment supports gzip
-# compression.
+# Sets the header and updates the user agent for gzip support if the
+# environment supports gzip compression.
 sub __set_gzip_header {
   my ($self) = @_;
-  # Set the header for gzip support.
+  my $user_agent = $self->get___user_agent();
+
   my $can_accept = HTTP::Message::decodable;
   my $gzip_support = $can_accept =~ /gzip/i;
 
-  $self->get___user_agent()
-    ->agent(
+  # Setting HTTP user-agent and gzip compression.
+  $user_agent->default_header("Accept-Encoding" => scalar $can_accept);
+
+  # Set the header for gzip support.
+  $user_agent->agent(
     $self->get_client()->get_user_agent() . ($gzip_support ? " gzip" : ""));
   return $gzip_support;
 }

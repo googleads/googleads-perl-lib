@@ -104,11 +104,6 @@ sub __prepare_request {
 
   my $lwp = LWP::UserAgent->new();
 
-  # Setting HTTP user-agent and gzip compression.
-  my $can_accept = HTTP::Message::decodable;
-  my $gzip_support = $can_accept =~ /gzip/i;
-  $lwp->default_header("Accept-Encoding" => scalar $can_accept);
-
   # Set agent timeout.
   $lwp->timeout(
       $timeout

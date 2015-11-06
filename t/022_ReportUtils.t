@@ -127,6 +127,7 @@ $user_agent_mock->mock(
     }
     return $response;
   });
+$user_agent_mock->mock(default_header => sub { return ""; });
 $user_agent_mock->mock(agent => sub { return "MOCK_AGENT"; });
 $report_handler->set___user_agent($user_agent_mock);
 
