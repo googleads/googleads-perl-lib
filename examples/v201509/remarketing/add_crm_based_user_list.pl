@@ -47,7 +47,7 @@ sub add_crm_based_user_list {
       # See limit here:
       # https://support.google.com/adwords/answer/6276125#requirements.
       membershipLifeSpan => "30",
-      # This field is required. It links to a service you created that
+      # This field is optional. It links to a service you created that
       # allows members of this list to remove themselves. It will be shown
       # in the "Why This Ad" pop-up as a courtesy to users and so it needs
       # to be verified. Read more about "Why This Ad" here:

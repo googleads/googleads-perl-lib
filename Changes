@@ -1,3 +1,11 @@
+4.3.0
+- Added examples and support for v201601.
+- BatchJobHanlder was modified to return a BatchJobHanlderStatus
+when uploading operations. This BatchJobHandlerStatus needs to
+now be created before uploading incremental operations.
+- Added paging to the get_account_hierarchy.pl example.
+- Updated the PageProcessor to include the new method is_end_of_page.
+
 4.2.0
 - Removed support for v201502.
 - Added an example for streaming reports.

@@ -25,9 +25,12 @@ use lib "../../../lib";
 
 use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;
+use Google::Ads::AdWords::v201506::Paging;
 use Google::Ads::AdWords::v201506::Selector;
 
 use Cwd qw(abs_path);
+
+use constant PAGE_SIZE => 500;
 
 sub display_customers_tree;
 
@@ -36,45 +39,54 @@ sub get_account_hierarchy {
   my $client = shift;
 
   # Create selector.
-  my $selector = Google::Ads::AdWords::v201506::Selector->new(
-    {fields => ["Name", "CustomerId"]});
+  my $paging = Google::Ads::AdWords::v201506::Paging->new({
+      startIndex    => 0,
+      numberResults => PAGE_SIZE
+  });
+  my $selector = Google::Ads::AdWords::v201506::Selector->new({
+      fields => ["Name", "CustomerId"],
+      paging => $paging
+  });
 
-  # Get account graph.
-  my $graph =
-    $client->ManagedCustomerService()->get({serviceSelector => $selector});
+  my $page;
+  my $customers = {};
+  my $root_account;
+  my $child_links  = {};
+  my $parent_links = {};
+  do {
+    # Get account graph.
+    $page =
+      $client->ManagedCustomerService()->get({serviceSelector => $selector});
 
-  # Display accounts graph.
-  if ($graph->get_entries()) {
-    # Create map from customerId to parent and child links.
-    my $child_links  = {};
-    my $parent_links = {};
-    if ($graph->get_links()) {
-      foreach my $link (@{$graph->get_links()}) {
-        if (!$child_links->{$link->get_managerCustomerId()}) {
-          $child_links->{$link->get_managerCustomerId()} = [];
+    # Display accounts graph.
+    if ($page->get_entries()) {
+      # Create map from customerId to parent and child links.
+      if ($page->get_links()) {
+        foreach my $link (@{$page->get_links()}) {
+          if (!$child_links->{$link->get_managerCustomerId()}) {
+            $child_links->{$link->get_managerCustomerId()} = [];
+          }
+          push @{$child_links->{$link->get_managerCustomerId()}}, $link;
+          if (!$parent_links->{$link->get_clientCustomerId()}) {
+            $parent_links->{$link->get_clientCustomerId()} = [];
+          }
+          push @{$parent_links->{$link->get_clientCustomerId()}}, $link;
         }
-        push @{$child_links->{$link->get_managerCustomerId()}}, $link;
-        if (!$parent_links->{$link->get_clientCustomerId()}) {
-          $parent_links->{$link->get_clientCustomerId()} = [];
+      }
+      # Create map from customerID to account, and find root account.
+      foreach my $customer (@{$page->get_entries()}) {
+        $customers->{$customer->get_customerId()} = $customer;
+        if (!$parent_links->{$customer->get_customerId()}) {
+          $root_account = $customer;
         }
-        push @{$parent_links->{$link->get_clientCustomerId()}}, $link;
       }
     }
-    # Create map from customerID to account, and find root account.
-    my $customers = {};
-    my $root_account;
-    foreach my $customer (@{$graph->get_entries()}) {
-      $customers->{$customer->get_customerId()} = $customer;
-      if (!$parent_links->{$customer->get_customerId()}) {
-        $root_account = $customer;
-      }
-    }
-    # Display customers tree.
-    print "CustomerId, Name\n";
-    display_customers_tree($root_account, undef, $customers, $child_links, 0);
-  } else {
-    print "No serviced accounts were found.\n";
-  }
+    $paging->set_startIndex($paging->get_startIndex() + PAGE_SIZE);
+  } while ($paging->get_startIndex() < $page->get_totalNumEntries());
+
+  # Display customers tree.
+  print "CustomerId, Name\n";
+  display_customers_tree($root_account, undef, $customers, $child_links, 0);
 
   return 1;
 }

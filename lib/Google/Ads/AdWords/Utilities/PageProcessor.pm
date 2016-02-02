@@ -32,6 +32,7 @@ my %selector_of : ATTR(:name<selector> :default<>);
 my %query_of : ATTR(:name<query> :default<>);
 my %page_size_of : ATTR(:name<page_size>
   :default<Google::Ads::AdWords::Constants::DEFAULT_PAGE_SIZE>);
+my $end_of_page = 0;
 
 # Verify that all the variables are correctly defined.
 # Either 'selector' or 'query' needs to be defined.
@@ -113,13 +114,19 @@ sub process_entries {
         $service->query({query => "${query} LIMIT ${offset},${page_size}"});
     }
     if ($page->get_entries()) {
-      foreach my $entry (
-        ref $page->get_entries() eq 'ARRAY'
+      $end_of_page = 0;
+      my @entries = ref $page->get_entries() eq 'ARRAY'
         ? @{$page->get_entries()}
-        : $page->get_entries())
+        : $page->get_entries();
+      # Before the last entry in the page, set a boolean indicating that
+      # the end of the page has been reached.
+      my $last_entry = pop @entries;
+      foreach my $entry (@entries)
       {
         push(@results, $process_entry_subroutine->($entry));
       }
+      $end_of_page = 1;
+      push(@results, $process_entry_subroutine->($last_entry));
       my $page_size =
         ref $page->get_entries() eq 'ARRAY' ? @{$page->get_entries()} : 1;
       if (defined($selector)) {
@@ -140,6 +147,11 @@ sub get_entries {
     return $entry;
   };
   return $self->process_entries($processEntrySubroutine);
+}
+
+# Returns a 1 if we have reached the end of a page and 0 otherwise.
+sub is_end_of_page {
+  return $end_of_page;
 }
 
 1;
@@ -210,5 +222,13 @@ Returns all the entries from all the pages in an array.
 =head3 Returns
 
 An array of entries from all the pages.
+
+=head2 is_end_of_page
+
+Returns whether or not processing has reached the end of a page boundary.
+
+=head3 Returns
+
+Returns a 1 if processing reached the end of a page and 0 otherwise.
 
 =cut

@@ -30,6 +30,7 @@ use Google::Ads::AdWords::v201509::BiddableAdGroupCriterion;
 use Google::Ads::AdWords::v201509::Keyword;
 use Google::Ads::AdWords::Utilities::BatchJobHandler;
 use Google::Ads::AdWords::Utilities::BatchJobHandlerError;
+use Google::Ads::AdWords::Utilities::BatchJobHandlerStatus;
 
 use Cwd qw(abs_path);
 
@@ -81,83 +82,44 @@ sub add_keywords_using_incremental_batch_job {
   # Upload #1: This is the first upload.
   my @operations = _create_keyword_operations($ad_group_id);
 
+  # Create an initial batch job status.
   # Convert the list of operations into XML.
   # POST the XML to the upload URL.
-  my $uploaded_byte_count =
+  my $batch_job_status =
+    Google::Ads::AdWords::Utilities::BatchJobHandlerStatus->new({
+      total_content_length => 0,
+      resumable_upload_uri => $batch_job->get_uploadUrl()->get_url()});
+  $batch_job_status =
     $batch_job_handler->upload_incremental_operations(\@operations,
-    $batch_job->get_uploadUrl()->get_url());
-  if (!$uploaded_byte_count) {
-    # If not given a number, then this object is an error.
-    my $error = $uploaded_byte_count;
-    printf("%s Error. %s\n",
-      $error->get_type(),
-      $error->get_description());
-    if ($error->get_type() eq "HTTP") {
-      printf(
-        "Type: %s\nCode: %s\nMessage: %s\nTrigger: %s\nField Path: %s\n",
-        $error->get_http_type(),
-        $error->get_http_response_code(),
-        $error->get_http_response_message(),
-        $error->get_http_trigger(),
-        $error->get_http_field_path());
-    }
+    $batch_job_status);
+  if (!_check_status($batch_job_status)) {
     return 1;
   }
 
-  # Upload #2: Make sure to pass in the number of bytes returned
+  # Upload #2: Make sure to pass in the status returned in the last call
   # into 'upload_incremental_operations'.
   @operations = _create_keyword_operations($ad_group_id);
 
   # Convert the list of operations into XML.
   # POST the XML to the upload URL.
-  $uploaded_byte_count =
+  $batch_job_status =
     $batch_job_handler->upload_incremental_operations(\@operations,
-    $batch_job->get_uploadUrl()->get_url(),
-    $uploaded_byte_count);
-  if (!$uploaded_byte_count) {
-    # If not given a number, then this object is an error.
-    my $error = $uploaded_byte_count;
-    printf("%s Error. %s\n",
-      $error->get_type(),
-      $error->get_description());
-    if ($error->get_type() eq "HTTP") {
-      printf(
-        "Type: %s\nCode: %s\nMessage: %s\nTrigger: %s\nField Path: %s\n",
-        $error->get_http_type(),
-        $error->get_http_response_code(),
-        $error->get_http_response_message(),
-        $error->get_http_trigger(),
-        $error->get_http_field_path());
-    }
+    $batch_job_status);
+  if (!_check_status($batch_job_status)) {
     return 1;
   }
 
-  # Upload #3: Make sure to pass in the number of bytes returned
+  # Upload #3: Make sure to pass in the status returned in the last request
   # and a true value for $is_last_request indicating that the uploads have
   # finished into 'upload_incremental_operations'.
   @operations = _create_keyword_operations($ad_group_id);
 
   # Convert the list of operations into XML.
   # POST the XML to the upload URL.
-  $uploaded_byte_count =
+  $batch_job_status =
     $batch_job_handler->upload_incremental_operations(\@operations,
-    $batch_job->get_uploadUrl()->get_url(),
-    $uploaded_byte_count, 1);
-  if (!$uploaded_byte_count) {
-    # If not given a number, then this object is an error.
-    my $error = $uploaded_byte_count;
-    printf("%s Error. %s\n",
-      $error->get_type(),
-      $error->get_description());
-    if ($error->get_type() eq "HTTP") {
-      printf(
-        "Type: %s\nCode: %s\nMessage: %s\nTrigger: %s\nField Path: %s\n",
-        $error->get_http_type(),
-        $error->get_http_response_code(),
-        $error->get_http_response_message(),
-        $error->get_http_trigger(),
-        $error->get_http_field_path());
-    }
+    $batch_job_status, 1);
+  if (!_check_status($batch_job_status)) {
     return 1;
   }
 
@@ -238,6 +200,25 @@ sub _create_keyword_operations {
     push(@operations, $ad_group_criterion_operation);
   }
   return @operations;
+}
+
+# Check the status of uploading incremental operations. Print details if an
+# error is found.
+sub _check_status {
+  my ($batch_job_status) = @_;
+  if (!$batch_job_status) {
+    # If not given a status back, then this object is an error.
+    my $error = $batch_job_status;
+    printf("%s Error. %s\n", $error->get_type(), $error->get_description());
+    if ($error->get_type() eq "HTTP") {
+      printf(
+        "Type: %s\nCode: %s\nMessage: %s\nTrigger: %s\nField Path: %s\n",
+        $error->get_http_type(),             $error->get_http_response_code(),
+        $error->get_http_response_message(), $error->get_http_trigger(),
+        $error->get_http_field_path());
+    }
+  }
+  return $batch_job_status;
 }
 
 # Poll for completion of the batch job using an exponential back off

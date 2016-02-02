@@ -26,6 +26,7 @@ use Google::Ads::AdWords::Logging;
 use Google::Ads::AdWords::RequestStats;
 use Google::Ads::AdWords::Serializer;
 use Google::Ads::AdWords::Utilities::BatchJobHandlerError;
+use Google::Ads::AdWords::Utilities::BatchJobHandlerStatus;
 use Google::Ads::SOAP::Deserializer::MessageParser;
 
 use Class::Std::Fast;
@@ -47,7 +48,7 @@ use constant REQUIRED_CONTENT_LENGTH_INCREMENT => 262144;
 
 my %client_of : ATTR(:name<client> :default<>);
 
-# Upload a list of operations. Returns the result contents as a string.
+# Upload a list of operations. Returns the BatchJobHandlerStatus.
 # If the request fails this returns a BatchJobHandlerError.
 # The timeout is an optional parameter that can be set to alter the default
 # time that the http client waits to get a response from the server.
@@ -56,32 +57,51 @@ my %client_of : ATTR(:name<client> :default<>);
 sub upload_operations {
   my ($self, $operations, $url, $timeout) = @_;
 
-  my $upload_request =
-    __prepare_upload_request($operations, $url, $self->get_client(), "POST",
-    $timeout);
+  my $status = Google::Ads::AdWords::Utilities::BatchJobHandlerStatus->new({
+      total_content_length => 0,
+      resumable_upload_uri => $url
+  });
+  my $is_last_request = 1;
 
-  my $request    = $upload_request->{request};
-  my $start_time = [gettimeofday()];
-  my $response   = $upload_request->{lwp}->request($request);
-  $response = $self->__check_response($response, $start_time);
-  if (!$response) {
-    return $response;
-  }
-  return $response->decoded_content();
+  return $self->upload_incremental_operations($operations, $status,
+    $is_last_request, $timeout);
 }
 
 # Upload a list of operations incrementally. Send operations to the upload URL
 # as the operations are available. The operations will not be
 # executed until the boolean is set indicating that it's the last request.
-# This returns the current total number of uploaded bytes. Keep track of this
-# number as you will need to pass it in to the next request as the
-# $total_content_length.
+# This returns the current BatchJobHandlerStatus. Keep track of this
+# BatchJobHandlerStatus as you will need to pass it in to the next request
+# as the $status.
 sub upload_incremental_operations {
-  my ($self, $operations, $url, $total_content_length, $is_last_request,
-    $timeout)
-    = @_;
-  if (!$total_content_length) {
-    $total_content_length = 0;
+  my ($self, $operations, $status, $is_last_request, $timeout) = @_;
+  if (!$status) {
+    return Google::Ads::AdWords::Utilities::BatchJobHandlerError->new({
+        type        => "UPLOAD",
+        description => "Required: BatchJobHandlerStatus"
+    });
+  }
+  my $url                  = $status->get_resumable_upload_uri();
+  my $total_content_length = $status->get_total_content_length();
+  my $is_first_request     = $total_content_length == 0;
+  if (!$url || $url eq '') {
+    return Google::Ads::AdWords::Utilities::BatchJobHandlerError->new({
+        type        => "UPLOAD",
+        description => "Required: BatchJobHandlerStatus.resumable_upload_uri"
+    });
+  }
+
+  # If this is the first request, then take the URI passed in and make a request
+  # to that URI for the URI to which the operations will be uploaded. That
+  # URI will then be stored in the BatchJobHelperStatus.
+  if ($is_first_request) {
+    my $response = $self->
+      __initialize_upload($url, $self->get_client(), $timeout);
+    if (!$response) {
+      return $response;
+    }
+    $url = $response;
+    $status->set_resumable_upload_uri($url);
   }
 
   # The process below follows the Google Cloud Storage guidelines for resumable
@@ -97,7 +117,7 @@ sub upload_incremental_operations {
   my $xml     = $request->content();
 
   # If this is both the 1st and last request, leave the XML alone.
-  my $is_first_request = $total_content_length == 0;
+
   if (!($is_first_request && $is_last_request)) {
     # If it's not the last request, then remove the ending </mutate>.
     if (!$is_last_request) {
@@ -112,7 +132,7 @@ sub upload_incremental_operations {
     }
   }
 
-  my $padded_xml = _add_padding ($xml);
+  my $padded_xml = _add_padding($xml);
   $request->content($padded_xml);
   my $content_length = 0;
   {
@@ -136,12 +156,57 @@ sub upload_incremental_operations {
   # Continue with making the request.
   my $start_time = [gettimeofday()];
   my $response   = $upload_request->{lwp}->request($request);
-  $response = $self->__check_response($response, $start_time, 1);
+  $response = $self->__check_response($response, $start_time, 1, 0);
   if (!$response) {
     return $response;
   }
   $total_content_length = $total_content_length + $content_length;
-  return $total_content_length;
+  $status->set_total_content_length($total_content_length);
+  return $status;
+}
+
+# In the first upload request, take the URI passed in and make a request
+# to that URI for the URI to which the operations will be uploaded.
+sub __initialize_upload {
+  my ($self, $url, $client, $timeout) = @_;
+
+  # The upload only needs to be initialized for v201601 or greater.
+  my $version = $client->get_version();
+  if ($version lt 'v201601') {
+    return $url;
+  }
+
+  my $lwp        = LWP::UserAgent->new();
+  my $can_accept = HTTP::Message::decodable;
+  $lwp->default_header("Accept-Encoding" => scalar $can_accept);
+
+  # Set agent timeout.
+  $lwp->timeout(
+      $timeout
+    ? $timeout
+    : Google::Ads::AdWords::Constants::LWP_DEFAULT_TIMEOUT
+  );
+
+  my @headers = ();
+  push @headers, "x-goog-resumable" => "start";
+  push @headers, "Content-Length"   => "0";
+  push @headers, "Content-Type"     => "application/xml";
+
+  # Read proxy configuration for the enviroment.
+  $lwp->env_proxy();
+
+  # Prepare the request.
+  my $signed_url = URI->new($url);
+  my $request = HTTP::Request->new("POST", $signed_url, \@headers);
+
+  my $start_time = [gettimeofday()];
+  my $response   = $lwp->request($request);
+  $response = $self->__check_response($response, $start_time, 0, 1);
+  if (!$response) {
+    return $response;
+  }
+
+  return $response->header("Location");
 }
 
 # Prepares the HTTP request to upload the operations for the batch job.
@@ -283,7 +348,7 @@ sub __prepare_download_request {
 # Checks the response's status code. If OK, then returns the HTTPResponse.
 # Otherwise, returns a new BatchJobHandlerError.
 sub __check_response {
-  my ($self, $response, $start_time, $is_incremental) = @_;
+  my ($self, $response, $start_time, $is_incremental, $is_initial) = @_;
   my $is_successful = 0;
   my $batch_job_error;
   my $return_val;
@@ -294,6 +359,12 @@ sub __check_response {
   } else {
     if ($response->code == HTTP_BAD_REQUEST) {
       $batch_job_error = $self->__extract_xml_error($response);
+    } elsif ($is_initial && $response->code == HTTP_CREATED) {
+      # This happens when requesting the resumable upload URL from the
+      # upload URL passed back in the batch job. This means that
+      # the new resumable upload URL is ready to go.
+      $return_val = $response;
+      return $return_val;
     } elsif ($is_incremental && $response->code == 308) {
       # This happens when doing an incremental upload. It just means that
       # we are not done uploading, yet.
@@ -389,7 +460,8 @@ Constructor. The following data structure may be passed to new():
 
 =head2 upload_operations
 
-Upload a list of operations. Returns the result contents as a string.
+Upload a list of operations. Returns the
+L<Google::Ads::AdWords::Utilities::BatchJobHandlerStatus>.
 If the request fails this returns a
 L<Google::Ads::AdWords::Utilities::BatchJobHandlerError>.
 
@@ -430,9 +502,10 @@ batch job fails immediately.
 Upload a list of operations incrementally. Send operations to the upload URL
 as the operations are available. The operations will not be
 executed until the boolean is set indicating that it's the last request.
-This returns the current total number of uploaded bytes. Keep track of this
-number as you will need to pass it in to the next request as the
-$total_content_length.
+This returns the current
+L<Google::Ads::AdWords::Utilities::BatchJobHandlerStatus>. Keep track of this
+status as you will need to pass it in to the next request as the
+$status.
 If the request fails this returns a
 L<Google::Ads::AdWords::Utilities::BatchJobHandlerError>.
 
@@ -446,8 +519,11 @@ An array of operations to be uploaded to the upload URL.
 
 =item *
 
-The number of bytes that have been uploaded already in total.
-If not specified, this defaults to zero.
+The current L<Google::Ads::AdWords::Utilities::BatchJobHandlerStatus>.
+In the first request, this object must be initialized with the URL to which
+the operations will be uploaded. For any uploads following the first upload,
+pass in the L<Google::Ads::AdWords::Utilities::BatchJobHandlerStatus>
+from the previous upload.
 
 =item *
 
@@ -470,8 +546,8 @@ Google::Ads::AdWords::Constants::LWP_DEFAULT_TIMEOUT
 
 =head3 Returns
 
-This returns the current total number of bytes already uploaded if the request
-is successful. Otherwise, this returns a
+This returns L<Google::Ads::AdWords::Utilities::BatchJobHandlerStatus> if the
+request is successful. Otherwise, this returns a
 L<Google::Ads::AdWords::Utilities::BatchJobHandlerError>.
 
 =head3 Exceptions

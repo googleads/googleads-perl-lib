@@ -62,8 +62,11 @@ sub add_ad_groups {
         # Additional properties (non-required).
         status   => "ENABLED",
         settings => [
-          # Targeting restriction settings - these settings only affect serving
-          # for the Display Network.
+          # Targeting restriction settings. Depending on the
+          # criterionTypeGroup value, most TargetingSettingDetail only
+          # affect Display campaigns. However, the USER_INTEREST_AND_LIST
+          # value works for RLSA campaigns - Search campaigns targeting
+          # using a remarketing list.
           Google::Ads::AdWords::v201509::TargetingSetting->new({
               details => [
                 # Restricting to serve ads that match your ad group placements.

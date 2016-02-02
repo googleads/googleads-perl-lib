@@ -99,7 +99,7 @@ ok(pause_ad($client, $ad_group_id, $text_ad_id), "Test of pause_ad example");
 
 # Advanced Operations examples.
 require qw(
-  examples/v201509/advanced_operations/add_complete_campaign_using_batch_job.pl);
+  examples/v201509/campaign_management/add_complete_campaign_using_batch_job.pl);
 ok(add_complete_campaign_using_batch_job($client),
    "Test of add_complete_campaign_using_batch_job example");
 require qw(
