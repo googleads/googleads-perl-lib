@@ -22,7 +22,7 @@ use lib qw(lib t t/util);
 
 use File::Temp qw(tempfile);
 use Test::MockObject::Extends;
-use Test::More (tests => 29);
+use Test::More (tests => 27);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
 
 use_ok("Google::Ads::Common::ReportUtils");
@@ -37,21 +37,6 @@ $auth_handler->mock("get_access_token", sub { return "ACCESS_TOKEN"; });
 my $client = get_test_client();
 $client = Test::MockObject::Extends->new($client);
 $client->mock("_get_auth_handler", sub { return $auth_handler; });
-
-# The download will not actually download anything due to the missing
-# report definition and test credentials, but the call should at least
-# complete without a runtime error.
-my $report_result = Google::Ads::Common::ReportUtils::download_report({
-    query => "SELECT CampaignId, Impressions " .
-      "FROM CAMPAIGN_PERFORMANCE_REPORT " . "DURING THIS_MONTH",
-    format => "CSV"
-  },
-  $client
-);
-ok(!$report_result, "report error should evaluate to false in boolean context");
-# A ReportDownloadError indicates that the request was sent.
-ok($report_result->isa("Google::Ads::Common::ReportDownloadError"),
-  "check report result return type");
 
 # Test each of the ReportDownloadHandler methods for a failed request.
 my $report_handler = Google::Ads::Common::ReportUtils::get_report_handler({

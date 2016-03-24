@@ -29,7 +29,8 @@ use POSIX;
 @EXPORT_OK = qw(get_api_package create_campaign delete_campaign create_ad_group
   delete_ad_group create_text_ad delete_text_ad create_keyword
   delete_keyword get_test_image
-  get_location_for_address create_experiment delete_experiment);
+  get_location_for_address create_experiment delete_experiment add_draft
+  delete_draft add_trial delete_trial);
 
 sub get_api_package {
   my $client = shift;
@@ -53,16 +54,15 @@ sub create_campaign {
     $bidding_strategy =
       get_api_package($client, "BiddingStrategyConfiguration", 1)->new({
         biddingStrategyType => "MANUAL_CPC",
-        biddingScheme =>
-          get_api_package($client, "ManualCpcBiddingScheme", 1)
+        biddingScheme => get_api_package($client, "ManualCpcBiddingScheme", 1)
           ->new({enhancedCpcEnabled => 0})});
   }
 
   my $budget = get_api_package($client, "Budget", 1)->new({
-      name           => "Test " . uniqid(),
-      period         => "DAILY",
-      amount         => {microAmount => 50000000},
-      deliveryMethod => "STANDARD"
+      name               => "Test " . uniqid(),
+      amount             => {microAmount => 50000000},
+      deliveryMethod     => "STANDARD",
+      isExplicitlyShared => "false"
   });
   my $budget_operation = get_api_package($client, "BudgetOperation", 1)->new({
       operand  => $budget,
@@ -211,8 +211,7 @@ sub create_text_ad {
       description1 => "Visit the Red Planet in style.",
       description2 => "Low-gravity fun for everyone!",
       displayUrl   => "www.example.com",
-      finalUrls    => ["http://www.example.com"]
-  });
+      finalUrls    => ["http://www.example.com"]});
   my $ad_group_ad = get_api_package($client, "AdGroupAd", 1)->new({
       adGroupId => $ad_group_id,
       ad        => $text_ad
@@ -288,34 +287,106 @@ sub get_any_child_client_email {
   $client->set_client_id(undef);
 
   my $email;
-  if ($client->get_version() lt "v201209") {
-    my $selector =
-      get_api_package($client, "ServicedAccountSelector", 1)
-      ->new({enablePaging => 0});
-    my $graph = $client->ServicedAccountService()->get({selector => $selector});
-    foreach my $account (@{$graph->get_accounts()}) {
-      if ($account->get_login() ne "" && !$account->get_canManageClients()) {
-        $email = $account->get_login()->get_value();
-        last;
-      }
-    }
-  } else {
-    my $selector =
-      get_api_package($client, "Selector", 1)
-      ->new({fields => ["Login", "CanManageClients"]});
-    my $page =
-      $client->ManagedCustomerService()->get({serviceSelector => $selector});
-    foreach my $customer (@{$page->get_entries()}) {
-      if ($customer->get_login() ne "" && !$customer->get_canManageClients()) {
-        $email = $customer->get_login()->get_value();
-        last;
-      }
+  my $selector =
+    get_api_package($client, "Selector", 1)
+    ->new({fields => ["Login", "CanManageClients"]});
+  my $page =
+    $client->ManagedCustomerService()->get({serviceSelector => $selector});
+  foreach my $customer (@{$page->get_entries()}) {
+    if ($customer->get_login() ne "" && !$customer->get_canManageClients()) {
+      $email = $customer->get_login()->get_value();
+      last;
     }
   }
 
   $client->set_client_id($current_client_id);
 
   return $email;
+}
+
+sub create_draft {
+  my $client           = shift;
+  my $base_campaign_id = shift;
+
+  my $draft = get_api_package($client, "Draft", 1)->new({
+      baseCampaignId => $base_campaign_id,
+      draftName      => sprintf("Test Draft #%s", uniqid())});
+
+  # Create operation.
+  my $draft_operation = get_api_package($client, "DraftOperation", 1)->new({
+      operator => "ADD",
+      operand  => $draft
+  });
+
+  # Add draft.
+  my $result =
+    $client->DraftService()->mutate({operations => [$draft_operation]});
+
+  $draft = $result->get_value()->[0];
+
+  return $draft;
+}
+
+sub delete_draft {
+  my $client           = shift;
+  my $base_campaign_id = shift;
+  my $draft_id         = shift;
+
+  my $draft = get_api_package($client, "Draft", 1)->new({
+      baseCampaignId => $base_campaign_id,
+      draftId        => $draft_id,
+      draftStatus    => "ARCHIVED"
+  });
+
+  my $operation = get_api_package($client, "DraftOperation", 1)->new({
+      operand  => $draft,
+      operator => "SET"
+  });
+
+  return $client->DraftService()->mutate({operations => [$operation]});
+}
+
+sub create_trial {
+  my $client           = shift;
+  my $base_campaign_id = shift;
+  my $draft_id         = shift;
+
+  my $trial = get_api_package($client, "Trial", 1)->new({
+      draftId             => $draft_id,
+      baseCampaignId      => $base_campaign_id,
+      name                => sprintf("Test Trial #%s", uniqid()),
+      trafficSplitPercent => 50,
+  });
+
+  # Create operation.
+  my $trial_operation = get_api_package($client, "TrialOperation", 1)->new({
+      operator => "ADD",
+      operand  => $trial
+  });
+
+  # Add trial.
+  my $result =
+    $client->TrialService()->mutate({operations => [$trial_operation]});
+
+  $trial = $result->get_value()->[0];
+
+  return $trial;
+}
+
+sub delete_trial {
+  my $client   = shift;
+  my $trial_id = shift;
+
+  my $trial =
+    get_api_package($client, "Trial", 1)
+    ->new({id => $trial_id, status => "ARCHIVED"});
+
+  my $operation = get_api_package($client, "TrialOperation", 1)->new({
+      operand  => $trial,
+      operator => "SET"
+  });
+
+  return $client->TrialService()->mutate({operations => [$operation]});
 }
 
 return 1;

@@ -22,12 +22,8 @@ use lib "../../../lib";
 
 use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;
-use Google::Ads::AdWords::v201509::BiddingStrategyConfiguration;
-use Google::Ads::AdWords::v201509::Budget;
 use Google::Ads::AdWords::v201509::Campaign;
 use Google::Ads::AdWords::v201509::CampaignOperation;
-use Google::Ads::AdWords::v201509::ConversionOptimizerBiddingScheme;
-use Google::Ads::AdWords::v201509::Money;
 
 use Cwd qw(abs_path);
 use Data::Uniqid qw(uniqid);
@@ -40,6 +36,8 @@ sub handle_server_faults {
   $client->set_die_on_faults(0);
 
   # Create campaign.
+  # Don't add the required advertisingChannelType in order to generate a fault
+  # for the purpose of showing how error handling works for this example.
   my (undef, undef, undef, $mday, $mon, $year) = localtime(time);
   my $today = sprintf("%d%02d%02d", ($year + 1900), ($mon + 1), $mday);
   my $campaign = Google::Ads::AdWords::v201509::Campaign->new({
@@ -47,25 +45,6 @@ sub handle_server_faults {
       name      => "Interplanetary Cruise #" . uniqid(),
       status    => "PAUSED"
   });
-
-  # Set an invalid bidding strategy this will trigger a server error.
-  my $biddingStrategyConfiguration =
-    Google::Ads::AdWords::v201509::BiddingStrategyConfiguration->new({
-      biddingStrategyType => "CONVERSION_OPTIMIZER",
-      biddingScheme =>
-        Google::Ads::AdWords::v201509::ConversionOptimizerBiddingScheme->new({
-          pricingMode => "CLICKS",
-          bidType     => "TARGET_CPA"
-        })});
-
-  $campaign->set_biddingStrategyConfiguration($biddingStrategyConfiguration);
-  my $budget = Google::Ads::AdWords::v201509::Budget->new({
-      amount =>
-        Google::Ads::AdWords::v201509::Money->new({microAmount => 50000000}),
-      deliveryMethod => "STANDARD",
-      period         => "DAILY"
-  });
-  $campaign->set_budget($budget);
 
   # Generate the mutate operation.
   my $campaignOperation = Google::Ads::AdWords::v201509::CampaignOperation->new(

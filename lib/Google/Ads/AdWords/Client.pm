@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.3.0");
+our $VERSION = qv("4.4.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -25,6 +25,7 @@ use Google::Ads::AdWords::OAuth2ServiceAccountsHandler;
 use Google::Ads::AdWords::Reports::ReportingConfiguration;
 use Google::Ads::AdWords::Serializer;
 use Google::Ads::Common::HTTPTransport;
+use Google::Ads::Common::Utilities::AdsUtilityRegistry;
 
 use Class::Std::Fast;
 use SOAP::WSDL qv("2.00.10");
@@ -46,6 +47,7 @@ my %die_on_faults_of : ATTR(:name<die_on_faults> :default<0>);
 my %validate_only_of : ATTR(:name<validate_only> :default<0>);
 my %partial_failure_of : ATTR(:name<partial_failure> :default<0>);
 my %reporting_config_of : ATTR(:name<reporting_config> :default<>);
+my %include_utilities_of : ATTR(:name<include_utilities> :default<>);
 
 my %properties_file_of : ATTR(:init_arg<properties_file> :default<>);
 my %services_of : ATTR(:name<services> :default<{}>);
@@ -87,6 +89,8 @@ sub START {
     $alternate_url_of{$ident}   ||= $properties{alternateUrl};
     $validate_only_of{$ident}   ||= $properties{validateOnly};
     $partial_failure_of{$ident} ||= $properties{partialFailure};
+    $include_utilities_of{$ident} ||=
+      $properties{"header.userAgent.includeUtilities"};
 
     # Construct the ReportingConfiguration.
     $reporting_config_of{$ident} ||=
@@ -111,6 +115,8 @@ sub START {
   $partial_failure_of{$ident} ||= 0;
   $reporting_config_of{$ident} ||=
     Google::Ads::AdWords::Reports::ReportingConfiguration->new();
+  $include_utilities_of{$ident} = 1
+    unless defined $include_utilities_of{$ident};
 
   # Setup of auth handlers
   my %auth_handlers = ();
@@ -286,16 +292,28 @@ sub __parse_properties_file {
 sub _get_header {
   my ($self) = @_;
 
+  # A value of 1 (evaluating to true) occurs when a user explicitly defines 1
+  # in the properties file or a user has ommitted the value from the properties
+  # file. A value of 0 (evaluating to false) occurs when a user explicitly
+  # defines 0 in the properties file.
+  my $ads_utilities = ($self->get_include_utilities())
+    ? sprintf(", %s",
+    Google::Ads::Common::Utilities::AdsUtilityRegistry
+      ->get_and_reset_ads_utility_registry_string(
+      ))
+    : "";
+
   # Always prepend the module identifier to the user agent.
   my $user_agent = sprintf(
     "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, " .
-      "libwww-perl/%s, perl/%s)",
+      "libwww-perl/%s, perl/%s%s)",
     $self->get_user_agent() || $0,
     ${Google::Ads::AdWords::Constants::VERSION},
     ${Google::Ads::Common::Constants::VERSION},
     ${SOAP::WSDL::VERSION},
     ${LWP::UserAgent::VERSION},
-    $]
+    $],
+    $ads_utilities
   );
 
   my $headers = {

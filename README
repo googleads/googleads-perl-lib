@@ -48,9 +48,10 @@ AdWords API web services plus more. It includes:
     writing your own application. All the code examples are runnable out of the
     box, but you will have to set your credentials in "~/adwords.properties" and
     you may be required to insert object IDs where you see "INSERT_***_HERE".
-    Starting with v201409 of the AdWords API, you must specify the
-    clientCustomerId HTTP header for most services, so make sure you set the
-    clientId in "~/adwords.properties" to a valid customer ID.
+    You must specify the clientCustomerId HTTP header for most services,
+    so make sure you set the clientId in "~/adwords.properties" to a valid
+    customer ID. See the Basic Concepts guide for more details about headers:
+    https://developers.google.com/adwords/api/docs/guides/basic-concepts#request_headers
 
 
 How do I start?

@@ -26,6 +26,7 @@ use Google::Ads::AdWords::Logging;
 use Google::Ads::AdWords::Reports::ReportingConfiguration;
 use Google::Ads::AdWords::RequestStats;
 use Google::Ads::Common::ReportDownloadError;
+use Google::Ads::Common::Utilities::AdsUtilityRegistry;
 
 use Class::Std::Fast;
 
@@ -51,6 +52,10 @@ my %download_format_of : ATTR(:name<download_format> :default<>);
 # a ReportDownloadError.
 sub get_as_string {
   my ($self) = @_;
+
+  Google::Ads::Common::Utilities::AdsUtilityRegistry->add_ads_utilities(
+      "ReportDownloaderString");
+
   my $user_agent = $self->get___user_agent();
 
   $self->__set_gzip_header();
@@ -72,6 +77,9 @@ sub save {
     warn 'No file path provided';
     return undef;
   }
+
+  Google::Ads::Common::Utilities::AdsUtilityRegistry->add_ads_utilities(
+      "ReportDownloaderFile");
 
   my $gzip_support = $self->__set_gzip_header();
   my $request      = $self->get___http_request();
@@ -111,6 +119,9 @@ sub save {
 # the HTTP::Response object.
 sub process_contents {
   my ($self, $content_callback) = @_;
+
+  Google::Ads::Common::Utilities::AdsUtilityRegistry->add_ads_utilities(
+      "ReportDownloaderStream");
 
   # Do not set the gzip header. If it is set then $content_callback will
   # get compressed data and we don't want clients to have to deal with
@@ -254,7 +265,7 @@ sub __log_report_request_response {
       } elsif ($error_message) {
         $log_message = $log_message . ': ' . $error_message;
       }
-      Google::Ads::AdWords::Logging::get_soap_logger->logwarn($log_message);
+      Google::Ads::AdWords::Logging::get_soap_logger->error($log_message);
     }
   }
 }

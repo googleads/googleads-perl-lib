@@ -23,6 +23,7 @@ use version;
 # The following needs to be on one line because CPAN uses a particularly hacky
 # eval() to determine module versions.
 use Google::Ads::AdWords::Constants; our $VERSION = ${Google::Ads::AdWords::Constants::VERSION};
+use Google::Ads::Common::Utilities::AdsUtilityRegistry;
 
 use Class::Std::Fast;
 
@@ -39,6 +40,10 @@ my $end_of_page = 0;
 # Page size needs to be greater than 0.
 sub START {
   my ($self) = @_;
+
+  Google::Ads::Common::Utilities::AdsUtilityRegistry->add_ads_utilities(
+      "PageProcessor");
+
   if (!defined($self->get_client())) {
     die("Argument 'client' is required.");
   }
@@ -115,14 +120,14 @@ sub process_entries {
     }
     if ($page->get_entries()) {
       $end_of_page = 0;
-      my @entries = ref $page->get_entries() eq 'ARRAY'
+      my @entries =
+        ref $page->get_entries() eq 'ARRAY'
         ? @{$page->get_entries()}
         : $page->get_entries();
       # Before the last entry in the page, set a boolean indicating that
       # the end of the page has been reached.
       my $last_entry = pop @entries;
-      foreach my $entry (@entries)
-      {
+      foreach my $entry (@entries) {
         push(@results, $process_entry_subroutine->($entry));
       }
       $end_of_page = 1;

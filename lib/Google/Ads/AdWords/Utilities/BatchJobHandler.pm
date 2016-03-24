@@ -27,6 +27,7 @@ use Google::Ads::AdWords::RequestStats;
 use Google::Ads::AdWords::Serializer;
 use Google::Ads::AdWords::Utilities::BatchJobHandlerError;
 use Google::Ads::AdWords::Utilities::BatchJobHandlerStatus;
+use Google::Ads::Common::Utilities::AdsUtilityRegistry;
 use Google::Ads::SOAP::Deserializer::MessageParser;
 
 use Class::Std::Fast;
@@ -81,6 +82,10 @@ sub upload_incremental_operations {
         description => "Required: BatchJobHandlerStatus"
     });
   }
+
+  Google::Ads::Common::Utilities::AdsUtilityRegistry->add_ads_utilities(
+      "BatchJobHandler");
+
   my $url                  = $status->get_resumable_upload_uri();
   my $total_content_length = $status->get_total_content_length();
   my $is_first_request     = $total_content_length == 0;

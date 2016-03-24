@@ -27,6 +27,10 @@ my %hasAttachment_of :ATTR(:get<hasAttachment>);
 my %dateRangeType_of :ATTR(:get<dateRangeType>);
 my %downloadFormat_of :ATTR(:get<downloadFormat>);
 my %creationTime_of :ATTR(:get<creationTime>);
+# The includeZeroImpressions option in the ReportDefinition is no longer
+# available for v201603 and later and has been deprecated. Either set the
+# reporting.includeZeroImpressions property in adwords.properties or set
+# includeZeroImpressions in ReportingConfig.
 my %includeZeroImpressions_of :ATTR(:get<includeZeroImpressions>);
 
 __PACKAGE__->_factory(
@@ -135,9 +139,12 @@ methods:
 =item * creationTime
 
 
-=item * includeZeroImpressions
+=item * includeZeroImpressions (Deprecated)
 
-
+The includeZeroImpressions option in the ReportDefinition is no longer
+available for v201603 and later and has been deprecated. Either set the
+reporting.includeZeroImpressions property in adwords.properties or set
+includeZeroImpressions in ReportingConfig.
 
 
 =back

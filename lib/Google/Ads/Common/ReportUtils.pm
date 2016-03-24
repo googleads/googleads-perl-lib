@@ -55,39 +55,6 @@ sub get_report_handler {
   });
 }
 
-# Deprecated - Prepares a Google::Ads::Common::ReportDownloadHandler and then
-# either saves the report's contents to a file (if passed an output file)
-# or returns them as a string.
-sub download_report {
-  warnings::warnif("deprecated",
-    "download_report is deprecated, use get_report_handler instead");
-  my ($report_definition, $client, $file_path, $server,
-    $return_money_in_micros, $timeout)
-    = @_;
-
-  # Perform parameter validation.
-  if (defined $return_money_in_micros) {
-    if ($client->get_die_on_faults()) {
-      die("Version " . $client->get_version() .
-          " does not support returnMoneyInMicros.");
-    } else {
-      warn("Version " . $client->get_version() .
-          " does not support returnMoneyInMicros.");
-    }
-  }
-
-  my $download_response =
-    get_report_handler($report_definition, $client, $server, $timeout);
-
-  my $result;
-  if ($file_path) {
-    $result = $download_response->save($file_path);
-  } else {
-    $result = $download_response->get_as_string();
-  }
-  return $result;
-}
-
 # Creates and properly configures an LWP::UserAgent and HTTP::Request
 # for the specified parameters. Returns a hash with the keys: lwp,
 # request, format.
@@ -296,74 +263,6 @@ L<Google::Ads::Common::ReportUtils::LWP_DEFAULT_TIMEOUT>.
 A new L<Google::Ads::Common::ReportDownloadHandler>. See the methods of
 L<Google::Ads::Common::ReportDownloadHandler> that support different use
 cases for processing the response's contents.
-
-=head2 download_report (Deprecated)
-
-Downloads a new instance of an existing report definition. If the file_path
-parameter is specified it will be downloaded to the file at that path, otherwise
-it will be downloaded to memory and returned as a string.
-
-=head3 Parameters
-
-=over
-
-=item *
-
-A C<ReportDefinition> object to be defined and downloaded on the fly OR
-
-=item *
-
-A hash with an AWQL query and format. i.e.
-
-  { query => 'query',
-    format => 'format' }
-
-=back
-
-=item *
-
-The versioned download url endpoint (based on the version of the given
-C<Client> object) will be used to download the report.
-
-=item *
-
-The client parameter is an instance of a valid L<Google::AdWords::Client>.
-
-=item *
-
-The file_path is an optional parameter that if given the subroutine will write
-out the report to the given file path.
-
-=item *
-
-The server is an optional parameter that can be set to alter the URL from where
-the report will be requested.
-
-=item *
-
-The return_money_in_micros is a deprecated parameter. This parameter is no
-longer supported.
-
-=item *
-
-The timeout is an optional parameter that can be set to alter the default
-time that the http client waits to get a response from the server. If not set,
-the default timeout used is
-L<Google::Ads::AdWords::Constants::LWP_DEFAULT_TIMEOUT>.
-
-=back
-
-=head3 Returns
-
-If a file_path is given, the report gets saved to file and the file size is
-returned, if not the report data itself is returned.
-
-=head3 Exceptions
-
-A L<Google::Ads::Common::ReportDownloadError>
-object will be returned in case of a download error. Check for failures by
-evaluating the return value in a boolean context, where a
-L<Google::Ads::Common::ReportDownloadError> will always evaluate to false.
 
 =head1 LICENSE AND COPYRIGHT
 

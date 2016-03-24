@@ -1,3 +1,25 @@
+4.4.0
+- Added examples and support for v201603.
+- The default version is now v201603.
+- The MutateJobService no longer exists for v201603.
+- The DraftService, DraftAsyncErrorService, TrialService, and
+TrialAsyncErrorService with examples have been added.
+- Added the authenticate_with_web_flow.pl example to demonstrate how to set
+up OAuth2 web flow in a Perl application that uses this library.
+- adwords.properties has a new header.userAgent.includeUtilities property that
+controls sending utility usage in the header's user agent. By default, this is
+set to 1 (true).
+- Removed deprecated method Google::Ads::Common::ReportUtils->download_report.
+To replace this in your code, call 'get_report_handler' on ReportUtils, which
+returns a Google::Ads::Common::ReportDownloadHandler. Then, call 'save' on
+the returned Google::Ads::Common::ReportDownloadHandler.
+- The includeZeroImpressions option in the ReportDefinition is no longer
+available for v201603 and later and has been deprecated. Either set the
+reporting.includeZeroImpressions property in adwords.properties or set
+includeZeroImpressions in ReportingConfig.
+- In bidding, the phrase 'Shared' has been changed to 'portfolio' and
+'non-shared (anonymous)' has been changed to 'standard'.
+
 4.3.0
 - Added examples and support for v201601.
 - BatchJobHanlder was modified to return a BatchJobHanlderStatus

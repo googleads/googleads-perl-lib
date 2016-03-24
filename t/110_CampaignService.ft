@@ -49,8 +49,7 @@ my $ budget = get_api_package($client, "Budget")->new({
   amount => get_api_package($client, "Money")->new({
     microAmount => 5000000
   }),
-  deliveryMethod => "STANDARD",
-  period => "DAILY"
+  deliveryMethod => "STANDARD"
 });
 
 my $budget_operation = get_api_package($client, "BudgetOperation")->new({

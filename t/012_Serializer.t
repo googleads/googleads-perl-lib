@@ -82,7 +82,7 @@ my $expected_output = "";
 $expected_output = $properties->getProperty("serializer_expected_output_cid");
 my $user_agent = sprintf(
   "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, " .
-    "libwww-perl/%s, perl/%s)",
+    "libwww-perl/%s, perl/%s, Logging/Disabled)",
   $client->get_user_agent() || $0,
   ${Google::Ads::AdWords::Constants::VERSION},
   ${Google::Ads::Common::Constants::VERSION},

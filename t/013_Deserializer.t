@@ -21,7 +21,7 @@ use lib qw(t/util);
 
 use File::Basename;
 use File::Spec;
-use Test::More (tests => 12);
+use Test::More (tests => 8);
 use TestClientUtils qw(get_test_client_no_auth);
 use TestUtils qw(read_test_properties replace_properties);
 
@@ -69,31 +69,6 @@ $deserializer = Google::Ads::AdWords::Deserializer->new({
 
 $deserializer_input =
   $properties->getProperty("deserializer_policy_violation_input");
-$deserializer_input =
-  replace_properties($deserializer_input, {version => $client->get_version()});
-
-@results = $deserializer->deserialize($deserializer_input);
-
-isa_ok($results[0],               "SOAP::WSDL::SOAP::Typelib::Fault11");
-isa_ok($results[0]->get_detail(), "Google::Ads::AdWords::FaultDetail");
-isa_ok(
-  $results[0]->get_detail()->get_ApiExceptionFault(),
-  "Google::Ads::AdWords::${current_version}::ApiException"
-);
-
-# Test we can deserialize a policy violation error response from mutate job
-# service.
-use_ok("Google::Ads::AdWords::${current_version}::TypeMaps::MutateJobService");
-
-$deserializer = Google::Ads::AdWords::Deserializer->new({
-    client => $client,
-    class_resolver =>
-      "Google::Ads::AdWords::${current_version}::TypeMaps::MutateJobService",
-    strict => "1"
-});
-
-$deserializer_input =
-  $properties->getProperty("deserializer_policy_violation_bulk_mutate_input");
 $deserializer_input =
   replace_properties($deserializer_input, {version => $client->get_version()});
 
