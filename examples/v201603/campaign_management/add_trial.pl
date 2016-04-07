@@ -118,7 +118,7 @@ sub add_trial {
                 values   => [$trial_id]})]});
 
       my $errors =
-        $client->TrialAsyncErrorService({selector => $error_selector})
+        $client->TrialAsyncErrorService->get({selector => $error_selector})
         ->get_entries();
       if (!$errors) {
         printf("Could not retrieve errors for trial %d", $trial->get_id());
@@ -126,7 +126,8 @@ sub add_trial {
         printf("Could not create trial due to the following errors:");
         my $index = 0;
         for my $error ($errors) {
-          printf("Error %d: %s", $index, $error->get_errorString());
+          printf("Error %d: %s", $index, $error->get_asyncError()
+          ->get_errorString());
           $index++;
         }
       }

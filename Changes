@@ -1,3 +1,7 @@
+4.5.0
+- Removed examples and support for v201506. For future sunset dates, see
+https://developers.google.com/adwords/api/docs/sunset-dates
+
 4.4.0
 - Added examples and support for v201603.
 - The default version is now v201603.
