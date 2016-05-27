@@ -109,7 +109,8 @@ sub __prepare_request {
     and (defined $reporting_config->get_skip_header()
       or defined $reporting_config->get_skip_column_header()
       or defined $reporting_config->get_skip_summary()
-      or defined $reporting_config->get_include_zero_impressions()))
+      or defined $reporting_config->get_include_zero_impressions()
+      or defined $reporting_config->get_use_raw_enum_values()))
   {
     if (defined $reporting_config->get_skip_header()) {
       push @headers,
@@ -132,6 +133,12 @@ sub __prepare_request {
     if (defined $reporting_config->get_include_zero_impressions()) {
       push @headers, "includeZeroImpressions" =>
         $reporting_config->get_include_zero_impressions() ? "true" : "false";
+    }
+    if (defined $reporting_config->get_use_raw_enum_values()) {
+      push @headers,
+        "useRawEnumValues" => $reporting_config->get_use_raw_enum_values()
+        ? "true"
+        : "false";
     }
   }
   push @headers, "developerToken" => $client->get_developer_token();

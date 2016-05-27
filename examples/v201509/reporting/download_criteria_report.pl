@@ -66,12 +66,14 @@ sub download_criteria_report {
 
   # Optional: Modify the reporting configuration of the client to suppress
   # header, column, or summary rows in the report output and include data with
-  # zero impressions.
+  # zero impressions. You can choose to return enum field values as enum
+  # values instead of display values.
   # You can also configure this via your adwords.properties configuration file.
   $client->get_reporting_config()->set_skip_header(0);
   $client->get_reporting_config()->set_skip_column_header(0);
   $client->get_reporting_config()->set_skip_summary(0);
   $client->get_reporting_config()->set_include_zero_impressions(0);
+  $client->get_reporting_config()->set_use_raw_enum_values(0);
 
   # Get the report handler.
   my $report_handler =

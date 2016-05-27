@@ -41,11 +41,13 @@ sub stream_criteria_report_results {
   # header, column name, or summary rows in the report output. You can also
   # configure this via your adwords.properties configuration file.
   # In addition, you can set whether you want to explicitly include or
-  # exclude zero impression rows.
+  # exclude zero impression rows. You can choose to return enum field values
+  # as enum values instead of display values.
   $client->get_reporting_config()->set_skip_header(1);
   $client->get_reporting_config()->set_skip_column_header(1);
   $client->get_reporting_config()->set_skip_summary(1);
   $client->get_reporting_config()->set_include_zero_impressions(0);
+  $client->get_reporting_config()->set_use_raw_enum_values(0);
 
   # Get the report handler.
   my $report_handler = Google::Ads::Common::ReportUtils::get_report_handler({

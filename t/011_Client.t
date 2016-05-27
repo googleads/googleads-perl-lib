@@ -22,7 +22,7 @@ use strict;
 
 use File::Basename;
 use File::Spec;
-use Test::More (tests => 25);
+use Test::More (tests => 27);
 
 # Set up @INC at runtime with an absolute path.
 my $lib_path = File::Spec->catdir(dirname($0), "..", "lib");
@@ -53,7 +53,7 @@ $client->set_die_on_faults(1);
 is($client->get_die_on_faults(), 1, "get/set die_on_faults()");
 
 # Make sure this supports all the services we think it should for each version.
-$client->set_version("v201603");
+$client->set_version("v201605");
 my @services = qw(AccountLabelService
   AdCustomizerFeedService
   AdGroupAdService
@@ -131,7 +131,8 @@ my $reporting_config_override =
     skip_header              => 0,
     skip_column_header       => 0,
     skip_summary             => 0,
-    include_zero_impressions => 0
+    include_zero_impressions => 0,
+    use_raw_enum_values      => 0
   });
 ok($reporting_config_override, "create reporting config");
 
@@ -151,6 +152,8 @@ is($client->get_reporting_config()->get_skip_summary(),
   0, "override report config skip summary");
 is($client->get_reporting_config()->get_include_zero_impressions(),
   0, "override report config include zero impressions");
+is($client->get_reporting_config()->get_use_raw_enum_values(),
+  0, "override report config use raw enum values");
 
 # Test that if no ReportingConfiguration is passed to the constructor then
 # reporting settings are taken from the properties file.
@@ -166,3 +169,5 @@ is($client->get_reporting_config()->get_skip_summary(),
   1, "report config skip summary");
 is($client->get_reporting_config()->get_include_zero_impressions(),
   1, "report config include zero impressions");
+is($client->get_reporting_config()->get_use_raw_enum_values(),
+  1, "report config use raw enum values");

@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.5.0");
+our $VERSION = qv("4.6.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -99,7 +99,8 @@ sub START {
         skip_column_header => $properties{"reporting.skipColumnHeader"},
         skip_summary       => $properties{"reporting.skipSummary"},
         include_zero_impressions =>
-          $properties{"reporting.includeZeroImpressions"}});
+          $properties{"reporting.includeZeroImpressions"},
+        use_raw_enum_values => $properties{"reporting.useRawEnumValues"}});
 
     # SSL Peer validation setup.
     $self->__setup_SSL($properties{CAPath}, $properties{CAFile});
@@ -296,8 +297,10 @@ sub _get_header {
   # in the properties file or a user has ommitted the value from the properties
   # file. A value of 0 (evaluating to false) occurs when a user explicitly
   # defines 0 in the properties file.
-  my $ads_utilities = ($self->get_include_utilities())
-    ? sprintf(", %s",
+  my $ads_utilities =
+    ($self->get_include_utilities())
+    ? sprintf(
+    ", %s",
     Google::Ads::Common::Utilities::AdsUtilityRegistry
       ->get_and_reset_ads_utility_registry_string(
       ))

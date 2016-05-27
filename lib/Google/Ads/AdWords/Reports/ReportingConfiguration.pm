@@ -29,17 +29,19 @@ my %skip_column_header_of : ATTR(:name<skip_column_header> :default<>);
 my %skip_summary_of : ATTR(:name<skip_summary> :default<>);
 my %include_zero_impressions_of :
   ATTR(:name<include_zero_impressions> :default<>);
+my %use_raw_enum_values_of : ATTR(:name<use_raw_enum_values> :default<>);
 
 sub as_string : STRINGIFY {
   my ($self, $ident) = @_;
   return sprintf(
     "ReportingConfiguration {\n  skip_header: %s\n" .
       "  skip_column_header: %s\n" . "  skip_summary: %s\n" .
-      "  include_zero_impressions: %s\n}",
+      "  include_zero_impressions: %s\n use raw enum values: %s\n}",
     $self->get_skip_header()              || "<undef>",
     $self->get_skip_column_header()       || "<undef>",
     $self->get_skip_summary()             || "<undef>",
-    $self->get_include_zero_impressions() || "<undef>"
+    $self->get_include_zero_impressions() || "<undef>",
+    $self->get_use_raw_enum_values()      || "<undef>"
   );
 }
 
@@ -83,6 +85,11 @@ row containing totals.
 Set this to true to request that report output includes data with zero
 impressions.
 
+=item * use_raw_enum_values
+
+Set this to true to request that report output return enum field values as
+enum values instead of display values.
+
 =back
 
 
@@ -97,6 +104,7 @@ Constructor. The following data structure may be passed to new():
    skip_column_header => $some_value, #boolean
    skip_summary =>  $some_value, # boolean
    include_zero_impressions => $some_value, # boolean
+   use_raw_enum_values => $some_value, # boolean
  },
 
 =cut

@@ -22,7 +22,7 @@ use lib qw(lib t t/util);
 
 use File::Temp qw(tempfile);
 use Test::MockObject::Extends;
-use Test::More (tests => 20);
+use Test::More (tests => 23);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
 
 use_ok("Google::Ads::AdWords::Reports::ReportingConfiguration");
@@ -38,6 +38,8 @@ is($client->get_reporting_config()->get_skip_summary(),
   undef, "skip_summary should be undef");
 is($client->get_reporting_config()->get_include_zero_impressions(),
   undef, "include_zero_impressions should be undef");
+is($client->get_reporting_config()->get_use_raw_enum_values(),
+  undef, "use_raw_enum_values should be undef");
 
 # Construct a new reporting config.
 my $reporting_config =
@@ -45,7 +47,8 @@ my $reporting_config =
     skip_header              => 1,
     skip_column_header       => 0,
     skip_summary             => 0,
-    include_zero_impressions => 0
+    include_zero_impressions => 0,
+    use_raw_enum_values      => 0
   });
 
 $client->set_reporting_config($reporting_config);
@@ -58,6 +61,8 @@ is($client->get_reporting_config()->get_skip_summary(),
   0, "skip_summary should be set by constructor");
 is($client->get_reporting_config()->get_include_zero_impressions(),
   0, "include_zero_impressions should be set by constructor");
+is($client->get_reporting_config()->get_use_raw_enum_values(),
+  0, "use_raw_enum_values should be set by constructor");
 
 # Mutate the reporting config
 $client->get_reporting_config->set_skip_header(0);
@@ -75,6 +80,10 @@ is($client->get_reporting_config()->get_skip_summary(),
 $client->get_reporting_config->set_include_zero_impressions(1);
 is($client->get_reporting_config()->get_include_zero_impressions(),
   1, "include_zero_impressions should be set to true");
+
+$client->get_reporting_config->set_use_raw_enum_values(1);
+is($client->get_reporting_config()->get_use_raw_enum_values(),
+  1, "use_raw_enum_values should be set to true");
 
 ok($client->get_reporting_config()->as_string(), "as_string");
 

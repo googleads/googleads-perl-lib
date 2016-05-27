@@ -20,6 +20,35 @@ programmatically access [AdWords](https://adwords.google.com/select/Login) accou
  - Online
    [documentation](https://metacpan.org/release/Google-Ads-AdWords-Client)
 
+## Getting started
+
+- Download the newest version from [releases](https://github.com/googleads/googleads-perl-lib/releases) or from [CPAN Google::Ads::AdWords::Client](http://search.cpan.org/~sundquist/).
+
+- Install dependencies.
+
+  ```
+  $ perl Build.PL
+  $ perl Build installdeps
+  ```
+
+- Copy the sample **adwords.properties** for your product to your home directory
+and fill out the required properties.
+
+  * [AdWords adwords.properties](https://github.com/googleads/googleads-perl-lib/blob/master/adwords.properties)
+
+- Setup your OAuth2 credentials.
+
+  The AdWords API uses
+[OAuth2](http://oauth.net/2/) as the authentication mechanism. Follow the appropriate guide below based on your use case.
+
+  **If you're accessing an API using your own credentials...**
+
+  * [Using AdWords](https://github.com/googleads/googleads-perl-lib/wiki/API-access-using-own-credentials-(installed-application-flow))
+
+  **If you're accessing an API on behalf of clients...**
+
+  * [Developing a web application](https://github.com/googleads/googleads-perl-lib/wiki/API-Access-on-behalf-of-your-clients-(web-flow))
+
 ## How do I use the library?
 You can refer to the [README](https://github.com/googleads/googleads-perl-lib/blob/master/README) file to get more details on how to start using the library. We have code examples for most of the common use cases in the [repository](https://github.com/googleads/googleads-perl-lib/tree/master/examples). These code examples are also available as part of the [release distributions](https://github.com/googleads/googleads-perl-lib/releases). You can also refer to the [wiki articles](https://github.com/googleads/googleads-perl-lib/wiki/_pages) for additional documentation.
 

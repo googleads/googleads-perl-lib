@@ -1,3 +1,12 @@
+4.6.0
+- Added examples and support for v201605. The examples include:
+ - The addition and retrieval of expanded text ads.
+ - The addition of responsive ads for display.
+ - A new reporting.useRawEnumValues property in adwords.properties that
+   provides the option of returning enum values rather than display values for
+   enum fields.
+ - The retrieval of platform stats in estimate_keyword_traffic.pl.
+
 4.5.0
 - Removed examples and support for v201506. For future sunset dates, see
 https://developers.google.com/adwords/api/docs/sunset-dates
