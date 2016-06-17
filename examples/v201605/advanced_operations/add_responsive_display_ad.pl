@@ -50,10 +50,16 @@ sub add_responsive_display_ad {
   # Upload image.
   $image = $client->MediaService()->upload({media => [$image]});
 
+  # This ad format does not allow the creation of an image using the
+  # Image.data field. An image must first be created using the MediaService,
+  # and Image.mediaId must be populated when creating the ad.
+  my $marketing_image = Google::Ads::AdWords::v201605::Image->new(
+    {mediaId => $image->get_mediaId()});
+
   # Create the responsive display ad.
   my $responsive_display_ad =
     Google::Ads::AdWords::v201605::ResponsiveDisplayAd->new({
-      marketingImage => $image,
+      marketingImage => $marketing_image,
       shortHeadline  => "Travel",
       longHeadline   => "Travel the World",
       description    => "Take to the air!",

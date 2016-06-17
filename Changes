@@ -1,3 +1,8 @@
+4.7.0
+- Removed examples and support for v201509.
+- Added parallel_report_download.pl example to show downloading multiple
+reports.
+
 4.6.0
 - Added examples and support for v201605. The examples include:
  - The addition and retrieval of expanded text ads.
