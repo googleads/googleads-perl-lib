@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# This example adds a remarketing user list (a.k.a. audience) and uploads
-# hashed email addresses to populate the list.
+# This example adds a user list (a.k.a. audience) and uploads hashed email
+# addresses to populate the list.
 #
 # Note: It may take up to several hours for the list to be populated
 # with members. Email addresses must be associated with a Google account.
@@ -40,7 +40,7 @@ use Digest::SHA qw(sha256_hex);
 sub add_crm_based_user_list {
   my $client = shift;
 
-  # Create remarketing user list.
+  # Create a user list.
   my $user_list = Google::Ads::AdWords::v201601::CrmBasedUserList->new({
       name        => "Customer relationship management list #" . uniqid(),
       description => "A list of customers that originated from email addresses",

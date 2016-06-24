@@ -1,3 +1,9 @@
+4.7.1
+- In OAuth2 service account authentication, added JSON keyfile support.
+In the adwords.properties file, there is now a new property called
+oAuth2ServiceAccountJSONFile. Change over from PEM keyfiles to JSON keyfiles
+as PEM keyfiles are now deprecated.
+
 4.7.0
 - Removed examples and support for v201509.
 - Added parallel_report_download.pl example to show downloading multiple

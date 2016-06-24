@@ -22,6 +22,8 @@ programmatically access [AdWords](https://adwords.google.com/select/Login) accou
 
 ## Getting started
 
+***NOTE:*** If you are using Windows, go through the instructions under ***What if I'm using Windows?*** first before continuing here.
+
 - Download the newest version from [releases](https://github.com/googleads/googleads-perl-lib/releases) or from [CPAN Google::Ads::AdWords::Client](http://search.cpan.org/~sundquist/).
 
 - Install dependencies.
@@ -50,11 +52,39 @@ and fill out the required properties.
   * [Developing a web application](https://github.com/googleads/googleads-perl-lib/wiki/API-Access-on-behalf-of-your-clients-(web-flow))
 
 ## How do I use the library?
-You can refer to the [README](https://github.com/googleads/googleads-perl-lib/blob/master/README) file to get more details on how to start using the library. We have code examples for most of the common use cases in the [repository](https://github.com/googleads/googleads-perl-lib/tree/master/examples). These code examples are also available as part of the [release distributions](https://github.com/googleads/googleads-perl-lib/releases). You can also refer to the [wiki articles](https://github.com/googleads/googleads-perl-lib/wiki/_pages) for additional documentation.
+There are code examples for most of the common use cases in the [repository](https://github.com/googleads/googleads-perl-lib/tree/master/examples). These code examples are also available as part of the [release distributions](https://github.com/googleads/googleads-perl-lib/releases). You can also refer to the [wiki articles](https://github.com/googleads/googleads-perl-lib/wiki/_pages) for additional documentation.
+
+### How do I run the examples?
+
+Examples can be run by executing the following on the command line
+from a sub-directory of the `examples/` directory,
+
+  ```
+  $ perl Example.pl
+  ```
+
+Some examples require you replace object IDs in where you see placeholder
+like `INSERT_***_HERE`
 
 ### How do I enable logging?
 
 The client library uses a custom class for all logging. Check out our [logging guide on GitHub](https://github.com/googleads/googleads-perl-lib/wiki/Logging) for more details.
+
+### What if I'm using Windows?
+
+The library is only supported on Windows for ActivePerl 5.14+ x86 (32bit version).
+
+Before following the **Getting started** steps:
+
+  * Install the MinGW module by executing `ppm install MinGW` in the command prompt.
+  * Install OpenSSL, which can be found at: https://code.google.com/p/openssl-for-windows/.
+  * If `installdeps` errors on `Crypt::OpenSSL::RSA` stating that it cannot find .h files:
+   - Note the root location of your openssl installation. This will be referred
+   to as `<openssl_dir>` e.g. `C:\openssl`. Note the root location or your Perl
+   installation e.g. `C:\Perl`. This will be referred to as `<perl_dir>`.
+   - Copy the `<openssl_dir>\include directory` to `<perl_dir>\lib\CORE`.
+   - Copy all the .dll files in `<openssl_dir>\bin` to `<perl_dir>\lib\CORE`.
+   - Copy all the .lib files in `<openssl_dir>\lib` to `<perl_dir>\lib\CORE`.
 
 ## How do I Contribute?
 See the [guidelines for contributing](https://github.com/googleads/googleads-perl-lib/blob/master/CONTRIBUTING.md) for details.

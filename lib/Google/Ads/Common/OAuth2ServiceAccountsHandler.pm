@@ -24,6 +24,7 @@ use Google::Ads::Common::Constants; our $VERSION = ${Google::Ads::Common::Consta
 
 use Crypt::OpenSSL::RSA;
 use HTTP::Request;
+use JSON::Parse qw(parse_json);
 use LWP::UserAgent;
 use MIME::Base64 qw(encode_base64 decode_base64);
 use utf8;
@@ -37,6 +38,7 @@ my %delegated_email_address_of :
   ATTR(:name<delegated_email_address> :default<>);
 my %additional_scopes_of : ATTR(:name<additional_scopes> :default<>);
 my %pem_file_of : ATTR(:name<pem_file> :default<>);
+my %json_file_of : ATTR(:name<json_file> :default<>);
 my %__crypt_module_of : ATTR(:name<__crypt_module> :default<>);
 
 # Constructor
@@ -57,6 +59,8 @@ sub initialize : CUMULATIVE(BASE FIRST) {
     || $delegated_email_address_of{$ident};
   $pem_file_of{$ident} = $properties->{oAuth2ServiceAccountPEMFile}
     || $pem_file_of{$ident};
+  $json_file_of{$ident} = $properties->{oAuth2ServiceAccountJSONFile}
+    || $json_file_of{$ident};
   $additional_scopes_of{$ident} = $properties->{oAuth2AdditionalScopes}
     || $additional_scopes_of{$ident};
 }
@@ -64,18 +68,24 @@ sub initialize : CUMULATIVE(BASE FIRST) {
 sub _refresh_access_token {
   my $self = shift;
 
+  if ($self->get_json_file() and $self->get_pem_file()) {
+    warn("Only one of oAuth2ServiceAccountPEMFile or " .
+    "oAuth2ServiceAccountJSONFile can be specified in adwords.properties.");
+    return 0;
+  }
+
+  my $file = $self->__read_certificate_file() || return 0;
+
   my $iat                     = time;
   my $exp                     = $iat + 3600;
   my $iss                     = $self->get_email_address();
   my $delegated_email_address = $self->get_delegated_email_address();
   my $scope                   = $self->_formatted_scopes();
 
-  my $file = $self->__read_certificate_file() || return 0;
-
   my $header = '{"alg":"RS256","typ":"JWT"}';
   my $claims = "{
     \"iss\":\"${iss}\",
-    \"prn\":\"${delegated_email_address}\",
+    \"sub\":\"${delegated_email_address}\",
     \"scope\":\"${scope}\",
     \"aud\":\"" . OAUTH2_BASE_URL . "/token\",
     \"exp\":${exp},
@@ -84,6 +94,7 @@ sub _refresh_access_token {
 
   my $encoded_header = __encode_base64_url($header);
   my $encoded_claims = __encode_base64_url($claims);
+
   my $key = $self->get___crypt_module()->new_private_key($file) || return 0;
   $key->use_pkcs1_padding();
   $key->use_sha256_hash();
@@ -111,18 +122,37 @@ sub _refresh_access_token {
   $self->set_access_token_expires($iat + $content_hash->{expires_in});
 }
 
+# Return the private key string from either the PEM file or JSON file specified.
 sub __read_certificate_file {
   my $self = shift;
-  my $file_str;
+  my $private_key;
 
-  $self->get_pem_file() || return 0;
-  open(MYFILE, $self->get_pem_file()) || return 0;
-  while (<MYFILE>) {
-    $file_str .= $_;
+  if (!$self->get_pem_file() and !$self->get_json_file()) {
+    return 0;
   }
-  close(MYFILE);
 
-  return $file_str;
+  # JSON File
+  if ($self->get_json_file()) {
+    my $file_str;
+    open(MYFILE, $self->get_json_file()) || return 0;
+    while (<MYFILE>) {
+      $file_str .= $_;
+    }
+    my $json_values = parse_json ($file_str);
+    $private_key = $json_values->{'private_key'};
+    $self->set_email_address($json_values->{'client_email'});
+    close(MYFILE);
+  }
+  # PEM File
+  else {
+    open(MYFILE, $self->get_pem_file()) || return 0;
+    while (<MYFILE>) {
+      $private_key .= $_;
+    }
+    close(MYFILE);
+  }
+
+  return $private_key;
 }
 
 sub __encode_base64_url($) {
@@ -196,6 +226,11 @@ Private key PEM file path. Keep in mind that the Google API Console generates
 files in PKCS12 format and it should be converted to PEM format with no password
 for this module to function.
 
+=head2 json_file
+
+JOSN file path. This contains the private key and client id needed for
+authentication.
+
 =head2 access_token
 
 Stores an OAuth2 access token after the authorization flow is followed or for
@@ -213,8 +248,7 @@ are allowed to access e.g. https://www.googleapis.com/auth/analytics
 
 =head2 initialize
 
-Initializes the handler with properties such as the client_id and
-client_secret to use for generating authorization requests.
+Initializes the handler with properties for generating authorization requests.
 
 =head3 Parameters
 
@@ -227,18 +261,13 @@ requests against the API.
 
 =item *
 
-A hash reference with the following keys:
+A hash reference with the following keys (with this example being for a simple
+JSON keyfile):
 {
-  # Refer to the documentation of the L<client_id> property.
-  oAuth2ClientId => "client-id",
-  # Refer to the documentation of the L<email_address> property.
-  oAuth2ServiceAccountEmailAddress => "email-address",
   # Refer to the documentation of the L<delegated_email_address> property.
   oAuth2ServiceAccountDelegateEmailAddress => "delegated-email-address",
-  # Refer to the documentation of the L<pem_file> property.
-  oAuth2ServiceAccountPEMFile => "pem-file-path",
-  # Refer to the documentation of the L<access_token> property.
-  oAuth2AccessToken => "access-token",
+  # Refer to the documentation of the L<json_file> property.
+  oAuth2ServiceAccountJSONFile => "json-file-path",
 }
 
 =head2 is_auth_enabled
