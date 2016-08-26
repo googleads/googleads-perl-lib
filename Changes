@@ -1,3 +1,10 @@
+4.9.0
+- Removed examples and support for v201601. Note that MutateJobService is no
+longer available; please use BatchJobService.
+- In previous versions, the adwords.properties userAgent would default to your
+script's name e.g. $0. Now, the value will default to 'unknown'. This value
+can no longer be non-ASCII.
+
 4.8.0
 - Added examples and support for v201607. The examples include:
  - The addition of a landscapeImage in add_click_to_download.pl.

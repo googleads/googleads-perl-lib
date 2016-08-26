@@ -175,12 +175,6 @@ sub upload_incremental_operations {
 sub __initialize_upload {
   my ($self, $url, $client, $timeout) = @_;
 
-  # The upload only needs to be initialized for v201601 or greater.
-  my $version = $client->get_version();
-  if ($version lt 'v201601') {
-    return $url;
-  }
-
   my $lwp        = LWP::UserAgent->new();
   my $can_accept = HTTP::Message::decodable;
   $lwp->default_header("Accept-Encoding" => scalar $can_accept);

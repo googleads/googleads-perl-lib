@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.8.0");
+our $VERSION = qv("4.9.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -306,11 +306,28 @@ sub _get_header {
       ))
     : "";
 
+  # Set the application name to the default if not provided.
+  # Verify that it is ASCII.
+  my $application_name =
+        ($self->get_user_agent()
+          && ($self->get_user_agent() ne "INSERT_USER_AGENT_HERE")
+        ? $self->get_user_agent()
+        : Google::Ads::AdWords::Constants::DEFAULT_USER_AGENT);
+  if ($application_name =~ /[[:^ascii:]]/) {
+    my $error_message = sprintf(
+      "userAgent [%s] in client must be ASCII.", $application_name);
+    if ($self->get_die_on_faults()) {
+      die($error_message);
+    } else {
+      warn($error_message);
+    }
+  }
+
   # Always prepend the module identifier to the user agent.
   my $user_agent = sprintf(
     "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, " .
       "libwww-perl/%s, perl/%s%s)",
-    $self->get_user_agent() || $0,
+    $application_name,
     ${Google::Ads::AdWords::Constants::VERSION},
     ${Google::Ads::Common::Constants::VERSION},
     ${SOAP::WSDL::VERSION},
@@ -427,7 +444,7 @@ account to act upon.
 =head2 user_agent
 
 A user-generated string used to identify your application. If nothing is
-specified, the name of your script (i.e. $0) will be used instead.
+specified, "unknown" will be used instead.
 
 =head2 developer_token
 

@@ -22,7 +22,7 @@ use lib qw(t/util);
 use lib qw(lib);
 
 use File::Temp qw(tempfile);
-use Test::More (tests => 60);
+use Test::More (tests => 59);
 use TestClientUtils qw(get_test_client get_test_manager_account_client);
 use TestAPIUtils;
 
@@ -235,11 +235,6 @@ ok(get_targetable_languages_and_carriers($client, $campaign_id),
    "Test of get_targetable_languages_and_carriers example");
 require qw(examples/v201605/targeting/lookup_location.pl);
 ok(lookup_location($client), "Test of lookup_location example");
-
-# Migration examples.
-require qw(examples/v201605/migration/upgrade_ad_url.pl);
-ok(upgrade_ad_url($client, $ad_group_id, $text_ad_id),
-   "Test of upgrade_ad_url example");
 
 # Basic Operations delete and remove examples.
 require qw(examples/v201605/basic_operations/remove_ad.pl);

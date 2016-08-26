@@ -22,7 +22,8 @@ use strict;
 
 use File::Basename;
 use File::Spec;
-use Test::More (tests => 27);
+use Test::Exception;
+use Test::More (tests => 29);
 
 # Set up @INC at runtime with an absolute path.
 my $lib_path = File::Spec->catdir(dirname($0), "..", "lib");
@@ -121,6 +122,16 @@ is($client->get_oauth_2_handler()->get_client_id(), $test_oauth2_client_id);
 $properties_file =
   File::Spec->catdir(dirname($0),
   qw(testdata client.withreportconfig.test.input));
+
+# Test non-ASCII and ASCII user agent.
+$client->set_user_agent("你好");
+dies_ok {
+  $client->_get_header()
+}
+"expected to die";
+
+$client->set_user_agent("hello");
+ok($client->_get_header());
 
 # Test that a ReportingConfiguration passed to the constructor takes
 # precedence over the reporting settings in the properties file.

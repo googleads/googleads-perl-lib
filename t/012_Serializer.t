@@ -80,10 +80,24 @@ my $envelope = $serializer->serialize({
 my $properties      = read_test_properties();
 my $expected_output = "";
 $expected_output = $properties->getProperty("serializer_expected_output_cid");
+
+# Set the application name to the default if not provided.
+# Verify that it is ASCII.
+my $application_name =
+      ($client->get_user_agent()
+        && ($client->get_user_agent() ne "INSERT_USER_AGENT_HERE")
+      ? $client->get_user_agent()
+      : Google::Ads::AdWords::Constants::DEFAULT_USER_AGENT);
+if ($application_name =~ /[[:^ascii:]]/) {
+  my $error_message = sprintf(
+    "userAgent [%s] in client must be ASCII.", $application_name);
+  die($error_message);
+}
+
 my $user_agent = sprintf(
   "%s (AwApi-Perl/%s, Common-Perl/%s, SOAP-WSDL/%s, " .
     "libwww-perl/%s, perl/%s, Logging/Disabled)",
-  $client->get_user_agent() || $0,
+  $application_name,
   ${Google::Ads::AdWords::Constants::VERSION},
   ${Google::Ads::Common::Constants::VERSION},
   ${SOAP::WSDL::VERSION},

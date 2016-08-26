@@ -23,10 +23,11 @@ use File::HomeDir;
 use File::Spec::Functions;
 
 # Main version number that the rest of the modules pick up off of.
-our $VERSION = qv("4.8.0");
+our $VERSION = qv("4.9.0");
 
 use constant DEFAULT_PROPERTIES_FILE =>
   catfile(File::HomeDir->my_home, "adwords.properties");
+use constant DEFAULT_USER_AGENT => "unknown";
 
 # In this format string, the first %s is the URL prefix, the second is the
 # version, and the third is service name.
@@ -91,7 +92,6 @@ our %SERVICE_TO_GROUP = (
   LocationCriterionService        => "cm",
   ManagedCustomerService          => "mcm",
   MediaService                    => "cm",
-  MutateJobService                => "cm",
   OfflineConversionFeedService    => "cm",
   ReportDefinitionService         => "cm",
   SharedCriterionService          => "cm",
