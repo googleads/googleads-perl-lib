@@ -54,7 +54,7 @@ $client->set_die_on_faults(1);
 is($client->get_die_on_faults(), 1, "get/set die_on_faults()");
 
 # Make sure this supports all the services we think it should for each version.
-$client->set_version("v201607");
+$client->set_version("v201609");
 my @services = qw(AccountLabelService
   AdCustomizerFeedService
   AdGroupAdService
@@ -83,7 +83,6 @@ my @services = qw(AccountLabelService
   DataService
   DataService
   DraftAsyncErrorService
-  ExperimentService
   FeedItemService
   FeedMappingService
   FeedService
@@ -91,6 +90,7 @@ my @services = qw(AccountLabelService
   LocationCriterionService
   ManagedCustomerService
   MediaService
+  OfflineCallConversionFeedService
   OfflineConversionFeedService
   ReportDefinitionService
   SharedCriterionService

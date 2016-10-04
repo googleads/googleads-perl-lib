@@ -121,8 +121,52 @@ sub upload_incremental_operations {
   my $request = $upload_request->{request};
   my $xml     = $request->content();
 
-  # If this is both the 1st and last request, leave the XML alone.
+  $xml = $self->__update_tags($is_first_request, $is_last_request, $xml);
 
+  my $padded_xml = _add_padding($xml);
+  $request->content($padded_xml);
+  my $content_length = 0;
+  {
+    use bytes;
+    $content_length = length($padded_xml);
+  }
+
+  $self->__set_incremental_operations_headers($request, $total_content_length,
+    $content_length, $is_last_request);
+
+  # Continue with making the request.
+  my $start_time = [gettimeofday()];
+  my $response   = $upload_request->{lwp}->request($request);
+  $response = $self->__check_response($response, $start_time, 1, 0);
+  if (!$response) {
+    return $response;
+  }
+  $total_content_length = $total_content_length + $content_length;
+  $status->set_total_content_length($total_content_length);
+  return $status;
+}
+
+# Update tags.
+# The process is that a user sends a list of operations to the Google Cloud
+# in smaller groups and then requests that all operations execute in a single
+# batch job e.g.
+# * HTTP Request 1: 1st list of operations
+# * HTTP Request 2: 2nd list of operations
+# * HTTP Request 3: Final list of operations
+# * Execute all operations.
+#
+# When the list of operations is serialized with each HTTP request, the
+# serialization adds a beginning and ending <mutate> tag. However, the
+# AdWords API only want to see the beginning and ending mutate tag in the first
+# and last HTTP requests. Those mutate tags are being stripped out of the middle
+# requests e.g.
+# * HTTP Request 1: <mutate><operations/> <== Take out the </mutate>
+# * HTTP Request 2: <operations/> <== Take out the <mutate> and </mutate>
+# * HTTP Request 3: <operations/></mutate> <== Take out the <mutate>
+# * Execute all operations.
+sub __update_tags {
+  my ($self, $is_first_request, $is_last_request, $xml) = @_;
+  # If this is both the 1st and last request, leave the XML alone.
   if (!($is_first_request && $is_last_request)) {
     # If it's not the last request, then remove the ending </mutate>.
     if (!$is_last_request) {
@@ -136,16 +180,13 @@ sub upload_incremental_operations {
       $xml =~ s/$find/$replace/;
     }
   }
+  return $xml;
+}
 
-  my $padded_xml = _add_padding($xml);
-  $request->content($padded_xml);
-  my $content_length = 0;
-  {
-    use bytes;
-    $content_length = length($padded_xml);
-  }
-
-  # Set the headers.
+# Set the headers for the incremental operations requests.
+sub __set_incremental_operations_headers {
+  my ($self, $request, $total_content_length, $content_length,
+    $is_last_request) = @_;
   # Set the Content-Length.
   $request->header("Content-Length" => $content_length);
   # Determine and set the content range.
@@ -157,17 +198,6 @@ sub upload_incremental_operations {
   my $content_range =
     sprintf("bytes %d-%d/%s", $lower_bound, $upper_bound, $total_bytes);
   $request->header("Content-Range" => $content_range);
-
-  # Continue with making the request.
-  my $start_time = [gettimeofday()];
-  my $response   = $upload_request->{lwp}->request($request);
-  $response = $self->__check_response($response, $start_time, 1, 0);
-  if (!$response) {
-    return $response;
-  }
-  $total_content_length = $total_content_length + $content_length;
-  $status->set_total_content_length($total_content_length);
-  return $status;
 }
 
 # In the first upload request, take the URI passed in and make a request
@@ -586,3 +616,4 @@ Returns a L<Google::Ads::AdWords::Utilities::BatchJobHandlerError> if the
 batch job fails immediately.
 
 =cut
+

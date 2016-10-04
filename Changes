@@ -1,3 +1,7 @@
+4.10.0
+- Added support and examples for v201609.
+- Added add_universal_app_campaign.pl example.
+
 4.9.0
 - Removed examples and support for v201601. Note that MutateJobService is no
 longer available; please use BatchJobService.

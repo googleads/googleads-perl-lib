@@ -123,3 +123,4 @@ $batch_job_status =
   $batch_job_handler->upload_incremental_operations(\@operations,
   $batch_job_status, $is_last_request);
 ok($batch_job_status, "upload operations");
+
