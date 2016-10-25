@@ -53,6 +53,20 @@ sub as_bool : BOOLIFY {
   return;
 }
 
+sub as_str : STRINGIFY {
+  my ($self) = @_;
+  return sprintf(
+    "BatchJobHandlerError {\n  type: %s\n  description: %s\n" .
+      "  http_type: %s\n  http_trigger: %s\n  http_field_path: %s\n" .
+      "  http_response_code: %s\n  http_response_message: %s\n}",
+    $self->get_type(), $self->get_description(),
+    $self->get_http_type(),
+    $self->get_http_trigger(),
+    $self->get_http_field_path(),
+    $self->get_http_response_code(),
+    $self->get_http_response_message());
+}
+
 return 1;
 
 =pod

@@ -18,6 +18,7 @@
 
 use strict;
 use lib "../../../lib";
+use utf8;
 
 use Data::Uniqid qw(uniqid);
 

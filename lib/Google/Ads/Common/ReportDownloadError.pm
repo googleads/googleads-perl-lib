@@ -40,6 +40,17 @@ sub as_bool : BOOLIFY {
   return;
 }
 
+sub as_str : STRINGIFY {
+  my ($self) = @_;
+  return sprintf(
+    "ReportDownloadError {\n  type: %s\n  trigger: %s\n" .
+      "  field_path: %s\n  response_code: %s\n  response_message: %s\n}",
+    $self->get_type(), $self->get_trigger(),
+    $self->get_field_path(),
+    $self->get_response_code(),
+    $self->get_response_message());
+}
+
 return 1;
 
 =pod

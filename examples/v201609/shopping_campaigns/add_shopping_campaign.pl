@@ -18,6 +18,7 @@
 
 use strict;
 use lib "../../../lib";
+use utf8;
 
 use Data::Uniqid qw(uniqid);
 
@@ -48,6 +49,10 @@ sub add_shopping_campaign {
       name => "Shopping campaign #" . uniqid(),
       # The advertisingChannelType is what makes this a Shopping campaign
       advertisingChannelType => "SHOPPING",
+      # Recommendation: Set the campaign to PAUSED when creating it to stop
+      # the ads from immediately serving. Set to ENABLED once you've added
+      # targeting and the ads are ready to serve.
+      status => "PAUSED",
       # Set budget (required)
       budget =>
         Google::Ads::AdWords::v201609::Budget->new({budgetId => $budget_id}),

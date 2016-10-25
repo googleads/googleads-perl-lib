@@ -18,6 +18,7 @@
 
 use strict;
 use lib "../../../lib";
+use utf8;
 
 use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;
@@ -108,6 +109,9 @@ sub add_campaigns {
         # Additional properties (non-required).
         startDate                   => $today,
         endDate                     => $tomorrow,
+        # Recommendation: Set the campaign to PAUSED when creating it to stop
+        # the ads from immediately serving. Set to ENABLED once you've added
+        # targeting and the ads are ready to serve.
         status                      => "PAUSED",
         adServingOptimizationStatus => "ROTATE"
       });

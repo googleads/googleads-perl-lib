@@ -210,6 +210,9 @@ sub _create_campaign_operations {
         id                     => _next_id(),
         name                   => "Batch Campaign #" . uniqid(),
         advertisingChannelType => "SEARCH",
+        # Recommendation: Set the campaign to PAUSED when creating it to stop
+        # the ads from immediately serving. Set to ENABLED once you've added
+        # targeting and the ads are ready to serve.
         status                 => "PAUSED",
         # Bidding strategy (required).
         biddingStrategyConfiguration =>

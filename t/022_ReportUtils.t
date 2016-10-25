@@ -22,8 +22,12 @@ use lib qw(lib t t/util);
 
 use File::Temp qw(tempfile);
 use Test::MockObject::Extends;
-use Test::More (tests => 27);
+use Test::More (tests => 28);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
+
+# The reporting tests force a lot of warnings. This is a signal handler
+# to avoid cluttering the test results with warnings.
+local $SIG{__WARN__} = sub { };
 
 use_ok("Google::Ads::Common::ReportUtils");
 use_ok("Google::Ads::Common::ReportDownloadHandler");
@@ -53,6 +57,8 @@ my $report_as_string = $report_handler->get_as_string();
 ok(!$report_as_string, "report as string");
 ok($report_as_string->isa("Google::Ads::Common::ReportDownloadError"),
   "check report handler->report_as_string return type");
+ok($report_as_string =~ /ReportDownloadError\s{[^}]+}/,
+  "check ReportDownloadError STRINGIFY");
 
 my ($fh, $filename) = tempfile();
 my $report_save = $report_handler->save($filename);

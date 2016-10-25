@@ -14,51 +14,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# This example updates a campaign by setting its status to PAUSED.
-# To get campaigns, run basic_operations/get_campaigns.pl.
+# This example accepts a pending invitation to link your AdWords account to a
+# Google Merchant Center account.
 
 use strict;
+
 use lib "../../../lib";
 use utf8;
 
 use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;
-use Google::Ads::AdWords::v201609::Campaign;
-use Google::Ads::AdWords::v201609::CampaignOperation;
+use Google::Ads::AdWords::v201609::ServiceLink;
+use Google::Ads::AdWords::v201609::ServiceLinkOperation;
 
 use Cwd qw(abs_path);
+use Data::Uniqid qw(uniqid);
 
 # Replace with valid values of your account.
-my $campaign_id = "INSERT_CAMPAIGN_ID_HERE";
+my $service_link_id = "INSERT_SERVICE_LINK_ID_HERE";
 
 # Example main subroutine.
-sub update_campaign {
-  my $client      = shift;
-  my $campaign_id = shift;
+sub accept_service_link {
+  my $client          = shift;
+  my $service_link_id = shift;
 
-  # Create campaign with updated status.
-  my $campaign = Google::Ads::AdWords::v201609::Campaign->new({
-      id     => $campaign_id,
-      status => "PAUSED"
+  my $service_link = Google::Ads::AdWords::v201609::ServiceLink->new({
+    serviceLinkId => $service_link_id,
+    serviceType   => "MERCHANT_CENTER",
+    linkStatus    => "ACTIVE"
   });
 
-  # Create operation.
-  my $operation = Google::Ads::AdWords::v201609::CampaignOperation->new({
-      operand  => $campaign,
-      operator => "SET"
+  # Create the operation to set the status to ACTIVE.
+  my $op = Google::Ads::AdWords::v201609::ServiceLinkOperation->new({
+    operator => "SET",
+    operand  => $service_link
   });
 
-  # Update campaign.
-  my $result = $client->CampaignService()->mutate({operations => [$operation]});
+  # Update the service link.
+  my $mutated_service_links =
+    $client->CustomerService->mutateServiceLinks({operations => [$op]});
 
-  # Display campaigns.
-  if ($result->get_value()) {
-    my $campaign = $result->get_value()->[0];
-    printf "Campaign with name \"%s\", id \"%d\" and status " .
-      "\"%s\" was updated.\n", $campaign->get_name(), $campaign->get_id(),
-      $campaign->get_status();
-  } else {
-    print "No campaign was updated.\n";
+  # Display the results.
+  foreach my $mutated_service_link ($mutated_service_links) {
+    printf(
+      "Service link with service link ID %d, " .
+        "type '%s' updated to status: %s.\n",
+      $mutated_service_link->get_serviceLinkId(),
+      $mutated_service_link->get_serviceType(),
+      $mutated_service_link->get_linkStatus());
+
   }
 
   return 1;
@@ -79,4 +83,4 @@ my $client = Google::Ads::AdWords::Client->new({version => "v201609"});
 $client->set_die_on_faults(1);
 
 # Call the example
-update_campaign($client, $campaign_id);
+accept_service_link($client, $service_link_id);

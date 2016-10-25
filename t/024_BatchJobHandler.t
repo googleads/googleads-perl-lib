@@ -24,12 +24,13 @@ use File::Temp qw(tempfile);
 use HTTP::Response;
 use Test::Exception;
 use Test::MockObject::Extends;
-use Test::More (tests => 11);
+use Test::More (tests => 14);
 use TestAPIUtils qw(get_api_package);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
 use TestUtils qw(read_test_properties replace_properties);
 
 use_ok("Google::Ads::AdWords::Utilities::BatchJobHandler");
+use_ok("Google::Ads::AdWords::Utilities::BatchJobHandlerError");
 use_ok("Google::Ads::AdWords::Utilities::BatchJobHandlerStatus");
 
 # Mock the auth handler
@@ -123,4 +124,15 @@ $batch_job_status =
   $batch_job_handler->upload_incremental_operations(\@operations,
   $batch_job_status, $is_last_request);
 ok($batch_job_status, "upload operations");
+
+# Test out that the error is false, and the error can be converted to
+# a string.
+my $batch_job_handler_error =
+  Google::Ads::AdWords::Utilities::BatchJobHandlerError->new({
+    type        => "UPLOAD",
+    description => "test"
+  });
+ok(!$batch_job_handler_error, "BOOLIFY on error false");
+ok($batch_job_handler_error =~ /BatchJobHandlerError\s{[^}]+}/,
+  "check BatchJobHandlerError STRINGIFY");
 

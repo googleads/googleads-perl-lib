@@ -25,6 +25,10 @@ use Test::MockObject::Extends;
 use Test::More (tests => 23);
 use TestClientUtils qw(get_test_client_no_auth get_test_client);
 
+# The reporting tests force a lot of warnings. This is a signal handler
+# to avoid cluttering the test results with warnings.
+local $SIG{__WARN__} = sub { };
+
 use_ok("Google::Ads::AdWords::Reports::ReportingConfiguration");
 
 my $client = get_test_client_no_auth();

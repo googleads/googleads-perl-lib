@@ -27,11 +27,6 @@ my %hasAttachment_of :ATTR(:get<hasAttachment>);
 my %dateRangeType_of :ATTR(:get<dateRangeType>);
 my %downloadFormat_of :ATTR(:get<downloadFormat>);
 my %creationTime_of :ATTR(:get<creationTime>);
-# The includeZeroImpressions option in the ReportDefinition is no longer
-# available for v201603 and later and has been deprecated. Either set the
-# reporting.includeZeroImpressions property in adwords.properties or set
-# includeZeroImpressions in ReportingConfig.
-my %includeZeroImpressions_of :ATTR(:get<includeZeroImpressions>);
 
 __PACKAGE__->_factory(
     [ qw(        id
@@ -42,7 +37,6 @@ __PACKAGE__->_factory(
         dateRangeType
         downloadFormat
         creationTime
-        includeZeroImpressions
 
     ) ],
     {
@@ -54,7 +48,6 @@ __PACKAGE__->_factory(
         'dateRangeType' => \%dateRangeType_of,
         'downloadFormat' => \%downloadFormat_of,
         'creationTime' => \%creationTime_of,
-        'includeZeroImpressions' => \%includeZeroImpressions_of,
     },
     {
         'id' => 'SOAP::WSDL::XSD::Typelib::Builtin::long',
@@ -65,7 +58,6 @@ __PACKAGE__->_factory(
         'dateRangeType' => 'Google::Ads::AdWords::Reports::DateRangeType',
         'downloadFormat' => 'Google::Ads::AdWords::Reports::DownloadFormat',
         'creationTime' => 'SOAP::WSDL::XSD::Typelib::Builtin::string',
-        'includeZeroImpressions' => 'SOAP::WSDL::XSD::Typelib::Builtin::boolean',
     },
     {
 
@@ -77,7 +69,6 @@ __PACKAGE__->_factory(
         'dateRangeType' => 'dateRangeType',
         'downloadFormat' => 'downloadFormat',
         'creationTime' => 'creationTime',
-        'includeZeroImpressions' => 'includeZeroImpressions',
     }
 );
 
@@ -139,14 +130,6 @@ methods:
 =item * creationTime
 
 
-=item * includeZeroImpressions (Deprecated)
-
-The includeZeroImpressions option in the ReportDefinition is no longer
-available for v201603 and later and has been deprecated. Either set the
-reporting.includeZeroImpressions property in adwords.properties or set
-includeZeroImpressions in ReportingConfig.
-
-
 =back
 
 
@@ -165,7 +148,6 @@ Constructor. The following data structure may be passed to new():
    dateRangeType => $some_value, # ReportDefinition.DateRangeType
    downloadFormat => $some_value, # DownloadFormat
    creationTime =>  $some_value, # string
-   includeZeroImpressions =>  $some_value, # boolean
  },
 
 

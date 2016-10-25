@@ -22,7 +22,7 @@ use lib qw(t/util);
 use lib qw(lib);
 
 use File::Temp qw(tempfile);
-use Test::More (tests => 61);
+use Test::More (tests => 60);
 use TestClientUtils qw(get_test_client get_test_manager_account_client);
 use TestAPIUtils;
 
@@ -224,9 +224,6 @@ ok(get_report_fields($client), "Test of get_report_fields example");
 require qw(examples/v201607/reporting/stream_criteria_report_results.pl);
 ok(stream_criteria_report_results($client),
    "Test of stream_criteria_report_results example");
-require qw(examples/v201607/reporting/parallel_report_download.pl);
-ok(parallel_report_download($manager_account_client),
-   "Test of parallel_report_download example");
 
 # Targeting examples.
 require qw(examples/v201607/targeting/add_campaign_targeting_criteria.pl);

@@ -265,7 +265,7 @@ sub __log_report_request_response {
       } elsif ($error_message) {
         $log_message = $log_message . ': ' . $error_message;
       }
-      Google::Ads::AdWords::Logging::get_soap_logger->error($log_message);
+      Google::Ads::AdWords::Logging::get_soap_logger->logwarn($log_message);
     }
   }
 }

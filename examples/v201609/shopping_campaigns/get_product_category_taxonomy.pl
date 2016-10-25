@@ -18,6 +18,7 @@
 
 use strict;
 use lib "../../../lib";
+use utf8;
 
 use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;

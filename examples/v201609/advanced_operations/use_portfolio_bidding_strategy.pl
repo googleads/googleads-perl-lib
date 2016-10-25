@@ -19,6 +19,7 @@
 
 use strict;
 use lib "../../../lib";
+use utf8;
 
 use Google::Ads::AdWords::Client;
 use Google::Ads::AdWords::Logging;
@@ -161,7 +162,12 @@ sub create_campaign_with_bidding_strategy {
           targetGoogleSearch   => 1,
           targetSearchNetwork  => 1,
           targetContentNetwork => 1
-        })});
+        }),
+      # Recommendation: Set the campaign to PAUSED when creating it to stop
+      # the ads from immediately serving. Set to ENABLED once you've added
+      # targeting and the ads are ready to serve.
+      status => "PAUSED"
+  });
 
   # Create operation.
   my $operation = Google::Ads::AdWords::v201609::CampaignOperation->new({

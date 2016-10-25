@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.10.0");
+our $VERSION = qv("4.11.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;

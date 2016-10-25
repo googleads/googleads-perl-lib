@@ -1,3 +1,14 @@
+4.11.0
+- Removed examples and support for v201603. For future sunset dates, see
+https://developers.google.com/adwords/api/docs/sunset-dates
+- The includeZeroImpressions field in ReportDefinition is no longer available
+as it is no longer supported by the AdWords API in any supported versions.
+Either set the reporting.includeZeroImpressions property in adwords.properties
+or set includeZeroImpressions in ReportingConfig.
+- Updated BatchJobHandlerError and ReportDownloadError to have STRINGIFY.
+- Added the example accept_service_link.pl that accepts a pending invitation
+to link your AdWords account to a Google Merchant Center account.
+
 4.10.0
 - Added support and examples for v201609.
 - Added add_universal_app_campaign.pl example.
