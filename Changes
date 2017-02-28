@@ -1,3 +1,15 @@
+4.12.0
+- Added support and examples for v201702.
+- Added example add_shopping_campaign_for_showcase_ads.pl for showing how to
+add shopping campaigns with Showcase ads.
+- Updated ErrorUtils.pm, handle_partial_failures.pl, and
+handle_policy_violation_error.pl to use the new FieldPathElement.pm to
+discover the index of an error.
+- Renamed download_criteria_report.pl to
+download_criteria_report_with_selector.pl.
+- Changed the 'approval_prmopt' parameter to 'prompt' in the
+OAuth autorization flow to match newer standards.
+
 4.11.0
 - Removed examples and support for v201603. For future sunset dates, see
 https://developers.google.com/adwords/api/docs/sunset-dates

@@ -16,7 +16,7 @@ package Google::Ads::AdWords::Client;
 
 use strict;
 use version;
-our $VERSION = qv("4.11.0");
+our $VERSION = qv("4.12.0");
 
 use Google::Ads::AdWords::Constants;
 use Google::Ads::AdWords::Deserializer;
@@ -675,7 +675,7 @@ $client->get_oauth_2_applications_handler()->set_client_secret('client-secret');
 $client->get_oauth_2_applications_handler()->set_access_token('access-token');
 $client->get_oauth_2_applications_handler()->set_refresh_token('refresh-token');
 $client->get_oauth_2_applications_handler()->set_access_type('access-type');
-$client->get_oauth_2_applications_handler()->set_approval_prompt('prompt');
+$client->get_oauth_2_applications_handler()->set_prompt('prompt');
 $client->get_oauth_2_applications_handler()->set_redirect_uri('redirect-url');
 
 Refer to L<Google::Ads::AdWords::OAuth2ApplicationsHandler> for more details.

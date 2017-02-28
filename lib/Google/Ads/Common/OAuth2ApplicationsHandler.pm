@@ -36,7 +36,7 @@ use constant OAUTH2_TOKEN_INFO_URL =>
 # These need to go in the same line for older Perl interpreters to understand.
 my %client_secret_of : ATTR(:name<client_secret> :default<>);
 my %access_type_of : ATTR(:name<access_type> :default<offline>);
-my %approval_prompt_of : ATTR(:name<approval_prompt> :default<auto>);
+my %prompt_of : ATTR(:name<prompt> :default<consent>);
 my %refresh_token_of : ATTR(:name<refresh_token> :default<>);
 my %redirect_uri_of :
   ATTR(:name<redirect_uri> :default<urn:ietf:wg:oauth:2.0:oob>);
@@ -51,8 +51,8 @@ sub initialize : CUMULATIVE(BASE FIRST) {
     || $client_secret_of{$ident};
   $access_type_of{$ident} = $properties->{oAuth2AccessType}
     || $access_type_of{$ident};
-  $approval_prompt_of{$ident} = $properties->{oAuth2ApprovalPrompt}
-    || $approval_prompt_of{$ident};
+  $prompt_of{$ident} = $properties->{oAuth2ApprovalPrompt}
+    || $prompt_of{$ident};
   $refresh_token_of{$ident} = $properties->{oAuth2RefreshToken}
     || $refresh_token_of{$ident};
   $redirect_uri_of{$ident} = $properties->{oAuth2RedirectUri}
@@ -66,14 +66,14 @@ sub get_authorization_url {
   my ($self, $state) = @_;
 
   $state ||= "";
-  my ($client_id, $redirect_uri, $access_type, $approval_prompt) = (
+  my ($client_id, $redirect_uri, $access_type, $prompt) = (
     $self->get_client_id(),   $self->get_redirect_uri(),
-    $self->get_access_type(), $self->get_approval_prompt());
+    $self->get_access_type(), $self->get_prompt());
 
   return OAUTH2_BASE_URL . "/auth?response_type=code" . "&client_id=" .
     uri_escape($client_id) . "&redirect_uri=" . $redirect_uri . "&scope=" .
     $self->_formatted_scopes() . "&access_type=" . $access_type .
-    "&approval_prompt=" . $approval_prompt . "&state=" . uri_escape($state);
+    "&prompt=" . $prompt . "&state=" . uri_escape($state);
 }
 
 sub issue_access_token {
@@ -186,11 +186,10 @@ OAuth2 client secret obtained from the Google APIs Console.
 OAuth2 access type to be requested when following the authorization flow. It
 defaults to offline but it can be set to online.
 
-=head2 approval_prompt
+=head2 prompt
 
-OAuth2 approval_prompt to be used when following the authorization flow. It
-defaults to auto but it can be set to always - to force the user to always
-authorize.
+OAuth2 prompt to be used when following the authorization flow. It
+defaults to consent.
 
 =head2 redirect_uri
 
@@ -243,7 +242,7 @@ A hash reference with the following keys:
   oAuth2ClientSecret => "client-secret",
   # Refer to the documentation of the L<access_type> property.
   oAuth2AccessType => "access-type",
-  # Refer to the documentation of the L<approval_prompt> property.
+  # Refer to the documentation of the L<prompt> property.
   oAuth2ApprovalPrompt => "approval-prompt",
   # Refer to the documentation of the L<refresh_token> property.
   oAuth2AccessToken => "access-token",

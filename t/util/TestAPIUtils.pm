@@ -206,12 +206,13 @@ sub create_text_ad {
   my $client      = shift;
   my $ad_group_id = shift;
 
-  my $text_ad = get_api_package($client, "TextAd", 1)->new({
-      headline     => "Luxury Cruise to Mars",
-      description1 => "Visit the Red Planet in style.",
-      description2 => "Low-gravity fun for everyone!",
-      displayUrl   => "www.example.com",
-      finalUrls    => ["http://www.example.com"]});
+  my $text_ad = get_api_package($client, "ExpandedTextAd", 1)->new({
+      headlinePart1 => "Luxury Cruise to Mars",
+      headlinePart2 => "Best Space Cruise Line",
+      description   => "Buy your tickets now!",
+      finalUrls     => ["http://www.example.com/"],
+      path1         => "all-inclusive",
+      path2         => "deals"});
   my $ad_group_ad = get_api_package($client, "AdGroupAd", 1)->new({
       adGroupId => $ad_group_id,
       ad        => $text_ad
@@ -227,12 +228,15 @@ sub create_text_ad {
 }
 
 sub delete_text_ad {
-  my $client     = shift;
-  my $text_ad_id = shift;
+  my $client      = shift;
+  my $ad_group_id = shift;
+  my $text_ad_id  = shift;
 
   my $ad_group_ad =
     get_api_package($client, "AdGroupAd", 1)
-    ->new({ad => get_api_package($client, "Ad", 1)->new({id => $text_ad_id})});
+    ->new({
+      adGroupId => $ad_group_id,
+      ad => get_api_package($client, "Ad", 1)->new({id => $text_ad_id})});
 
   my $operation = get_api_package($client, "AdGroupAdOperation", 1)->new({
       operand  => $ad_group_ad,

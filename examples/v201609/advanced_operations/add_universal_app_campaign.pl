@@ -50,11 +50,11 @@ sub add_universal_app_campaign {
   # generate ads.
   my $universalAppSetting =
     Google::Ads::AdWords::v201609::UniversalAppCampaignSetting->new({
-      appId        => "com.interplanetarycruise.booking",
-      description1 => "Best Space Cruise Line",
-      description2 => "Visit all the planets",
-      description3 => "Trips 7 days a week",
-      description4 => "Buy your tickets now!"
+      appId        => "com.labpixies.colordrips",
+      description1 => "A cool puzzle game",
+      description2 => "Remove connected blocks",
+      description3 => "3 difficulty levels",
+      description4 => "4 colorful fun skins"
     });
 
   # Optional: You can set up to 10 image assets for your campaign.

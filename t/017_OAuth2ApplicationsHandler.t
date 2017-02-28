@@ -39,7 +39,7 @@ ok(!$handler->is_auth_enabled());
 
 # Test defaults.
 is($handler->get_access_type(),       "offline");
-is($handler->get_approval_prompt(),   "auto");
+is($handler->get_prompt(),            "consent");
 is($handler->get_redirect_uri(),      "urn:ietf:wg:oauth:2.0:oob");
 is($handler->get_additional_scopes(), undef);
 is_deeply($handler->_scope(), qw(https://www.googleapis.com/auth/adwords));
@@ -75,7 +75,7 @@ ok($handler->is_auth_enabled());
 is($handler->get_client_id(),       "client-id");
 is($handler->get_client_secret(),   "client-secret");
 is($handler->get_access_type(),     "access-type");
-is($handler->get_approval_prompt(), "approval-prompt");
+is($handler->get_prompt(),          "approval-prompt");
 is($handler->get_access_token(),    "access-token");
 is($handler->get_refresh_token(),   "refresh-token");
 is($handler->get_redirect_uri(),    "uri");
@@ -96,7 +96,7 @@ is($handler->get_authorization_url("state"),
   "https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=" .
     "client-id&redirect_uri=uri&scope=https%3A%2F%2Fwww.googleapis.com%2F" .
     "auth%2Fanalytics+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fadwords" .
-    "&access_type=access-type&approval_prompt=approval-prompt&state=state");
+    "&access_type=access-type&prompt=approval-prompt&state=state");
 
 $user_agent_mock->mock(
   request => sub {

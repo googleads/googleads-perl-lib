@@ -195,7 +195,7 @@ Constructor. The following data structure may be passed to new():
    page_size => $page_size, # The size of the page (only used when 'query' is
    defined in the constructor).
    If not defined, the default of
-   L<Google::Ads::AdWords::Constants:PAGE_SIZE> will be used.
+   L<Google::Ads::AdWords::Constants:DEFAULT_PAGE_SIZE> will be used.
  },
 
 =head1 METHODS
