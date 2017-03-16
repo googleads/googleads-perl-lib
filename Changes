@@ -1,3 +1,10 @@
+4.13.0
+- Removed examples and support for v201605. For future sunset dates, see
+https://developers.google.com/adwords/api/docs/sunset-dates
+- Updated summary and SOAP logging to include more detailed messages.
+- Updated add_site_links_using_feeds examples to use field and constant names
+that are consistent with the field names of SiteLinkFeedItem.
+
 4.12.0
 - Added support and examples for v201702.
 - Added example add_shopping_campaign_for_showcase_ads.pl for showing how to

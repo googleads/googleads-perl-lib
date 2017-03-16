@@ -46,8 +46,8 @@ use Cwd qw(abs_path);
 use constant PLACEHOLDER_SITELINKS                  => 1;
 use constant PLACEHOLDER_FIELD_SITELINK_LINK_TEXT   => 1;
 use constant PLACEHOLDER_FIELD_SITELINK_FINAL_URLS  => 5;
-use constant PLACEHOLDER_FIELD_SITELINK_LINE_1_TEXT => 3;
-use constant PLACEHOLDER_FIELD_SITELINK_LINE_2_TEXT => 4;
+use constant PLACEHOLDER_FIELD_SITELINK_LINE_2_TEXT => 3;
+use constant PLACEHOLDER_FIELD_SITELINK_LINE_3_TEXT => 4;
 
 # Replace with valid values of your account.
 my $campaign_id = "INSERT_CAMPAIGN_ID_HERE";
@@ -61,8 +61,8 @@ sub add_site_links_using_feeds {
     "siteLinksFeedId"             => 0,
     "linkTextFeedAttributeId"     => 0,
     "linkFinalUrlFeedAttributeId" => 0,
-    "line1FeedAttributeId"        => 0,
     "line2FeedAttributeId"        => 0,
+    "line3FeedAttributeId"        => 0,
     "feedItemIds"                 => []};
 
   create_site_links_feed($client, $site_links_data, $feed_name);
@@ -84,19 +84,19 @@ sub create_site_links_feed() {
     type => "URL_LIST",
     name => "Link Final URLs"
   });
-  my $line_1_attribute = Google::Ads::AdWords::v201609::FeedAttribute->new({
-    type => "STRING",
-    name => "Line 1 Description"
-  });
   my $line_2_attribute = Google::Ads::AdWords::v201609::FeedAttribute->new({
     type => "STRING",
-    name => "Line 2 Description"
+    name => "Line 2"
+  });
+  my $line_3_attribute = Google::Ads::AdWords::v201609::FeedAttribute->new({
+    type => "STRING",
+    name => "Line 3"
   });
   my $feed = Google::Ads::AdWords::v201609::Feed->new({
       name       => $feed_name,
       attributes => [
         $text_attribute,   $final_url_attribute,
-        $line_1_attribute, $line_2_attribute
+        $line_2_attribute, $line_3_attribute
       ],
       origin => "USER"
     });
@@ -119,12 +119,12 @@ sub create_site_links_feed() {
     $saved_attributes->[0]->get_id();
   $site_links_data->{"linkFinalUrlFeedAttributeId"} =
     $saved_attributes->[1]->get_id();
-  $site_links_data->{"line1FeedAttributeId"} = $saved_attributes->[2]->get_id();
-  $site_links_data->{"line2FeedAttributeId"} = $saved_attributes->[3]->get_id();
+  $site_links_data->{"line2FeedAttributeId"} = $saved_attributes->[2]->get_id();
+  $site_links_data->{"line3FeedAttributeId"} = $saved_attributes->[3]->get_id();
   printf(
     "Feed with name '%s' and ID %d with linkTextAttributeId %d" .
-      " and linkFinalUrlAttributeId %d and line1AttributeId %d" .
-      " and line2AttributeId %d was created.\n",
+      " and linkFinalUrlAttributeId %d and line2AttributeId %d" .
+      " and line3AttributeId %d was created.\n",
     $saved_feed->get_name(),          $saved_feed->get_id(),
     $saved_attributes->[0]->get_id(), $saved_attributes->[1]->get_id(),
     $saved_attributes->[2]->get_id(), $saved_attributes->[3]->get_id());
@@ -137,33 +137,33 @@ sub create_site_links_feed_items() {
 
   push @operations,
     create_feed_item_add_operation($site_links_data,
-    "Home", "http://www.example.com", "Home line 1", "Home line 2");
+    "Home", "http://www.example.com", "Home line 2", "Home line 3");
   push @operations,
     create_feed_item_add_operation(
     $site_links_data, "Stores",
     "http://www.example.com/stores",
-    "Stores line 1",
-    "Stores line 2"
+    "Stores line 2",
+    "Stores line 3"
     );
   push @operations,
     create_feed_item_add_operation(
     $site_links_data, "On Sale", "http://www.example.com/sale",
-    "On Sale line 1",
-    "On Sale line 2"
+    "On Sale line 2",
+    "On Sale line 3"
     );
   push @operations,
     create_feed_item_add_operation(
     $site_links_data, "Support",
     "http://www.example.com/support",
-    "Support line 1",
-    "Support line 2"
+    "Support line 2",
+    "Support line 3"
     );
   push @operations,
     create_feed_item_add_operation(
     $site_links_data, "Products",
     "http://www.example.com/prods",
-    "Products line 1",
-    "Products line 2"
+    "Products line 2",
+    "Products line 3"
     );
   # This site link is using geographical targeting by specifying the criterion
   # ID for California.
@@ -171,8 +171,8 @@ sub create_site_links_feed_items() {
     create_feed_item_add_operation(
     $site_links_data, "About Us",
     "http://www.example.com/about",
-    "About Us line 1",
-    "About Us line 2", "21137"
+    "About Us line 2",
+    "About Us line 3", "21137"
     );
 
   my $result = $client->FeedItemService()->mutate({operations => \@operations});
@@ -185,7 +185,7 @@ sub create_site_links_feed_items() {
 }
 
 sub create_feed_item_add_operation() {
-  my ($site_links_data, $text, $final_url, $line_1, $line_2, $location_id) = @_;
+  my ($site_links_data, $text, $final_url, $line_2, $line_3, $location_id) = @_;
 
   my $text_attribute_value =
     Google::Ads::AdWords::v201609::FeedItemAttributeValue->new({
@@ -196,22 +196,22 @@ sub create_feed_item_add_operation() {
     Google::Ads::AdWords::v201609::FeedItemAttributeValue->new({
       feedAttributeId => $site_links_data->{"linkFinalUrlFeedAttributeId"},
       stringValues    => [$final_url]});
-  my $line_1_attribute_value =
-    Google::Ads::AdWords::v201609::FeedItemAttributeValue->new({
-      feedAttributeId => $site_links_data->{"line1FeedAttributeId"},
-      stringValue     => $line_1
-    });
   my $line_2_attribute_value =
     Google::Ads::AdWords::v201609::FeedItemAttributeValue->new({
       feedAttributeId => $site_links_data->{"line2FeedAttributeId"},
       stringValue     => $line_2
+    });
+  my $line_3_attribute_value =
+    Google::Ads::AdWords::v201609::FeedItemAttributeValue->new({
+      feedAttributeId => $site_links_data->{"line3FeedAttributeId"},
+      stringValue     => $line_3
     });
 
   my $feed_item = Google::Ads::AdWords::v201609::FeedItem->new({
       feedId          => $site_links_data->{"siteLinksFeedId"},
       attributeValues => [
         $text_attribute_value,   $final_url_attribute_value,
-        $line_1_attribute_value, $line_2_attribute_value
+        $line_2_attribute_value, $line_3_attribute_value
       ]});
 
   # OPTIONAL: Use geographical targeting on a feed.
@@ -252,15 +252,15 @@ sub create_site_links_feed_mapping() {
       feedAttributeId => $site_links_data->{"linkFinalUrlFeedAttributeId"},
       fieldId         => PLACEHOLDER_FIELD_SITELINK_FINAL_URLS
     });
-  my $line_1_field_mapping =
-    Google::Ads::AdWords::v201609::AttributeFieldMapping->new({
-      feedAttributeId => $site_links_data->{"line1FeedAttributeId"},
-      fieldId         => PLACEHOLDER_FIELD_SITELINK_LINE_1_TEXT
-    });
   my $line_2_field_mapping =
     Google::Ads::AdWords::v201609::AttributeFieldMapping->new({
       feedAttributeId => $site_links_data->{"line2FeedAttributeId"},
       fieldId         => PLACEHOLDER_FIELD_SITELINK_LINE_2_TEXT
+    });
+  my $line_3_field_mapping =
+    Google::Ads::AdWords::v201609::AttributeFieldMapping->new({
+      feedAttributeId => $site_links_data->{"line3FeedAttributeId"},
+      fieldId         => PLACEHOLDER_FIELD_SITELINK_LINE_3_TEXT
     });
 
   # Create the FeedMapping and operation.
@@ -269,7 +269,7 @@ sub create_site_links_feed_mapping() {
       feedId                 => $site_links_data->{"siteLinksFeedId"},
       attributeFieldMappings => [
         $text_field_mapping,   $final_url_field_mapping,
-        $line_1_field_mapping, $line_2_field_mapping
+        $line_2_field_mapping, $line_3_field_mapping
       ]});
 
   my $operation = Google::Ads::AdWords::v201609::FeedMappingOperation->new({

@@ -211,14 +211,13 @@ sub __log_report_request_response {
   my $auth_handler = $client->_get_auth_handler();
 
   my $request_stats = Google::Ads::AdWords::RequestStats->new({
-        authentication => !$auth_handler ? ""
-      : $auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler") ? "OAuth"
-      : "Unknown",
+      server        => $client->get_alternate_url(),
       client_id     => $client->get_client_id(),
       service_name  => $request->uri,
       method_name   => $request->method,
       is_fault      => !$is_successful,
       response_time => int(($elapsed_seconds * 1000) + 0.5),
+      fault_message => (!$is_successful) ? $response->message : ""
   });
   $client->_push_new_request_stats($request_stats);
   Google::Ads::AdWords::Logging::get_awapi_logger->info($request_stats);
@@ -234,8 +233,7 @@ sub __log_report_request_response {
       $request_string =~ s!(\n$header):(.*)\n!$1: REDACTED\n!;
     }
     my $log_message = sprintf(
-      "Outgoing %s report request:\n%s",
-      $is_successful ? 'successful' : 'failed',
+      "Outgoing request:\n%s",
       $request_string
     );
     Google::Ads::AdWords::Logging::get_soap_logger->log(
@@ -247,10 +245,17 @@ sub __log_report_request_response {
     # Log:
     #  To WARN if the request failed OR
     #  To INFO (status and message only)
+    my $response_string = $response->headers_as_string("\n");
+    # Remove sensitive information from the log message.
+    foreach my $header (SCRUBBED_HEADERS) {
+      $response_string =~ s!(\n$header):(.*)\n!$1: REDACTED\n!;
+    }
     my $log_message = sprintf(
-      "Incoming %s report response with status code %s and message '%s'",
+      "Incoming %s report response with status code %s and message '%s'\n%s" .
+      "REDACTED REPORT DATA",
       $is_successful ? 'successful' : 'failed',
-      $response->code, $response->message
+      $response->code, $response->message,
+      $response_string
     );
 
     if ($is_successful) {

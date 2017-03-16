@@ -16,10 +16,10 @@ package Google::Ads::AdWords::RequestStats;
 
 use strict;
 use version;
+use Encode qw( encode_utf8 decode_utf8 );
 
 use Class::Std::Fast;
 
-my %authentication_of : ATTR(:name<authentication> :default<>);
 my %client_id_of : ATTR(:name<client_id> :default<>);
 my %service_name_of : ATTR(:name<service_name> :default<>);
 my %method_name_of : ATTR(:name<method_name> :default<>);
@@ -27,21 +27,32 @@ my %response_time_of : ATTR(:name<response_time> :default<0>);
 my %request_id_of : ATTR(:name<request_id> :default<>);
 my %operations_of : ATTR(:name<operations> :default<0>);
 my %is_fault_of : ATTR(:name<is_fault> :default<0>);
+my %server_of : ATTR(:name<server> :default<>);
+my %fault_message_of : ATTR(:name<fault_message> :default<>);
 
 sub as_str : STRINGIFY {
   my $self          = shift;
-  my $auth          = $self->get_authentication() || "";
   my $client_id     = $self->get_client_id() || "";
+  my $server        = $self->get_server() || "";
   my $service       = $self->get_service_name() || "";
   my $method        = $self->get_method_name() || "";
   my $response_time = $self->get_response_time() || "";
   my $request_id    = $self->get_request_id() || "";
   my $operations    = $self->get_operations() || "";
   my $is_fault      = $self->get_is_fault() ? "yes" : "no";
-  return "auth=${auth}" . " client_id=${client_id}" .
+  my $fault_message = $self->get_fault_message() || "";
+
+  # Convert the fault message to one less than 16K characters.
+  $fault_message =~ s/\r?\n/ /g;
+  my $utf8 = encode_utf8($fault_message);
+  my @utf8_chunks = $utf8 =~ /\G(.{1,16000})(?![\x80-\xBF])/sg;
+  $fault_message = decode_utf8($_) for @utf8_chunks;
+
+  return " clientCustomerId=${client_id}" . " server=${server}" .
     " service=${service}" . " method=${method}" .
-    " response_time=${response_time}" . " request_id=${request_id}" .
-    " operations=${operations}" . " is_fault=${is_fault}";
+    " responseTime=${response_time}" . " requestId=${request_id}" .
+    " operations=${operations}" . " isFault=${is_fault}" .
+    " faultMessage=${fault_message}";
 }
 
 return 1;
@@ -54,8 +65,8 @@ Google::Ads::AdWords::RequestStats
 
 =head1 SYNOPSIS
 
-Class that wraps API request statistics such as number of operations, units
-consumed, request id and others.
+Class that wraps API request statistics such as number of operations,
+request id and others.
 
 =head1 DESCRIPTION
 
@@ -64,13 +75,13 @@ to a given request.
 
 =head1 ATTRIBUTES
 
-=head2 authentication
-
-Type of authentication used in the request.
-
 =head2 client_id
 
 The client id against which the call was made if available.
+
+=head2 server
+
+The server endpoint.
 
 =head2 service_name
 
@@ -92,13 +103,13 @@ Request id of the call.
 
 Number of operations in the request.
 
-=head2 units
-
-Number of API units consumed in the request.
-
 =head2 is_fault
 
 Whether the request returned as a fault or not.
+
+=head2 fault_message
+
+The stack trace of up to 16K characters if a fault occurs.
 
 =head1 LICENSE AND COPYRIGHT
 

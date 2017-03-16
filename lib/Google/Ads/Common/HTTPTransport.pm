@@ -29,8 +29,9 @@ sub client {
     $self->{_client} = $client;
     my $can_accept = HTTP::Message::decodable;
     $self->default_header('Accept-Encoding' => scalar $can_accept);
+    my $client_user_agent = $client->get_user_agent() || "";
     $self->{_user_agent} =
-      $client->get_user_agent() . ($can_accept =~ /gzip/i ? " gzip" : "");
+      $client_user_agent . ($can_accept =~ /gzip/i ? " gzip" : "");
   }
 
   return $self->{_client};

@@ -57,20 +57,16 @@ sub deserialize {
       $self->__get_element_content($response_header, "operations");
     my $response_time =
       $self->__get_element_content($response_header, "responseTime");
-    my $units = $self->__get_element_content($response_header, "units");
 
     my $auth_handler = $client->_get_auth_handler();
     $request_stats = Google::Ads::AdWords::RequestStats->new({
-          authentication => !$auth_handler ? ""
-        : $auth_handler->isa("Google::Ads::Common::OAuth2BaseHandler") ? "OAuth"
-        : "Unknown",
         client_id     => $client->get_client_id(),
+        server        => $client->get_alternate_url(),
         service_name  => $service_name,
         method_name   => $method_name,
         response_time => $response_time,
         request_id    => $request_id,
-        operations    => $operations,
-        units         => $units,
+        operations    => $operations
     });
   }
 
@@ -80,6 +76,9 @@ sub deserialize {
 
   if ($request_stats) {
     $request_stats->set_is_fault($is_fault);
+    if ($is_fault) {
+      $request_stats->set_fault_message($response[0]->get_faultstring());
+    }
     $client->_push_new_request_stats($request_stats);
     Google::Ads::AdWords::Logging::get_awapi_logger->info($request_stats);
   }

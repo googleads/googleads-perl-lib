@@ -20,7 +20,6 @@ use version;
 
 use Google::Ads::AdWords::Logging;
 use Google::Ads::AdWords::Reports::ReportingConfiguration;
-use Google::Ads::AdWords::RequestStats;
 
 # The following needs to be on one line because CPAN uses a particularly hacky
 # eval() to determine module versions.

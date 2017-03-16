@@ -23,7 +23,6 @@ use version;
 use Google::Ads::Common::Constants; our $VERSION = ${Google::Ads::Common::Constants::VERSION};
 
 use Google::Ads::AdWords::Logging;
-use Google::Ads::AdWords::RequestStats;
 use Google::Ads::AdWords::Serializer;
 use Google::Ads::AdWords::Utilities::BatchJobHandlerError;
 use Google::Ads::AdWords::Utilities::BatchJobHandlerStatus;
