@@ -1,5 +1,8 @@
 # AdWords API Perl Client Library
 
+> **The AdWords API will [sunset on April 27, 2022](https://ads-developers.googleblog.com/2021/04/upgrade-to-google-ads-api-from-adwords.html).  
+> Upgrade to the [Google Ads API](https://developers.google.com/google-ads/api/docs/client-libs).**
+
 [![CPAN version](https://badge.fury.io/pl/Google-Ads-AdWords-Client.svg)](https://badge.fury.io/pl/Google-Ads-AdWords-Client)
 
 Google's [AdWords API](https://developers.google.com/adwords/api/) service lets developers design computer programs that
